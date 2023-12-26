@@ -25,10 +25,11 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker container prune -f
             docker pull minskim22/mylist-spring:latest
             docker tag minskim22/mylist-spring:latest mylist-spring
             
-            if [ "$(docker ps -aq -f name=spring)" ]
+            if [ "$(docker ps -aq -f name=server)" ]
             then
               echo "[ spring is running ]"
               docker stop server
