@@ -29,4 +29,6 @@ jobs:
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build -t mylist-spring .
         docker tag mylist-spring minskim22/mylist-spring:${GITHUB_SHA::7}
+        docker tag mylist-spring minskim22/mylist-spring:latest
         docker push minskim22/mylist-spring:${GITHUB_SHA::7}
+        docker push minskim22/mylist-spring:latest
