@@ -25,7 +25,15 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker pull minskim22/mylist-spring:${GITHUB_SHA::7}
-            docker tag minskim22/mylist-spring:${GITHUB_SHA::7} mylist-spring
-            docker stop server
+            docker pull minskim22/mylist-spring:latest
+            docker tag minskim22/mylist-spring:latest mylist-spring
+            
+            if [ "$(docker ps -aq -f name=spring)" ]
+            then
+              echo "[ spring is running ]"
+              docker stop server
+            else
+              echo "[ spring is not running ]"
+            fi
+            
             docker run -d --rm --name server -p 8080:8080 mylist-spring
