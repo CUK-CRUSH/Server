@@ -1,0 +1,20 @@
+# ?? ???? ??? ?? ??
+spring:
+  profiles:
+    include: dev # ??? ??? ??? ???
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${SERVER_IP}:${DATASOURCE_PORT}/${DATASOURCE_SCHEMA}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
