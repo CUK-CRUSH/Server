@@ -18,6 +18,15 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Set yml file
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: ./src/main/resources/application.yml
+      env:
+        spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
+        spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
+        spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
+
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
 
@@ -29,4 +38,6 @@ jobs:
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build -t mylist-spring .
         docker tag mylist-spring minskim22/mylist-spring:${GITHUB_SHA::7}
+        docker tag mylist-spring minskim22/mylist-spring:latest
         docker push minskim22/mylist-spring:${GITHUB_SHA::7}
+        docker push minskim22/mylist-spring:latest
