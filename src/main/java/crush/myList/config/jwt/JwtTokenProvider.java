@@ -1,10 +1,9 @@
 package crush.myList.config.jwt;
 
-import Lingtning.new_match42.enums.Role;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import crush.myList.config.security.SecurityMemberDto;
+import crush.myList.member.entity.Member;
+import crush.myList.member.repository.MemberRepository;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -20,16 +20,15 @@ import java.util.Date;
 
 // 토큰을 생성하고 검증하는 클래스입니다.
 // 해당 컴포넌트는 필터클래스에서 사전 검증을 거칩니다.
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
+    @Value("${jwt.access-token-time}")
+    private long accessTokenTime;
 
-    // 토큰 유효시간 30분
-    private static final long tokenValidTime = 30 * 60 * 1000L;
-
-    private final CustomUserDetailsService userDetailsService;
+    private final MemberRepository memberRepository;
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -38,27 +37,37 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String intra, Role role) {
-        Claims claims = Jwts.claims().setSubject(intra); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
-        claims.put("role", role); // 정보는 key / value 쌍으로 저장된다.
+    public String createToken(String memberId) throws IllegalArgumentException {
+        Claims claims = Jwts.claims().setSubject(memberId); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
+
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
-                // signature 에 들어갈 secret값 세팅
+                .setExpiration(new Date(now.getTime() + accessTokenTime)) // set Expire Time
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256) // signature 에 들어갈 secret값 세팅
                 .compact();
     }
 //    // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getIntra(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        Member member = memberRepository.findById(Long.parseLong(getMemberId(token))).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        SecurityMemberDto userDetails = SecurityMemberDto.builder()
+                .id(String.valueOf(member.getId()))
+                .username(member.getUsername())
+                .oauth2id(member.getOauth2id())
+                .name(member.getName())
+                .build();
+        // todo: 권한 부여 설정해야함
+        return new UsernamePasswordAuthenticationToken(userDetails, "", null);
     }
 
 //    // 토큰에서 회원 정보 추출
-    public String getIntra(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token).getBody().getSubject();
+    public String getMemberId(String token) {
+        JwtParser jwtParser = Jwts.parserBuilder()
+                .setSigningKey(secretKey.getBytes()).build();
+
+        return jwtParser.parseClaimsJws(token).getBody().getSubject();
     }
 //
 //    // Request의 Header에서 token 값을 가져옵니다. "Authorization" : "TOKEN값'
@@ -73,7 +82,8 @@ public class JwtTokenProvider {
         }
         String jwt = token.replace("Bearer ", "");
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(jwt);
+            JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build();
+            Jws<Claims> claims = jwtParser.parseClaimsJws(jwt);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;

@@ -1,5 +1,10 @@
-package crush.myList.config;
+package crush.myList.config.security;
 
+import crush.myList.config.OAuth.handler.LoginFailureHandler;
+import crush.myList.config.OAuth.handler.LoginSuccessHandler;
+import crush.myList.config.OAuth.OAuth2Service;
+import crush.myList.config.jwt.JwtAuthenticationFilter;
+import crush.myList.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +14,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 // spring security 설정 파일 입니다.
 @Configuration
@@ -22,21 +23,20 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableMethodSecurity() // prePostEnabled 어노테이션 활성화
 public class SecurityConfig {
+    private final OAuth2Service OAuth2Service;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
+
     private final String[] WHITE_LIST = {
-            // swagger
-            "/v3/api-docs/**",
-            "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            // index
-            "/",
-            // register
-            "/register",
-            // login
-            "/login",
-            "/login/process",
-            // logout
-            "/logout",
+        // swagger
+        "/v3/api-docs/**",
+        "/swagger-ui.html",
+        "/swagger-ui/**",
+        "/swagger-resources/**",
+
+        // redirect
+        "/login/oauth2/success",
     };
 
     @Bean
@@ -45,6 +45,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(WHITE_LIST).permitAll()  // 모든 사용자 허용 경로
                         .anyRequest().authenticated())  // 그 외 나머지 경로는 전부 인증 필요
+//                        .anyRequest().permitAll())  // 그 외 나머지 경로는 전부 허용
                 // 예외 처리
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
@@ -53,14 +54,14 @@ public class SecurityConfig {
                 // 로그인
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(oAuth2Service)) // 유저 정보 가져오기
-                        .successHandler(configSuccessHandler) // 로그인 성공
-                        .failureHandler(configFailureHandler) // 로그인 실패
+                                .userService(OAuth2Service)) // 유저 정보 가져오기
+                        .successHandler(loginSuccessHandler) // 로그인 성공
+                        .failureHandler(loginFailureHandler) // 로그인 실패
                         .permitAll()
                 )
                 // 로그아웃
                 .logout(logout -> logout
-                        .logoutUrl("/api/v1/logout")
+                        .logoutUrl("/logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
@@ -72,10 +73,5 @@ public class SecurityConfig {
         http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
