@@ -37,6 +37,7 @@ public class SecurityConfig {
 
         // redirect
         "/login/oauth2/success",
+        "/login/oauth2/callback",
     };
 
     @Bean

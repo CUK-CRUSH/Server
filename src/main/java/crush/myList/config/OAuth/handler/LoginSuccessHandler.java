@@ -26,7 +26,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         // 토큰 생성
         String token = jwtTokenProvider.createToken(oAuth2User.getMemberId());
         // 토큰을 query parameter로 붙여서 리다이렉트
-        getRedirectStrategy().sendRedirect(request, response, "/login/oauth2/success?token=" + token);
+//        getRedirectStrategy().sendRedirect(request, response, "/login/oauth2/success?token=" + token);
+        response.getWriter().write(token);
         log.info("로그인 성공");
     }
 }
