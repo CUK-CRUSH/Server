@@ -1,4 +1,4 @@
-package crush.myList.member.entity;
+package crush.myList.domain.member.entity;
 
 import crush.myList.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;

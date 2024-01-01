@@ -1,4 +1,4 @@
-package crush.myList.config.OAuth.users;
+package crush.myList.config.OAuth2.users;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,8 +1,8 @@
-package crush.myList.config.OAuth;
+package crush.myList.config.OAuth2;
 
-import crush.myList.config.OAuth.users.GoogleUser;
-import crush.myList.member.entity.Member;
-import crush.myList.member.repository.MemberRepository;
+import crush.myList.config.OAuth2.users.GoogleUser;
+import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j(topic = "OAuth2UserService")

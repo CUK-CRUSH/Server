@@ -1,4 +1,4 @@
-package crush.myList.config.OAuth.handler;
+package crush.myList.config.OAuth2.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

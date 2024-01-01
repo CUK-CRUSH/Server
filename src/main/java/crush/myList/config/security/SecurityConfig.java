@@ -1,8 +1,8 @@
 package crush.myList.config.security;
 
-import crush.myList.config.OAuth.handler.LoginFailureHandler;
-import crush.myList.config.OAuth.handler.LoginSuccessHandler;
-import crush.myList.config.OAuth.OAuth2Service;
+import crush.myList.config.OAuth2.handler.LoginFailureHandler;
+import crush.myList.config.OAuth2.handler.LoginSuccessHandler;
+import crush.myList.config.OAuth2.OAuth2Service;
 import crush.myList.config.jwt.JwtAuthenticationFilter;
 import crush.myList.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;

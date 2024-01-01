@@ -1,4 +1,4 @@
-package crush.myList.login;
+package crush.myList.domain.login;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;

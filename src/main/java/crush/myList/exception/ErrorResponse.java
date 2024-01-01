@@ -1,11 +1,10 @@
-package crush.myList.error;
+package crush.myList.exception;
 
 import crush.myList.global.dto.ResponseBody;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @Getter
 @Builder

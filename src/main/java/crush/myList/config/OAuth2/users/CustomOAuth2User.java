@@ -1,4 +1,4 @@
-package crush.myList.config.OAuth.users;
+package crush.myList.config.OAuth2.users;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

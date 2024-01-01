@@ -1,4 +1,4 @@
-package crush.myList.error;
+package crush.myList.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

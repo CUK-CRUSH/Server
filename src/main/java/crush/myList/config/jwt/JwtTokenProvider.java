@@ -1,8 +1,8 @@
 package crush.myList.config.jwt;
 
 import crush.myList.config.security.SecurityMemberDto;
-import crush.myList.member.entity.Member;
-import crush.myList.member.repository.MemberRepository;
+import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;

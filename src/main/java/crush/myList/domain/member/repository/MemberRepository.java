@@ -1,6 +1,6 @@
-package crush.myList.member.repository;
+package crush.myList.domain.member.repository;
 
-import crush.myList.member.entity.Member;
+import crush.myList.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

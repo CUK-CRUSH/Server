@@ -1,4 +1,4 @@
-package crush.myList.error;
+package crush.myList.exception;
 
 import crush.myList.global.dto.ResponseBody;
 import lombok.extern.slf4j.Slf4j;

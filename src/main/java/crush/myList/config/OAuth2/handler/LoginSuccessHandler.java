@@ -1,8 +1,8 @@
-package crush.myList.config.OAuth.handler;
+package crush.myList.config.OAuth2.handler;
 
-import crush.myList.config.OAuth.users.GoogleUser;
+import crush.myList.config.OAuth2.users.GoogleUser;
 import crush.myList.config.jwt.JwtTokenProvider;
-import crush.myList.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
