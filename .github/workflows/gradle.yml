@@ -21,11 +21,15 @@ jobs:
     - name: Set yml file
       uses: microsoft/variable-substitution@v1
       with:
-        files: ./src/main/resources/application.yml
+        files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml
       env:
         spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
         spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
         spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
+        spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+        spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.GOOGLE_REDIRECT_URI }}
+        jwt.secret: ${{ secrets.JWT_SECRET }}
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
