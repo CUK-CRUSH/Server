@@ -12,13 +12,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Slf4j
+@Slf4j(topic = "LoginFailureHandler")
 @Component
 public class LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        // content-type을 json, 인코딩을 utf-8로 설정
+        response.setContentType("application/json; charset=utf-8");
+
         response.getWriter().write("로그인 실패");
-//        response.sendRedirect("/login/failure");
         log.info(exception.getMessage());
         log.info(getExceptionMessage(exception));
     }

@@ -7,12 +7,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-public class JsonBody implements ResponseBody {
+@AllArgsConstructor(staticName = "of")
+public class JsonBody<T> implements ResponseBody {
     @NotNull
     private HttpStatus status;
     @NotBlank
     private String message;
-    private Object data;
+    private T data;
 }

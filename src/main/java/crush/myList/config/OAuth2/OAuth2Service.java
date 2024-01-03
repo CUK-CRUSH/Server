@@ -39,7 +39,6 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     }
 
     private OAuth2User saveOrUpdate(OAuth2User oAuth2User, String registrationId) {
-
         switch (registrationId) {
             case "google":
                 return saveOrUpdateGoogleUser(oAuth2User);
