@@ -30,6 +30,9 @@ jobs:
         spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.GOOGLE_REDIRECT_URI }}
         jwt.secret: ${{ secrets.JWT_SECRET }}
+        spring.cloud.gcp.storage.credentials.location: ${{ secrets.GCS_KEY_LOCATION }}
+        spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
+        spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
