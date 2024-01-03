@@ -20,5 +20,12 @@
 - [ ] Documentation content changes
 
 
+## What is the current behavior?
+변경 전 코드의 동작 방식을 설명해주세요.
+
+## What is the new behavior?
+변경 후 코드의 동작 방식을 설명해주세요.
+
+
 ## Other information
 이미지와 같은 PR과 관련된 추가적인 정보가 있다면 작성해주세요.
