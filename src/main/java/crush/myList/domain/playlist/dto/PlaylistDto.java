@@ -21,14 +21,14 @@ public class PlaylistDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Res {
-        @Schema(name = "playlist_name", description = "플레이리스트 이름입니다.")
+        @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotEmpty
         private String playlistName;
 
-        @Schema(name = "thumnail_url", description = "썸네일 이미지 주소입니다.")
+        @Schema(name = "thumnailUrl", description = "썸네일 이미지 주소입니다.")
         private String thumbnailUrl;
 
-        @Schema(name = "number_of_musics", description = "플레이리스트 음악 개수입니다.")
+        @Schema(name = "numberOfMusics", description = "플레이리스트 음악 개수입니다.")
         private Long numberOfMusics;
     }
 }
