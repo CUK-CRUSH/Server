@@ -34,6 +34,14 @@ jobs:
         spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
         spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
 
+    - name: create-json
+      id: create-json
+      uses: jsdaniell/create-json@1.2.2
+      with:
+        name: "gcs-key.json"
+        json: ${{ secrets.GCS_KEY_JSON }}
+        dir: ${{ secrets.GCS_KEY_DIR_LOCATION }}
+
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
 
