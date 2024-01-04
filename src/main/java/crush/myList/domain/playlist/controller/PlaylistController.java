@@ -1,5 +1,6 @@
 package crush.myList.domain.playlist.controller;
 
+import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.service.PlaylistService;
 import crush.myList.global.dto.JsonBody;
@@ -17,17 +18,18 @@ import java.util.List;
 @RestController
 @Slf4j(topic = "PlaylistController")
 @RequiredArgsConstructor
-@RequestMapping("/user/{userId}/playlist")
+@RequestMapping("/user/{username}/playlist")
 public class PlaylistController {
     private final PlaylistService playlistService;
+
     @Operation(summary = "유저의 플레이리스트 조회하기")
     @GetMapping("/")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 조회 성공"),
             @ApiResponse(responseCode = "401", description = "플레이리스트 조회 실패")
     })
-    public JsonBody<List<PlaylistDto>> getUserPlaylists(@PathVariable String userId) {
-        List<PlaylistDto> playlists = playlistService.getPlaylists(userId);
+    public JsonBody<List<PlaylistDto.Res>> getUserPlaylists(@PathVariable String username) {
+        List<PlaylistDto.Res> playlists = playlistService.getPlaylists(username);
         return JsonBody.of(
                 HttpStatus.OK,
                 "플레이리스트 조회 성공",
@@ -35,14 +37,21 @@ public class PlaylistController {
         );
     }
 
-//    @PostMapping("/")
-//    public JsonBody<String> addPlaylist() {
-//
-//        return JsonBody.builder()
-//                .message("플레이리스트 추가 성공")
-//                .data("addPlaylistToUser")
-//                .build();
-//    }
+    @Operation(summary = "유저의 플레이리스트 생성하기")
+    @PostMapping("/")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
+            @ApiResponse(responseCode = "401", description = "플레이리스트 생성 실패")
+    })
+    public JsonBody<PlaylistDto.Res> addPlaylist(@PathVariable String username, @RequestBody PlaylistDto.Req request) {
+        PlaylistDto.Res playlist = playlistService.addPlaylist(username, request);
+
+        return JsonBody.of(
+                HttpStatus.OK,
+                "플레이리스트 생성 성공",
+                playlist
+                );
+    }
 //
 //    @PutMapping("/{playlistID}")
 //    public JsonBody<String> updatePlaylist(@PathVariable Long playlistID) {
