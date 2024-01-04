@@ -6,6 +6,7 @@ import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.global.dto.JsonBody;
 import crush.myList.global.dto.ResponseBody;
+import crush.myList.global.enums.JwtTokenType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static crush.myList.config.jwt.JwtTokenProvider.ACCESS_TOKEN;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -31,8 +30,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         // OAuth2User로 캐스팅하여 인증된 사용자 정보를 가져온다.
         GoogleUser oAuth2User = (GoogleUser) authentication.getPrincipal();
         // 토큰 생성
-        String accessToken = jwtTokenProvider.createToken(oAuth2User.getMemberId(), ACCESS_TOKEN);
-        String refreshToken = jwtTokenProvider.createToken(oAuth2User.getMemberId(), JwtTokenProvider.REFRESH_TOKEN);
+        String accessToken = jwtTokenProvider.createToken(oAuth2User.getMemberId(), JwtTokenType.ACCESS_TOKEN);
+        String refreshToken = jwtTokenProvider.createToken(oAuth2User.getMemberId(), JwtTokenType.REFRESH_TOKEN);
 
         Map<String, String> token = new HashMap<>();
         token.put("access_token", accessToken);
