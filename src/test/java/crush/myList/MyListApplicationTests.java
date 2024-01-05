@@ -19,9 +19,7 @@ class MyListApplicationTests {
     @Test
     @WithMockUser(username = "test")
     @DisplayName("이미지 파일 GCS에 저장 및 삭제 테스트.")
-    void saveImageToGcsTest() throws NoSuchFieldException {
-//        System.out.println("bucketName: " + envBean.getBucketName());
-
+    void saveImageToGcsTest() {
         // given
         MockMultipartFile imageFile = new MockMultipartFile("image", "image.jpg", "image/jpeg", "image".getBytes());
 

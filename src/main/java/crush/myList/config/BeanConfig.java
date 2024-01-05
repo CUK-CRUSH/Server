@@ -14,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.IOException;
 
 @Configuration
+@RequiredArgsConstructor
 public class BeanConfig {
+    private final EnvBean envBean;
     @Bean
     public PasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -23,9 +25,9 @@ public class BeanConfig {
 
     @Bean
     public Storage storage() throws IOException {
-        ClassPathResource resource = new ClassPathResource("gcs-key.json");
+        ClassPathResource resource = new ClassPathResource(envBean.getKeyName());
         GoogleCredentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
-        String projectId = "eighth-alchemy-408113";
+        String projectId = envBean.getProjectId();
         return StorageOptions.newBuilder()
                 .setProjectId(projectId)
                 .setCredentials(credentials)
