@@ -1,5 +1,6 @@
 package crush.myList.config.security;
 
+import crush.myList.config.EnvBean;
 import crush.myList.config.OAuth2.handler.LoginFailureHandler;
 import crush.myList.config.OAuth2.handler.LoginSuccessHandler;
 import crush.myList.config.OAuth2.OAuth2Service;
@@ -27,6 +28,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
+    private final EnvBean envBean;
 
     private final String[] WHITE_LIST = {
         // swagger
@@ -60,6 +62,7 @@ public class SecurityConfig {
                         })) // 권한 없음
                 // 로그인
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage(envBean.getLoginPage()) // 로그인 페이지
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(OAuth2Service)) // 유저 정보 가져오기
                         .successHandler(loginSuccessHandler) // 로그인 성공
