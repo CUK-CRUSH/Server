@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -17,6 +18,7 @@ class MyListApplicationTests {
     @Autowired
     private ImageService imageService;
     @Test
+    @Transactional
     @WithMockUser(username = "test")
     @DisplayName("이미지 파일 GCS에 저장 및 삭제 테스트.")
     void saveImageToGcsTest() {
