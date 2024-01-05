@@ -15,3 +15,4 @@ spring:
             redirect-uri: ${FACEBOOK_REDIRECT_URI}  # to frontend page
             authorization-grant-type: authorization_code
             scope: email, public_profile
+        login-page: ${LOGIN_PAGE}  # to frontend page
