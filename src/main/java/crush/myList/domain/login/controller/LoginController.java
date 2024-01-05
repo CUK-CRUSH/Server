@@ -41,7 +41,7 @@ public class LoginController {
         return null;
     }
 
-    @Operation(summary = "구글 로그인 리다이렉트 임시 경로", description = "여기서 받은 code를 ")
+    @Operation(summary = "로그인 리다이렉트 임시 경로", description = "여기서 받은 code를 통해 토큰을 발급 받는다.")
     @GetMapping("/oauth2/callback")
     public String callback(@RequestParam(value = "code", required = false) String code) {
         return code;
