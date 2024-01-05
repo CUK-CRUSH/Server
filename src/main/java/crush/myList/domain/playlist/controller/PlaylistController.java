@@ -28,7 +28,7 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 조회 성공"),
             @ApiResponse(responseCode = "401", description = "플레이리스트 조회 실패")
     })
-    public JsonBody<List<PlaylistDto.Res>> getUserPlaylists(@PathVariable String username) {
+    public JsonBody<List<PlaylistDto.Result>> getUserPlaylists(@PathVariable String username) {
         return JsonBody.of(
                 HttpStatus.OK,
                 "플레이리스트 조회 성공",
@@ -42,9 +42,9 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
             @ApiResponse(responseCode = "401", description = "플레이리스트 생성 실패")
     })
-    public JsonBody<PlaylistDto.Res> addPlaylist(
+    public JsonBody<PlaylistDto.Result> addPlaylist(
             @PathVariable String username,
-            @RequestPart PlaylistDto.Req request,
+            @RequestPart PlaylistDto.PostRequest request,
             @RequestPart MultipartFile titleImage
             ) {
         return JsonBody.of(

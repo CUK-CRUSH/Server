@@ -10,7 +10,7 @@ public class PlaylistDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Req {
+    public static class PostRequest {
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotEmpty
         private String playlistName;
@@ -20,15 +20,25 @@ public class PlaylistDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Res {
+    public static class Result {
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotEmpty
         private String playlistName;
 
-        @Schema(name = "thumnailUrl", description = "썸네일 이미지 주소입니다.")
+        @Schema(name = "thumbnailUrl", description = "썸네일 이미지 주소입니다.")
         private String thumbnailUrl;
 
         @Schema(name = "numberOfMusics", description = "플레이리스트 음악 개수입니다.")
         private Long numberOfMusics;
+    }
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PutRequest {
+        @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
+        @NotEmpty
+        private String playlistName;
     }
 }

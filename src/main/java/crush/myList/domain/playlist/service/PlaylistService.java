@@ -28,7 +28,7 @@ public class PlaylistService {
     private final ImageRepository imageRepository;
     private final MusicRepository musicRepository;
 
-    public List<PlaylistDto.Res> getPlaylists(String username) {
+    public List<PlaylistDto.Result> getPlaylists(String username) {
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (!member.isPresent()) {
@@ -36,11 +36,11 @@ public class PlaylistService {
         }
 
         List<Playlist> playlistEntities = playlistRepository.findAllByMember(member.get());
-        List<PlaylistDto.Res> playlistResDtos = convertToDtoList(playlistEntities);
-        return playlistResDtos;
+        List<PlaylistDto.Result> playlistResultDtos = convertToDtoList(playlistEntities);
+        return playlistResultDtos;
     }
 
-    public PlaylistDto.Res addPlaylist(String username, PlaylistDto.Req request, MultipartFile titleImage) {
+    public PlaylistDto.Result addPlaylist(String username, PlaylistDto.PostRequest request, MultipartFile titleImage) {
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (!member.isPresent()) {
@@ -53,7 +53,7 @@ public class PlaylistService {
                 .build();
 
         playlistRepository.save(playlist);
-        return PlaylistDto.Res.builder()
+        return PlaylistDto.Result.builder()
                 .playlistName(playlist.getName())
                 .numberOfMusics(0L)
                 .thumbnailUrl("")
@@ -61,15 +61,15 @@ public class PlaylistService {
     }
 
     /* Convert Playlist Entity List to Playlist Dto List */
-    private List<PlaylistDto.Res> convertToDtoList(List<Playlist> playlistEntities) {
-        List<PlaylistDto.Res> playlistResDtos = playlistEntities.stream()
-                .map(m -> PlaylistDto.Res.builder()
+    private List<PlaylistDto.Result> convertToDtoList(List<Playlist> playlistEntities) {
+        List<PlaylistDto.Result> playlistResultDtos = playlistEntities.stream()
+                .map(m -> PlaylistDto.Result.builder()
                         .playlistName(m.getName())
                         .thumbnailUrl(m.getImage().getUrl())
                         // counts musics in playlist 'm'
                         .numberOfMusics((long) musicRepository.findAllByPlaylist(m).size())
                         .build())
                 .toList();
-        return playlistResDtos;
+        return playlistResultDtos;
     }
 }
