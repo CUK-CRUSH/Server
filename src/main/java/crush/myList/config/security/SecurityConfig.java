@@ -40,7 +40,10 @@ public class SecurityConfig {
         "/login/oauth2/callback",
 
         // refresh token으로 access token 재발급
-        "/login/token/reissue"
+        "/login/token/reissue",
+
+        // file upload
+        "/api/v1/image/**",
     };
 
     @Bean
