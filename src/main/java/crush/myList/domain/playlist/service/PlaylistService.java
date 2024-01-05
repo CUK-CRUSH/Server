@@ -3,6 +3,7 @@ package crush.myList.domain.playlist.service;
 import crush.myList.domain.image.repository.ImageRepository;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
@@ -25,6 +26,7 @@ public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
+    private final MusicRepository musicRepository;
 
     public List<PlaylistDto.Res> getPlaylists(String username) {
         Optional<Member> member = memberRepository.findByUsername(username);
@@ -63,8 +65,9 @@ public class PlaylistService {
         List<PlaylistDto.Res> playlistResDtos = playlistEntities.stream()
                 .map(m -> PlaylistDto.Res.builder()
                         .playlistName(m.getName())
-                        .thumbnailUrl("")   // 미구현
-                        .numberOfMusics(0L)  // 미구현
+                        .thumbnailUrl(m.getImage().getUrl())
+                        // counts musics in playlist 'm'
+                        .numberOfMusics((long) musicRepository.findAllByPlaylist(m).size())
                         .build())
                 .toList();
         return playlistResDtos;
