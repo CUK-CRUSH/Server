@@ -11,7 +11,7 @@ public class PlaylistDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Req {
-        @Schema(name = "playlist_name", description = "플레이리스트 이름입니다.")
+        @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotEmpty
         private String playlistName;
     }

@@ -1,5 +1,6 @@
 package crush.myList.domain.playlist.service;
 
+import crush.myList.domain.image.repository.ImageRepository;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.playlist.dto.PlaylistDto;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final MemberRepository memberRepository;
+    private final ImageRepository imageRepository;
 
     public List<PlaylistDto.Res> getPlaylists(String username) {
         Optional<Member> member = memberRepository.findByUsername(username);
@@ -35,14 +38,12 @@ public class PlaylistService {
         return playlistResDtos;
     }
 
-    public PlaylistDto.Res addPlaylist(String username, PlaylistDto.Req request) {
+    public PlaylistDto.Res addPlaylist(String username, PlaylistDto.Req request, MultipartFile titleImage) {
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (!member.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
         }
-
-        System.out.println(request.getPlaylistName());
 
         Playlist playlist = Playlist.builder()
                 .name(request.getPlaylistName())

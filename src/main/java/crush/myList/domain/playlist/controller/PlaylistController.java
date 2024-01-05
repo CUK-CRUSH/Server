@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -41,11 +42,15 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
             @ApiResponse(responseCode = "401", description = "플레이리스트 생성 실패")
     })
-    public JsonBody<PlaylistDto.Res> addPlaylist(@PathVariable String username, @RequestBody PlaylistDto.Req request) {
+    public JsonBody<PlaylistDto.Res> addPlaylist(
+            @PathVariable String username,
+            @RequestPart PlaylistDto.Req request,
+            @RequestPart MultipartFile titleImage
+            ) {
         return JsonBody.of(
                 HttpStatus.OK,
                 "플레이리스트 생성 성공",
-                playlistService.addPlaylist(username, request)
+                playlistService.addPlaylist(username, request, titleImage)
         );
     }
 
