@@ -24,7 +24,7 @@ public class Image {
     @Column(name = "extension", nullable = false, length = 30)
     String extension;
 
-    @Column(name = "uuid", nullable = false, length = 30)
+    @Column(name = "uuid", nullable = false, length = 50)
     String uuid;
 
     @Column(name = "url", nullable = false)
