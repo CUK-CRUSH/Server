@@ -31,7 +31,7 @@ public class MusicDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Res {
+    public static class Result {
         @Schema(name = "id", description = "음악 ID입니다.")
         @NotNull
         private Long id;
