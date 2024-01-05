@@ -1,6 +1,7 @@
 package crush.myList.domain.login.service;
 
 import crush.myList.config.jwt.JwtTokenProvider;
+import crush.myList.global.enums.JwtTokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,16 +22,25 @@ import java.util.Map;
 public class LoginService {
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * refresh_token 으로 access_token 재발급. x
+    * */
     public Map<String, String> reissue(HttpServletRequest request) {
         try {
             String token = jwtTokenProvider.resolveToken(request);
             Jws<Claims> jws = jwtTokenProvider.validateAndParseToken(token);
+
+            if (!jwtTokenProvider.isRefreshToken(jws)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "토큰 타입이 올바르지 않습니다.");
+            }
             String memberId = jwtTokenProvider.getMemberId(jws);
 
-            String accessToken = jwtTokenProvider.createToken(memberId, JwtTokenProvider.ACCESS_TOKEN);
+            String accessToken = jwtTokenProvider.createToken(memberId, JwtTokenType.ACCESS_TOKEN);
             Map<String, String> json = new HashMap<>();
             json.put("access_token", accessToken);
             return json;
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
         }

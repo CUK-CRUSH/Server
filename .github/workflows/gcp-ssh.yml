@@ -11,8 +11,64 @@ env:
   PROJECT_NAME: 'mylist spring server'
 
 jobs:
+  build:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml, ./src/main/resources/application-gcs.yml
+        env:
+          spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
+          spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
+          spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
+          spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
+          spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          jwt.secret: ${{ secrets.JWT_SECRET }}
+          spring.cloud.gcp.storage.credentials.location: ${{ secrets.GCS_KEY_LOCATION }}
+          spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
+          spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
+
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: "gcs-key.json"
+          json: ${{ secrets.GCS_KEY_JSON }}
+          dir: ${{ secrets.GCS_KEY_DIR_LOCATION }}
+
+      - name: Run chmod to make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker build
+        run: |
+          docker build -t mylist-spring .
+          docker tag mylist-spring minskim22/mylist-spring:${GITHUB_SHA::7}
+          docker tag mylist-spring minskim22/mylist-spring:latest
+          docker push minskim22/mylist-spring:${GITHUB_SHA::7}
+          docker push minskim22/mylist-spring:latest
+
   deploy:
     name: Deploy
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: executing remote ssh commands using ssh key
@@ -33,8 +89,9 @@ jobs:
             then
               echo "[ spring is running ]"
               docker stop server
+              docker rm server
             else
               echo "[ spring is not running ]"
             fi
             
-            docker run -d --rm --name server -p 8080:8080 mylist-spring
+            docker run -d --name server -p 8080:8080 mylist-spring

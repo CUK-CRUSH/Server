@@ -3,6 +3,7 @@ package crush.myList.config.jwt;
 import crush.myList.config.security.SecurityMemberDto;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.global.enums.JwtTokenType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -30,9 +31,6 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-token-time}")
     private long refreshTokenTime;
 
-    public final static Boolean ACCESS_TOKEN = false;
-    public final static Boolean REFRESH_TOKEN = true;
-
     private final MemberRepository memberRepository;
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
@@ -42,19 +40,22 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String memberId, boolean tokenType) throws IllegalArgumentException {
+    public String createToken(String memberId, JwtTokenType tokenType) throws IllegalArgumentException {
         // 멤버 조회
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         // 토큰 생성
         Claims claims = Jwts.claims().setSubject(member.getId().toString()); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
+        claims.put("type", tokenType); // 토큰 타입 (access token, refresh token)
         Date now = new Date();
         Date expiration;
 
-        if (tokenType == REFRESH_TOKEN) { // refresh token
+        if (tokenType == JwtTokenType.REFRESH_TOKEN) { // refresh token
             expiration = new Date(now.getTime() + refreshTokenTime);
-        } else { // access token
+        } else if (tokenType == JwtTokenType.ACCESS_TOKEN) { // access token
             expiration = new Date(now.getTime() + accessTokenTime);
+        } else {
+            throw new IllegalArgumentException("토큰 타입이 올바르지 않습니다.");
         }
 
         return Jwts.builder()
@@ -99,5 +100,13 @@ public class JwtTokenProvider {
     public Jws<Claims> validateAndParseToken(String jwt) {
         JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build();
         return jwtParser.parseClaimsJws(jwt);
+    }
+
+    public boolean isRefreshToken(Jws<Claims> jws) {
+        return jws.getBody().get("type").equals(JwtTokenType.REFRESH_TOKEN);
+    }
+
+    public boolean isAccessToken(Jws<Claims> jws) {
+        return jws.getBody().get("type").equals(JwtTokenType.ACCESS_TOKEN);
     }
 }
