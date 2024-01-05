@@ -40,7 +40,7 @@ jobs:
       id: create-json
       uses: jsdaniell/create-json@v1.2.2
       with:
-        name: "gcs-key.json"
+        name: ${{ secrets.GCS_KEY_NAME }}
         json: ${{ secrets.GCS_KEY_JSON }}
         dir: ${{ secrets.GCS_KEY_DIR_LOCATION }}
 
