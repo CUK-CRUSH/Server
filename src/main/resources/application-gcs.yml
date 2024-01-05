@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: ${GCS_KEY_LOCATION}
+        project-id: ${GCS_PROJECT_ID}
+        bucket: ${GCS_BUCKET_NAME}
