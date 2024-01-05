@@ -1,5 +1,6 @@
 package crush.myList.config.OAuth2;
 
+import crush.myList.config.OAuth2.users.FaceBookUser;
 import crush.myList.config.OAuth2.users.GoogleUser;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
@@ -42,6 +43,8 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         switch (registrationId) {
             case "google":
                 return saveOrUpdateGoogleUser(oAuth2User);
+            case "facebook":
+                return saveOrUpdateFacebookUser(oAuth2User);
             default:
                 Assert.isTrue(false, "지원하지 않는 소셜 로그인 입니다.");
                 return null;
@@ -55,7 +58,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         if (member == null) {
             String uuid = UUID.randomUUID().toString();
             member = Member.builder()
-                    .username(oAuth2User.getAttribute("name") + uuid)
+                    .username(oAuth2User.getAttribute("name") + "_" + uuid)
                     .name(oAuth2User.getAttribute("name"))
                     .oauth2id(oauth2Id)
                     .build();
@@ -64,6 +67,29 @@ public class OAuth2Service extends DefaultOAuth2UserService {
 
         return GoogleUser.builder()
                 .registrationId("google")
+                .memberId(String.valueOf(member.getId()))
+                .oauth2Id(oauth2Id)
+                .attributes(oAuth2User.getAttributes())
+                .authorities(oAuth2User.getAuthorities())
+                .build();
+    }
+
+    private OAuth2User saveOrUpdateFacebookUser(OAuth2User oAuth2User) {
+        String oauth2Id = oAuth2User.getName();
+
+        Member member = memberRepository.findByOauth2id(oauth2Id).orElse(null);
+        if (member == null) {
+            String uuid = UUID.randomUUID().toString();
+            member = Member.builder()
+                    .username(oAuth2User.getAttribute("name") + "_" + uuid)
+                    .name(oAuth2User.getAttribute("name"))
+                    .oauth2id(oauth2Id)
+                    .build();
+            memberRepository.save(member);
+        }
+
+        return FaceBookUser.builder()
+                .registrationId("facebook")
                 .memberId(String.valueOf(member.getId()))
                 .oauth2Id(oauth2Id)
                 .attributes(oAuth2User.getAttributes())
