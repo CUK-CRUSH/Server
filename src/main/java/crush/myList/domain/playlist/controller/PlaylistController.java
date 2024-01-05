@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @Slf4j(topic = "PlaylistController")
 @RequiredArgsConstructor
-@RequestMapping("/user/{username}/playlist")
+@RequestMapping("/api/v1/user/{username}/playlist")
 public class PlaylistController {
     private final PlaylistService playlistService;
 
