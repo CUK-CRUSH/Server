@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,20 +38,20 @@ public class PlaylistController {
     }
 
     @Operation(summary = "유저의 플레이리스트 생성하기")
-    @PostMapping("/")
+    @PostMapping(value = "/", produces = "application/json", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
             @ApiResponse(responseCode = "401", description = "플레이리스트 생성 실패")
     })
     public JsonBody<PlaylistDto.Result> addPlaylist(
             @PathVariable String username,
-            @RequestPart PlaylistDto.PostRequest request,
-            @RequestPart MultipartFile titleImage
+            @RequestPart(required = true) String playlistName,
+            @RequestPart(value = "image", required = false) MultipartFile titleImage
             ) {
         return JsonBody.of(
                 HttpStatus.OK,
                 "플레이리스트 생성 성공",
-                playlistService.addPlaylist(username, request, titleImage)
+                playlistService.addPlaylist(username, new PlaylistDto.PostRequest(playlistName), titleImage)
         );
     }
 

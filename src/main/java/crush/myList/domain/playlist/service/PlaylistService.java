@@ -1,6 +1,9 @@
 package crush.myList.domain.playlist.service;
 
+import crush.myList.domain.image.dto.ImageDto;
+import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.image.repository.ImageRepository;
+import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.music.Repository.MusicRepository;
@@ -28,41 +31,50 @@ public class PlaylistService {
     private final ImageRepository imageRepository;
     private final MusicRepository musicRepository;
 
+    private final ImageService imageService;
+
     public List<PlaylistDto.Result> getPlaylists(String username) {
         Optional<Member> member = memberRepository.findByUsername(username);
 
-        if (!member.isPresent()) {
+        if (member.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
         }
 
         List<Playlist> playlistEntities = playlistRepository.findAllByMember(member.get());
-        List<PlaylistDto.Result> playlistResultDtos = convertToDtoList(playlistEntities);
-        return playlistResultDtos;
+        return convertToDtoList(playlistEntities);
     }
 
     public PlaylistDto.Result addPlaylist(String username, PlaylistDto.PostRequest request, MultipartFile titleImage) {
         Optional<Member> member = memberRepository.findByUsername(username);
 
-        if (!member.isPresent()) {
+        if (member.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
+        }
+
+        ImageDto imageDto = imageService.saveImageToGcs(titleImage);
+        Optional<Image> image = imageRepository.findById(imageDto.getId());
+
+        if (image.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
         }
 
         Playlist playlist = Playlist.builder()
                 .name(request.getPlaylistName())
                 .member(member.get())
+                .image(image.get())
                 .build();
 
         playlistRepository.save(playlist);
         return PlaylistDto.Result.builder()
                 .playlistName(playlist.getName())
                 .numberOfMusics(0L)
-                .thumbnailUrl("")
+                .thumbnailUrl(playlist.getImage().getUrl())
                 .build();
     }
 
     /* Convert Playlist Entity List to Playlist Dto List */
     private List<PlaylistDto.Result> convertToDtoList(List<Playlist> playlistEntities) {
-        List<PlaylistDto.Result> playlistResultDtos = playlistEntities.stream()
+        return playlistEntities.stream()
                 .map(m -> PlaylistDto.Result.builder()
                         .playlistName(m.getName())
                         .thumbnailUrl(m.getImage().getUrl())
@@ -70,6 +82,5 @@ public class PlaylistService {
                         .numberOfMusics((long) musicRepository.findAllByPlaylist(m).size())
                         .build())
                 .toList();
-        return playlistResultDtos;
     }
 }
