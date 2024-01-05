@@ -9,7 +9,6 @@ spring:
             redirect-uri: ${GOOGLE_REDIRECT_URI}  # to frontend page
             authorization-grant-type: authorization_code
             scope: email, profile
-
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
