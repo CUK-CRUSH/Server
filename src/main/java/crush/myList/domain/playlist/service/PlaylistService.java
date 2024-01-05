@@ -76,6 +76,7 @@ public class PlaylistService {
     private List<PlaylistDto.Result> convertToDtoList(List<Playlist> playlistEntities) {
         return playlistEntities.stream()
                 .map(m -> PlaylistDto.Result.builder()
+                        .id(m.getId())
                         .playlistName(m.getName())
                         .thumbnailUrl(m.getImage().getUrl())
                         // counts musics in playlist 'm'

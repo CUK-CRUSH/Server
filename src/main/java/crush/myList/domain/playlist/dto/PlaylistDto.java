@@ -2,6 +2,7 @@ package crush.myList.domain.playlist.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 public class PlaylistDto {
@@ -21,6 +22,10 @@ public class PlaylistDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Result {
+        @Schema(name = "id", description = "플레이리스트 ID입니다.")
+        @NotNull
+        private Long id;
+
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotEmpty
         private String playlistName;
@@ -37,6 +42,10 @@ public class PlaylistDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PutRequest {
+        @Schema(name = "id", description = "플레이리스트 ID입니다.")
+        @NotNull
+        private Long id;
+
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotEmpty
         private String playlistName;
