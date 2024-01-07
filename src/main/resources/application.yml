@@ -19,7 +19,6 @@ spring:
       hibernate:
         format_sql: true
     defer-datasource-initialization: true
-    database-platform: org.hibernate.dialect.MariaDBDialect
 
 jwt:
   secret: ${JWT_SECRET}
