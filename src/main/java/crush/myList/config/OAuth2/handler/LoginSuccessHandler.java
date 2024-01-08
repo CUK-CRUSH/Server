@@ -38,7 +38,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         token.put("access_token", accessToken);
         token.put("refresh_token", refreshToken);
 
-        JsonBody<Object> jsonBody = JsonBody.of(HttpStatus.OK, "로그인 성공", token);
+        JsonBody<Object> jsonBody = JsonBody.of(HttpStatus.OK.value(), "로그인 성공", token);
 
         // content-type을 json, 인코딩을 utf-8로 설정
         response.setContentType("application/json; charset=utf-8");

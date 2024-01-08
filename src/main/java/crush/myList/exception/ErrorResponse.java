@@ -10,12 +10,12 @@ import org.springframework.http.HttpStatus;
 @Builder
 @AllArgsConstructor
 public class ErrorResponse implements ResponseBody {
-    private HttpStatus status;
+    private int status;
     private String message;
 
     public static ErrorResponse toResponse(ErrorCode errorCode){
         return ErrorResponse.builder()
-                        .status(errorCode.getStatus())
+                        .status(errorCode.getStatus().value())
                         .message(errorCode.getMessage())
                         .build();
     }
