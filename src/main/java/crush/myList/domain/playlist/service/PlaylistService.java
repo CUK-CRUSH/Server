@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j(topic = "PlaylistService")
@@ -34,37 +33,31 @@ public class PlaylistService {
     private final ImageService imageService;
 
     public List<PlaylistDto.Result> getPlaylists(String username) {
-        Optional<Member> member = memberRepository.findByUsername(username);
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> {
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
+        });
 
-        if (member.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
-        }
-
-        List<Playlist> playlistEntities = playlistRepository.findAllByMember(member.get());
+        List<Playlist> playlistEntities = playlistRepository.findAllByMember(member);
         return convertToDtoList(playlistEntities);
     }
 
     public PlaylistDto.Result addPlaylist(String username, PlaylistDto.PostRequest request, MultipartFile titleImage) {
-        Optional<Member> member = memberRepository.findByUsername(username);
-
-        if (member.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
-        }
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> {
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
+        });
 
         ImageDto imageDto = imageService.saveImageToGcs(titleImage);
-        Optional<Image> image = imageRepository.findById(imageDto.getId());
-
-        if (image.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
-        }
+        Image image = imageRepository.findById(imageDto.getId()).orElseThrow(() -> {
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
+        });
 
         Playlist playlist = Playlist.builder()
                 .name(request.getPlaylistName())
-                .member(member.get())
-                .image(image.get())
+                .member(member)
+                .image(image)
                 .build();
-
         playlistRepository.save(playlist);
+
         return PlaylistDto.Result.builder()
                 .playlistName(playlist.getName())
                 .numberOfMusics(0L)
@@ -73,34 +66,48 @@ public class PlaylistService {
     }
 
     public PlaylistDto.Result updatePlaylist(String username, PlaylistDto.PutRequest request, MultipartFile image) {
-        Optional<Playlist> playlist = playlistRepository.findById(request.getId());
+        Playlist playlist = playlistRepository.findById(request.getId()).orElseThrow(() -> {
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
+        });
 
-        if (playlist.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
+        playlist.setName(request.getPlaylistName());
+
+        if (!image.isEmpty()) {
+            imageService.deleteImageToGcs(playlist.getImage().getId());
+            ImageDto imageDto = imageService.saveImageToGcs(image);
+            Image newImage = imageRepository.findById(imageDto.getId()).orElseThrow(() -> {
+                return new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
+            });
+
+            playlist.setImage(newImage);
         }
+
+        return convertToDto(playlist);
     }
 
     public void deletePlaylist(Long playlistId) {
-        Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() -> {
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
+        });
 
-        if (playlist.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
-        }
-
-        imageService.deleteImageToGcs(playlist.get().getImage().getId());
-        playlistRepository.delete(playlist.get());
+        imageService.deleteImageToGcs(playlist.getImage().getId());
+        playlistRepository.delete(playlist);
     }
 
     /* Convert Playlist Entity List to Playlist Dto List */
     private List<PlaylistDto.Result> convertToDtoList(List<Playlist> playlistEntities) {
         return playlistEntities.stream()
-                .map(m -> PlaylistDto.Result.builder()
-                        .id(m.getId())
-                        .playlistName(m.getName())
-                        .thumbnailUrl(m.getImage().getUrl())
-                        // counts musics in playlist 'm'
-                        .numberOfMusics((long) musicRepository.findAllByPlaylist(m).size())
-                        .build())
+                .map(this::convertToDto)
                 .toList();
+    }
+
+    private PlaylistDto.Result convertToDto(Playlist playlist) {
+        return PlaylistDto.Result.builder()
+                .id(playlist.getId())
+                .playlistName(playlist.getName())
+                .thumbnailUrl(playlist.getImage().getUrl())
+                // counts musics in playlist
+                .numberOfMusics((long) musicRepository.findAllByPlaylist(playlist).size())
+                .build();
     }
 }
