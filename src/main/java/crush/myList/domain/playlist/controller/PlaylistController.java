@@ -73,7 +73,7 @@ public class PlaylistController {
                 .build();
 
         return JsonBody.of(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 "플레이리스트 수정 완료",
                 playlistService.updatePlaylist(username, request, titleImage)
         );
@@ -88,7 +88,7 @@ public class PlaylistController {
     public JsonBody<Long> deletePlaylist(@PathVariable Long playlistId) {
         playlistService.deletePlaylist(playlistId);
         return JsonBody.of(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 "플레이리스트 삭제 완료",
                 playlistId
         );

@@ -29,7 +29,7 @@ public class MusicController {
     })
     public JsonBody<List<MusicDto.Result>> getMusics(@PathVariable String username, @PathVariable Long playlistId) {
         return JsonBody.of(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 "음악 조회 성공",
                 musicService.getMusics(playlistId)
         );
@@ -43,7 +43,7 @@ public class MusicController {
     })
     public JsonBody<MusicDto.Result> addMusic(@PathVariable String username, @PathVariable Long playlistId, MusicDto.Request request) {
         return JsonBody.of(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 "음악 추가 성공",
                 musicService.addMusic(username, playlistId, request)
         );
@@ -58,7 +58,7 @@ public class MusicController {
     public JsonBody<Long> deleteMusic(@PathVariable String username, @PathVariable Long playlistId, @PathVariable Long musicId) {
         musicService.deleteMusic(username, musicId);
         return JsonBody.of(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 "음악 삭제 성공",
                 musicId
         );
