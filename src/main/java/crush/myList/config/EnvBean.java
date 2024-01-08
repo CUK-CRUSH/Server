@@ -13,4 +13,7 @@ public class EnvBean {
     private String projectId;
     @Value("${spring.cloud.gcp.storage.key-name}")
     private String keyName;
+
+    @Value("${spring.security.oauth2.client.login-page}")
+    private String loginPage;
 }
