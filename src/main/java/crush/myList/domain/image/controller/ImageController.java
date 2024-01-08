@@ -17,12 +17,12 @@ public class ImageController {
     @PostMapping(value = "/save", produces = "application/json", consumes = "multipart/form-data")
     public JsonBody<String> saveImageToGcs(@RequestParam(value = "image") MultipartFile imageFile) {
         ImageDto imageDto = imageService.saveImageToGcs(imageFile);
-        return JsonBody.of(HttpStatus.OK, "이미지가 성공적으로 저장되었습니다.", imageDto.getUrl());
+        return JsonBody.of(HttpStatus.OK.value(), "이미지가 성공적으로 저장되었습니다.", imageDto.getUrl());
     }
 
     @DeleteMapping(value = "/delete", produces = "application/json")
     public JsonBody<Long> deleteImageToGcs(@RequestParam(value = "id") Long imageId) {
         imageService.deleteImageToGcs(imageId);
-        return JsonBody.of(HttpStatus.OK, "이미지가 성공적으로 삭제되었습니다.", imageId);
+        return JsonBody.of(HttpStatus.OK.value(), "이미지가 성공적으로 삭제되었습니다.", imageId);
     }
 }

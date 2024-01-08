@@ -11,8 +11,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor(staticName = "of")
 public class JsonBody<T> implements ResponseBody {
     @NotNull
-    @Schema(example = "200 OK")
-    private HttpStatus status;
+    @Schema(example = "200")
+    private int status;
     @NotBlank
     @Schema(example = "성공")
     private String message;
