@@ -45,7 +45,7 @@ public class PlaylistController {
     })
     public JsonBody<PlaylistDto.Result> addPlaylist(
             @PathVariable String username,
-            @RequestPart(required = true) String playlistName,
+            @RequestPart String playlistName,
             @RequestPart(value = "image", required = false) MultipartFile titleImage
             ) {
         return JsonBody.of(
