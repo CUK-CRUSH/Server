@@ -38,7 +38,7 @@ public class PlaylistController {
     }
 
     @Operation(summary = "유저의 플레이리스트 생성하기")
-    @PostMapping(value = "/", produces = "application/json", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
             @ApiResponse(responseCode = "401", description = "플레이리스트 생성 실패")
@@ -55,21 +55,32 @@ public class PlaylistController {
         );
     }
 
-//    @PutMapping("/{playlistId}")
-//    public JsonBody<String> updatePlaylist(@PathVariable Long playlistId) {
-//        return JsonBody.of(
-//                HttpStatus.OK,
-//                "플레이리스트 수정 완료",
-//                "흠"
-//        );
-//    }
-//
-//    @DeleteMapping("/{playlistId}")
-//    public JsonBody<String> deletePlaylist(@PathVariable Long playlistId) {
-//        return JsonBody.of(
-//                HttpStatus.OK,
-//                "플레이리스트 삭제 완료",
-//                "흐음"
-//        );
-//    }
+    @PutMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public JsonBody<PlaylistDto.Result> updatePlaylist(
+            @PathVariable String username,
+            @PathVariable Long playlistId,
+            @RequestPart(required = false) String playlistName,
+            @RequestPart(value = "image", required = false) MultipartFile titleImage
+    ) {
+        PlaylistDto.PutRequest request = PlaylistDto.PutRequest.builder()
+                .id(playlistId)
+                .playlistName(playlistName)
+                .build();
+
+        return JsonBody.of(
+                HttpStatus.OK,
+                "플레이리스트 수정 완료",
+                playlistService.updatePlaylist(username, request, titleImage)
+        );
+    }
+
+    @DeleteMapping("/{playlistId}")
+    public JsonBody<Long> deletePlaylist(@PathVariable Long playlistId) {
+        playlistService.deletePlaylist(playlistId);
+        return JsonBody.of(
+                HttpStatus.OK,
+                "플레이리스트 삭제 완료",
+                playlistId
+        );
+    }
 }

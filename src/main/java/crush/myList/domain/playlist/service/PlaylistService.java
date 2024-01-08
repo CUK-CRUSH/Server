@@ -72,6 +72,25 @@ public class PlaylistService {
                 .build();
     }
 
+    public PlaylistDto.Result updatePlaylist(String username, PlaylistDto.PutRequest request, MultipartFile image) {
+        Optional<Playlist> playlist = playlistRepository.findById(request.getId());
+
+        if (playlist.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
+        }
+    }
+
+    public void deletePlaylist(Long playlistId) {
+        Optional<Playlist> playlist = playlistRepository.findById(playlistId);
+
+        if (playlist.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
+        }
+
+        imageService.deleteImageToGcs(playlist.get().getImage().getId());
+        playlistRepository.delete(playlist.get());
+    }
+
     /* Convert Playlist Entity List to Playlist Dto List */
     private List<PlaylistDto.Result> convertToDtoList(List<Playlist> playlistEntities) {
         return playlistEntities.stream()
