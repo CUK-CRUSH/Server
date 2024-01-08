@@ -51,6 +51,6 @@ public class LoginController {
     @PostMapping("/token/reissue")
     public JsonBody<?> reissue(HttpServletRequest request) {
         Map<String, String> accessToken = loginService.reissue(request);
-        return JsonBody.of(HttpStatus.OK, "토큰 재발급 성공", accessToken);
+        return JsonBody.of(HttpStatus.OK.value(), "토큰 재발급 성공", accessToken);
     }
 }
