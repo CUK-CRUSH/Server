@@ -31,7 +31,7 @@ public class PlaylistController {
     })
     public JsonBody<List<PlaylistDto.Result>> getUserPlaylists(@PathVariable String username) {
         return JsonBody.of(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 "플레이리스트 조회 성공",
                 playlistService.getPlaylists(username)
         );
@@ -49,7 +49,7 @@ public class PlaylistController {
             @RequestPart(value = "image", required = false) MultipartFile titleImage
             ) {
         return JsonBody.of(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 "플레이리스트 생성 성공",
                 playlistService.addPlaylist(username, new PlaylistDto.PostRequest(playlistName), titleImage)
         );

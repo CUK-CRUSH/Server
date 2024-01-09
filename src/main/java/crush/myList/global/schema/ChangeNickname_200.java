@@ -1,20 +1,21 @@
-package crush.myList.global.dto;
+package crush.myList.global.schema;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@Setter
-@AllArgsConstructor(staticName = "of")
-public class JsonBody<T> implements ResponseBody {
+@Schema(name = "CheckNickname_200", description = "닉네임 중복 검사 성공 응답")
+public class ChangeNickname_200 {
     @NotNull
     @Schema(example = "200")
     private int status;
     @NotBlank
-    @Schema(example = "성공")
+    @Schema(example = "사용 가능한 닉네임")
     private String message;
-    private T data;
+    @NotBlank
+    @Schema(example = "crush")
+    private String data;
 }

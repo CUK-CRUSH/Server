@@ -16,12 +16,15 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name= "oauth2id", nullable = false, unique = true)
+    @Column(name= "oauth2id", nullable = false, unique = true, length = 50)
     private String oauth2id;
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
+
+    @Column(name = "introduction")
+    private String introduction;
 }
