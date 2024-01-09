@@ -58,11 +58,7 @@ public class PlaylistService {
                 .build();
         playlistRepository.save(playlist);
 
-        return PlaylistDto.Result.builder()
-                .playlistName(playlist.getName())
-                .numberOfMusics(0L)
-                .thumbnailUrl(playlist.getImage().getUrl())
-                .build();
+        return convertToDto(playlist);
     }
 
     public PlaylistDto.Result updatePlaylist(String username, PlaylistDto.PutRequest request, MultipartFile image) {
