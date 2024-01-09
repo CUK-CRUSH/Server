@@ -41,7 +41,7 @@ public class MusicController {
             @ApiResponse(responseCode = "200", description = "음악 생성 성공"),
             @ApiResponse(responseCode = "401", description = "음악 생성 실패")
     })
-    public JsonBody<MusicDto.Result> addMusic(@PathVariable String username, @PathVariable Long playlistId, MusicDto.Request request) {
+    public JsonBody<MusicDto.Result> addMusic(@PathVariable String username, @PathVariable Long playlistId, @RequestBody MusicDto.Request request) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "음악 추가 성공",
