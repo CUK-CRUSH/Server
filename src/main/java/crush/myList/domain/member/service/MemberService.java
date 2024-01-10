@@ -21,8 +21,11 @@ public class MemberService {
         }
     }
 
-    public void changeUsername(String username) {
+    public void changeUsername(Long id, String username) {
         checkUsername(username);
 
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
+        member.setUsername(username);
     }
 }

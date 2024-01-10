@@ -1,15 +1,14 @@
 package crush.myList.domain.member.controller;
 
-import crush.myList.config.security.SecurityMemberDto;
+import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.member.service.MemberService;
 import crush.myList.global.dto.JsonBody;
+import crush.myList.global.schema.ChangeNickname_200;
+import crush.myList.global.schema.ChangeNickname_400;
 import crush.myList.global.schema.CheckNickname_200;
 import crush.myList.global.schema.CheckNickname_400;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.extensions.Extension;
-import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @ApiResponse(description = "회원 관련 API")
 @RestController
@@ -46,17 +43,13 @@ public class MemberController {
     @Operation(summary = "회원 닉네임 변경")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = JsonBody.class))}),
+                    schema = @Schema(implementation = ChangeNickname_200.class))}),
             @ApiResponse(responseCode = "400", description = "닉네임 변경 실패", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = JsonBody.class))})
+                    schema = @Schema(implementation = ChangeNickname_400.class))})
     })
     @PostMapping("/nickname/change/{username}")
-    public JsonBody<String> changeNickname(@PathVariable String username, Principal principal) {
-        System.out.println(principal.getName());
-        log.info("principal: {}", principal.getName());
-        SecurityMemberDto member = (SecurityMemberDto) principal;
-        log.info("member: {}", member.getName());
-        memberService.changeUsername(username);
+    public JsonBody<String> changeNickname(@PathVariable String username,  @AuthenticationPrincipal SecurityMember member) {
+        memberService.changeUsername(Long.parseLong(member.getId()), username);
         return JsonBody.of(HttpStatus.OK.value(), "닉네임 변경 성공", username);
     }
 }
