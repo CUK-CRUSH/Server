@@ -86,7 +86,9 @@ public class PlaylistService {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
         });
 
+        // 이미지, 음악, 플레이리스트 순으로 삭제
         imageService.deleteImageToGcs(playlist.getImage().getId());
+        musicRepository.deleteAllByPlaylist(playlist);
         playlistRepository.delete(playlist);
     }
 
