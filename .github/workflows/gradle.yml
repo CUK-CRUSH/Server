@@ -30,11 +30,16 @@ jobs:
         spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
         spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.GOOGLE_REDIRECT_URI }}
+        spring.security.oauth2.client.registration.facebook.client-id: ${{ secrets.FACEBOOK_CLIENT_ID }}
+        spring.security.oauth2.client.registration.facebook.client-secret: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
+        spring.security.oauth2.client.registration.facebook.redirect-uri: ${{ secrets.FACEBOOK_REDIRECT_URI }}
+        spring.security.oauth2.client.login-page: ${{ secrets.LOGIN_PAGE }}
         jwt.secret: ${{ secrets.JWT_SECRET }}
         spring.cloud.gcp.storage.credentials.location: ${{ secrets.GCS_KEY_LOCATION }}
         spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
         spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
         spring.cloud.gcp.storage.key-name: ${{ secrets.GCS_KEY_NAME }}
+        server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
 
     - name: create-json
       id: create-json
@@ -43,6 +48,9 @@ jobs:
         name: ${{ secrets.GCS_KEY_NAME }}
         json: ${{ secrets.GCS_KEY_JSON }}
         dir: ${{ secrets.GCS_KEY_DIR_LOCATION }}
+
+    - name: Keystore Save
+      run: echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./src/main/resources/keystore.p12
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
