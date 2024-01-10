@@ -11,6 +11,8 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
+    env:
+      KEYSTORE: ${{secrets.KEYSTORE}}
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -46,9 +48,7 @@ jobs:
         dir: ${{ secrets.GCS_KEY_DIR_LOCATION }}
 
     - name: Keystore Save
-      run: echo $KEYSTORE | base64 --decode > ./src/main/resources/keystore.p12
-      env:
-        KEYSTORE: ${{secrets.KEYSTORE}}
+      run: echo $KEYSTORE | base64 -d > ./src/main/resources/keystore.p12
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
