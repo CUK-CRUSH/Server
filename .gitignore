@@ -38,3 +38,4 @@ out/
 
 ### spring ###
 gcs-key.json
+keystore.p12
