@@ -46,8 +46,6 @@ public class MemberControllerTest {
     private MemberRepository memberRepository;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-    private Long memberIdx = 1L;
-
     @BeforeEach
     void beforeAll(WebApplicationContext webApplicationContext) {
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
@@ -60,15 +58,15 @@ public class MemberControllerTest {
     @DisplayName("닉네임 중복 확인 테스트")
     void checkUsernameTest(TestReporter testReporter) throws Exception {
         // given
-        memberRepository.save(Member.builder()
-                .id(memberIdx++)
+        Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
-                .build());
+                .build();
+        memberRepository.save(member);
         // when
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/check/{username}", "test2")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN)))
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
     }
@@ -77,15 +75,15 @@ public class MemberControllerTest {
     @DisplayName("닉네임 변경 테스트")
     void changeUsernameTest(TestReporter testReporter) throws Exception {
         // given
-        memberRepository.save(Member.builder()
-                .id(memberIdx++)
+        Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
-                .build());
+                .build();
+        memberRepository.save(member);
         // when
         testReporter.publishEntry(mvc.perform(post("/api/v1/member/nickname/change/{username}", "test2")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("2", JwtTokenType.ACCESS_TOKEN)))
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
     }
