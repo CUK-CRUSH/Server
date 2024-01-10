@@ -46,7 +46,9 @@ jobs:
         dir: ${{ secrets.GCS_KEY_DIR_LOCATION }}
 
     - name: Keystore Save
-      run: echo ${{ secrets.KEYSTORE }} | base64 --decode > ./src/main/resources/keystore.p12
+      run: echo $KEYSTORE | base64 --decode > ./src/main/resources/keystore.p12
+      env:
+        KEYSTORE: ${{secrets.KEYSTORE}}
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
