@@ -35,6 +35,7 @@ jobs:
         spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
         spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
         spring.cloud.gcp.storage.key-name: ${{ secrets.GCS_KEY_NAME }}
+        server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
 
     - name: create-json
       id: create-json
@@ -43,6 +44,10 @@ jobs:
         name: ${{ secrets.GCS_KEY_NAME }}
         json: ${{ secrets.GCS_KEY_JSON }}
         dir: ${{ secrets.GCS_KEY_DIR_LOCATION }}
+
+    - name: Keystore Save
+      run: |
+        echo ${{ secrets.KEYSTORE }} | base64 --decode > ./src/main/resources/keystore.p12
 
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
