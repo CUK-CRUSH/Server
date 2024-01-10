@@ -46,7 +46,7 @@ public class JwtTokenProvider {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         // 토큰 생성
         Claims claims = Jwts.claims().setSubject(member.getId().toString()); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
-        claims.put("type", tokenType); // 토큰 타입 (access token, refresh token)
+        claims.put("type", tokenType.getTokenType()); // 토큰 타입 (access token, refresh token)
         Date now = new Date();
         Date expiration;
 
@@ -103,10 +103,10 @@ public class JwtTokenProvider {
     }
 
     public boolean isRefreshToken(Jws<Claims> jws) {
-        return jws.getBody().get("type").equals(JwtTokenType.REFRESH_TOKEN);
+        return jws.getBody().get("type").equals(JwtTokenType.REFRESH_TOKEN.getTokenType());
     }
 
     public boolean isAccessToken(Jws<Claims> jws) {
-        return jws.getBody().get("type").equals(JwtTokenType.ACCESS_TOKEN);
+        return jws.getBody().get("type").equals(JwtTokenType.ACCESS_TOKEN.getTokenType());
     }
 }
