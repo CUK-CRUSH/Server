@@ -16,4 +16,7 @@ public class EnvBean {
 
     @Value("${spring.security.oauth2.client.login-page}")
     private String loginPage;
+
+    @Value("${react.uri}")
+    private String reactUri;
 }

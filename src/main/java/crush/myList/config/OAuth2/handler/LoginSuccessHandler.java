@@ -1,6 +1,7 @@
 package crush.myList.config.OAuth2.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import crush.myList.config.EnvBean;
 import crush.myList.config.OAuth2.users.CustomOAuth2User;
 import crush.myList.config.OAuth2.users.GoogleUser;
 import crush.myList.config.jwt.JwtTokenProvider;
@@ -16,8 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +31,22 @@ import java.util.Map;
 @Component
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
+    private final EnvBean envBean;
+
+    private URI createURI(String accessToken, String refreshToken) {
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("access_token", accessToken);
+        queryParams.add("refresh_token", refreshToken);
+
+        return UriComponentsBuilder
+                .newInstance()
+                .scheme("https")
+                .host(envBean.getReactUri())
+                .path("/redirect")
+                .queryParams(queryParams)
+                .build()
+                .toUri();
+    }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         // OAuth2User로 캐스팅하여 인증된 사용자 정보를 가져온다.
@@ -47,6 +68,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         ObjectMapper mapper = new ObjectMapper();
         // JSON 형태로 변환된 객체를 Response에 담아준다.
         mapper.writeValue(response.getWriter(), jsonBody);
+
+        String uri = createURI(accessToken, refreshToken).toString();
+        response.sendRedirect(uri);
+
         log.info("로그인 성공");
     }
 }
