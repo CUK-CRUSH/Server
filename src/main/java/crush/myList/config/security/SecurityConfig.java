@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 // spring security 설정 파일 입니다.
 @Configuration
@@ -55,6 +56,16 @@ public class SecurityConfig {
                         .requestMatchers(WHITE_LIST).permitAll()  // 모든 사용자 허용 경로
                         .anyRequest().authenticated())  // 그 외 나머지 경로는 전부 인증 필요
 //                        .anyRequest().permitAll())  // 그 외 나머지 경로는 전부 허용
+                .cors(cors -> cors
+                        .configurationSource(request -> {
+                            CorsConfiguration corsConfiguration = new CorsConfiguration();
+                            corsConfiguration.addAllowedOriginPattern("*"); // 모든 ip에 응답을 허용합니다.
+                            corsConfiguration.addAllowedMethod("*");
+                            corsConfiguration.addAllowedHeader("*");
+                            corsConfiguration.setAllowCredentials(true);
+                            corsConfiguration.setMaxAge(3600L);
+                            return corsConfiguration;
+                        }))
                 // 예외 처리
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
