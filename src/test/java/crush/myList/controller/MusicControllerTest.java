@@ -93,7 +93,7 @@ public class MusicControllerTest {
         );
 
         /* DELETE */
-        final String DELETE_API = "/api/v1/playlist/" + playlist.getId() + "/music/" + musicRepository.findAllByPlaylist(playlist).getFirst().getId().toString();
+        final String DELETE_API = "/api/v1/playlist/" + playlist.getId() + "/music/" + musicRepository.findAllByPlaylist(playlist).get(0).getId().toString();
 
         testReporter.publishEntry(
                 mockMvc.perform(

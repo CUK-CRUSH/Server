@@ -226,7 +226,7 @@ public class PlaylistControllerTest {
         );
 
         /* UPDATE */
-        final String PUT_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).getFirst().getId().toString();
+        final String PUT_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).get(0).getId().toString();
         testReporter.publishEntry(
                 mockMvc.perform(
                         MockMvcRequestBuilders.multipart(HttpMethod.PUT, PUT_API)
@@ -239,7 +239,7 @@ public class PlaylistControllerTest {
         );
 
         /* DELETE */
-        final String DELETE_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).getFirst().getId().toString();
+        final String DELETE_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).get(0).getId().toString();
         testReporter.publishEntry(
                 mockMvc.perform(
                         MockMvcRequestBuilders.delete(DELETE_API)
