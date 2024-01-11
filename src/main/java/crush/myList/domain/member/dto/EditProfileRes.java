@@ -1,4 +1,4 @@
-package crush.myList.config.security;
+package crush.myList.domain.member.dto;
 
 import lombok.*;
 
@@ -7,9 +7,10 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SecurityMemberDto {
-    private String id;
+public class EditProfileRes {
+    private Long id;
     private String oauth2id;
     private String username;
     private String name;
+    private String introduction;
 }

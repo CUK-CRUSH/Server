@@ -1,6 +1,7 @@
 package crush.myList.config.jwt;
 
-import crush.myList.config.security.SecurityMemberDto;
+import crush.myList.config.security.SecurityMember;
+import crush.myList.config.security.SecurityUserDetailsService;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.global.enums.JwtTokenType;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class JwtTokenProvider {
     private long refreshTokenTime;
 
     private final MemberRepository memberRepository;
+    private final SecurityUserDetailsService securityUserDetailsService;
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -71,12 +74,7 @@ public class JwtTokenProvider {
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        SecurityMemberDto userDetails = SecurityMemberDto.builder()
-                .id(String.valueOf(member.getId()))
-                .username(member.getUsername())
-                .oauth2id(member.getOauth2id())
-                .name(member.getName())
-                .build();
+        UserDetails userDetails = securityUserDetailsService.loadUserByUsername(member.getId().toString());
         // todo: 권한 부여 설정해야함
         return new UsernamePasswordAuthenticationToken(userDetails, "", null);
     }
