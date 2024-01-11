@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     private final JwtTokenProvider jwtTokenProvider;
     private final EnvBean envBean;
 
-    private URI createURI(String accessToken, String refreshToken) {
+    private String createURI(String accessToken, String refreshToken) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("access_token", accessToken);
         queryParams.add("refresh_token", refreshToken);
@@ -45,7 +46,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
                 .path("/redirect")
                 .queryParams(queryParams)
                 .build()
-                .toUri();
+                .encode(StandardCharsets.UTF_8)
+                .toUriString();
     }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -69,7 +71,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         // JSON 형태로 변환된 객체를 Response에 담아준다.
 //        mapper.writeValue(response.getWriter(), jsonBody);
 
-        String uri = createURI(accessToken, refreshToken).toString();
+        String uri = createURI(accessToken, refreshToken);
         response.sendRedirect(uri);
 
         log.info("로그인 성공");
