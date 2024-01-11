@@ -1,5 +1,6 @@
 package crush.myList.domain.music.Service;
 
+import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.music.Dto.MusicDto;
 import crush.myList.domain.music.Entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j(topic = "MusicService")
@@ -31,27 +33,34 @@ public class MusicService {
         return convertToDtoList(musics);
     }
 
-    public MusicDto.Result addMusic(String username, Long playlistId, MusicDto.Request request) {
-        // 인증 필요
-
+    public MusicDto.Result addMusic(SecurityMember memberDetails, Long playlistId, MusicDto.Request request) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() -> {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
         });
+
+        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+        }
 
         Music music = Music.builder()
                 .title(request.getTitle())
                 .artist(request.getArtist())
                 .url(request.getUrl())
+                .playlist(playlist)
                 .build();
         musicRepository.save(music);
 
         return convertToDto(music);
     }
 
-    public void deleteMusic(String username, Long musicId) {
+    public void deleteMusic(SecurityMember memberDetails, Long musicId) {
         Music music = musicRepository.findById(musicId).orElseThrow(() -> {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.");
         });
+
+        if (!Objects.equals(music.getPlaylist().getMember().getUsername(), memberDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+        }
 
         musicRepository.delete(music);
     }

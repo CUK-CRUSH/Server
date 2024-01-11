@@ -1,5 +1,6 @@
 package crush.myList.domain.playlist.service;
 
+import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.image.dto.ImageDto;
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.image.repository.ImageRepository;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j(topic = "PlaylistService")
@@ -41,8 +43,8 @@ public class PlaylistService {
         return convertToDtoList(playlistEntities);
     }
 
-    public PlaylistDto.Result addPlaylist(String username, PlaylistDto.PostRequest request, MultipartFile titleImage) {
-        Member member = memberRepository.findByUsername(username).orElseThrow(() -> {
+    public PlaylistDto.Result addPlaylist(SecurityMember memberDetails, PlaylistDto.PostRequest request, MultipartFile titleImage) {
+        Member member = memberRepository.findByUsername(memberDetails.getUsername()).orElseThrow(() -> {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
         });
 
@@ -61,10 +63,14 @@ public class PlaylistService {
         return convertToDto(playlist);
     }
 
-    public PlaylistDto.Result updatePlaylist(String username, PlaylistDto.PutRequest request, MultipartFile image) {
+    public PlaylistDto.Result updatePlaylist(SecurityMember memberDetails, PlaylistDto.PutRequest request, MultipartFile image) {
         Playlist playlist = playlistRepository.findById(request.getId()).orElseThrow(() -> {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
         });
+
+        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+        }
 
         playlist.setName(request.getPlaylistName());
 
@@ -81,10 +87,14 @@ public class PlaylistService {
         return convertToDto(playlist);
     }
 
-    public void deletePlaylist(Long playlistId) {
+    public void deletePlaylist(SecurityMember memberDetails, Long playlistId) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() -> {
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
         });
+
+        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+        }
 
         // 이미지, 음악, 플레이리스트 순으로 삭제
         imageService.deleteImageToGcs(playlist.getImage().getId());
