@@ -47,6 +47,10 @@ public class SecurityConfig {
 
         // file upload
         "/api/v1/image/**",
+
+        // 조회 api
+        "/api/v1/playlist/user/**",
+        "/api/v1/playlist/**/music"
     };
 
     @Bean
