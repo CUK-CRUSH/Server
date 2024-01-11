@@ -43,6 +43,7 @@ jobs:
           spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
           spring.cloud.gcp.storage.key-name: ${{ secrets.GCS_KEY_NAME }}
           server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
+          react.uri: ${{ secrets.REACT_URI }}
 
       - name: create-json
         id: create-json
