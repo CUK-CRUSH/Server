@@ -18,7 +18,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다."));
         return SecurityMember.builder()
-                .id(member.getId().toString())
+                .id(member.getId())
                 .oauth2id(member.getOauth2id())
                 .username(member.getUsername())
                 .name(member.getName())

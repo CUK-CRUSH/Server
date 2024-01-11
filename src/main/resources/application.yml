@@ -20,6 +20,11 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
 
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 10MB
+
 jwt:
   secret: ${JWT_SECRET}
   # 10 minutes

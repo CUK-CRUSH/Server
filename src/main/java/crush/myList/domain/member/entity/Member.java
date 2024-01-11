@@ -1,5 +1,6 @@
 package crush.myList.domain.member.entity;
 
+import crush.myList.domain.image.entity.Image;
 import crush.myList.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,4 +28,12 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "introduction")
     private String introduction;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_image_id")
+    private Image profileImage;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "background_image_id")
+    private Image backgroundImage;
 }

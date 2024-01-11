@@ -3,7 +3,6 @@ package crush.myList.domain.image.service;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 import crush.myList.config.EnvBean;
 import crush.myList.domain.image.dto.ImageDto;
 import crush.myList.domain.image.entity.Image;
@@ -29,6 +28,19 @@ public class ImageService {
     private final Storage storage;
 
     public ImageDto saveImageToGcs(MultipartFile imageFile) throws RuntimeException {
+        Image image = saveImageToGcs_Image(imageFile);
+        return ImageDto.builder()
+                .id(image.getId())
+                .originalName(image.getOriginalName())
+                .name(image.getName())
+                .extension(image.getExtension())
+                .uuid(image.getUuid())
+                .url(image.getUrl())
+                .build();
+    }
+
+    // ImageDto말고 Image가 필요한 경우
+    public Image saveImageToGcs_Image(MultipartFile imageFile) throws RuntimeException {
         String originalName = imageFile.getOriginalFilename();
         String ext = imageFile.getContentType();
         String uuid = UUID.randomUUID().toString();
@@ -51,15 +63,7 @@ public class ImageService {
                     .url(imageUrl)
                     .build();
 
-            imageRepository.save(image);
-            return ImageDto.builder()
-                    .id(image.getId())
-                    .originalName(image.getOriginalName())
-                    .name(image.getName())
-                    .extension(image.getExtension())
-                    .uuid(image.getUuid())
-                    .url(image.getUrl())
-                    .build();
+            return imageRepository.save(image);
 
         } catch (IOException e) {
             log.error("ImageService.saveImageToGcs: {}", e.getMessage());
@@ -67,9 +71,7 @@ public class ImageService {
         }
     }
 
-    public void deleteImageToGcs(Long id) throws RuntimeException {
-        Image image = imageRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 이미지가 존재하지 않습니다."));
+    private void deleteImage(Image image) throws RuntimeException {
         String fileName = image.getName();
         Blob blob = storage.get(envBean.getBucketName(), fileName);
         if (blob == null) {
@@ -87,5 +89,15 @@ public class ImageService {
             log.error("ImageService.deleteImageToGcs: {}", e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public void deleteImageToGcs(Long id) throws RuntimeException {
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "해당 이미지가 존재하지 않습니다."));
+        deleteImage(image);
+    }
+    // id말고 Image를 인자로 받는 경우
+    public void deleteImageToGcs(Image image) throws RuntimeException {
+        deleteImage(image);
     }
 }
