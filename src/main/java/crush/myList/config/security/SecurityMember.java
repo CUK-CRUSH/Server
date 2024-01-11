@@ -12,7 +12,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SecurityMember implements UserDetails {
-    private String id;
+    private Long id;
     private String oauth2id;
     private String username;
     private String name;
