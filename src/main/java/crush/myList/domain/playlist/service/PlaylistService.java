@@ -1,7 +1,6 @@
 package crush.myList.domain.playlist.service;
 
 import crush.myList.config.security.SecurityMember;
-import crush.myList.domain.image.dto.ImageDto;
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.image.repository.ImageRepository;
 import crush.myList.domain.image.service.ImageService;
@@ -34,7 +33,7 @@ public class PlaylistService {
 
     private final ImageService imageService;
 
-    public List<PlaylistDto.Result> getPlaylists(String username) {
+    public List<PlaylistDto.Response> getPlaylists(String username) {
         Member member = memberRepository.findByUsername(username).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
@@ -43,15 +42,12 @@ public class PlaylistService {
         return convertToDtoList(playlistEntities);
     }
 
-    public PlaylistDto.Result addPlaylist(SecurityMember memberDetails, PlaylistDto.PostRequest request, MultipartFile titleImage) {
+    public PlaylistDto.Response addPlaylist(SecurityMember memberDetails, PlaylistDto.Request request) {
         Member member = memberRepository.findByUsername(memberDetails.getUsername()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
-        ImageDto imageDto = imageService.saveImageToGcs(titleImage);
-        Image image = imageRepository.findById(imageDto.getId()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다.")
-        );
+        Image image = imageService.saveImageToGcs_Image(request.getTitleImage());
 
         Playlist playlist = Playlist.builder()
                 .name(request.getPlaylistName())
@@ -63,8 +59,8 @@ public class PlaylistService {
         return convertToDto(playlist);
     }
 
-    public PlaylistDto.Result updatePlaylist(SecurityMember memberDetails, PlaylistDto.PutRequest request, MultipartFile image) {
-        Playlist playlist = playlistRepository.findById(request.getId()).orElseThrow(() ->
+    public PlaylistDto.Response updatePlaylist(SecurityMember memberDetails, Long playlistId, PlaylistDto.Request request) {
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
 
@@ -74,12 +70,11 @@ public class PlaylistService {
 
         playlist.setName(request.getPlaylistName());
 
-        if (!image.isEmpty()) {
+        MultipartFile imageFile = request.getTitleImage();
+
+        if (!imageFile.isEmpty()) {
             imageService.deleteImageToGcs(playlist.getImage().getId());
-            ImageDto imageDto = imageService.saveImageToGcs(image);
-            Image newImage = imageRepository.findById(imageDto.getId()).orElseThrow(() ->
-                    new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다.")
-            );
+            Image newImage = imageService.saveImageToGcs_Image(imageFile);
 
             playlist.setImage(newImage);
         }
@@ -103,14 +98,14 @@ public class PlaylistService {
     }
 
     /* Convert Playlist Entity List to Playlist Dto List */
-    private List<PlaylistDto.Result> convertToDtoList(List<Playlist> playlistEntities) {
+    private List<PlaylistDto.Response> convertToDtoList(List<Playlist> playlistEntities) {
         return playlistEntities.stream()
                 .map(this::convertToDto)
                 .toList();
     }
 
-    private PlaylistDto.Result convertToDto(Playlist playlist) {
-        return PlaylistDto.Result.builder()
+    private PlaylistDto.Response convertToDto(Playlist playlist) {
+        return PlaylistDto.Response.builder()
                 .id(playlist.getId())
                 .playlistName(playlist.getName())
                 .thumbnailUrl(playlist.getImage().getUrl())
