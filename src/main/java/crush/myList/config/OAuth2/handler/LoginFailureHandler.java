@@ -1,20 +1,45 @@
 package crush.myList.config.OAuth2.handler;
 
+import crush.myList.config.EnvBean;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j(topic = "LoginFailureHandler")
 @Component
+@RequiredArgsConstructor
 public class LoginFailureHandler implements AuthenticationFailureHandler {
+    private final EnvBean envBean;
+
+    // todo: 로그인 실패시 리다이렉트 경로
+    private String createURI(String accessToken, String refreshToken) {
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("access_token", accessToken);
+        queryParams.add("refresh_token", refreshToken);
+
+        return UriComponentsBuilder
+                .newInstance()
+                .scheme("https")
+                .host(envBean.getReactUri())
+                .path("/redirect")
+                .queryParams(queryParams)
+                .build()
+                .encode(StandardCharsets.UTF_8)
+                .toUriString();
+    }
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         // content-type을 json, 인코딩을 utf-8로 설정
