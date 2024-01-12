@@ -2,7 +2,7 @@ name: Deploy to GCP Instance using SSH
 
 on:
   push:
-    branches: ['main']
+    branches: ['develop']
 
 env:
   PROJECT_ID: 'eighth-alchemy-408113'
@@ -27,7 +27,8 @@ jobs:
         with:
           files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml, ./src/main/resources/application-gcs.yml
         env:
-          spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
+          server.port: ${{ secrets.TEST_SERVER_PORT }}
+          spring.datasource.url: ${{ secrets.TEST_DATASOURCE_URL }}
           spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
           spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
           spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
@@ -36,14 +37,14 @@ jobs:
           spring.security.oauth2.client.registration.facebook.client-id: ${{ secrets.FACEBOOK_CLIENT_ID }}
           spring.security.oauth2.client.registration.facebook.client-secret: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
           spring.security.oauth2.client.registration.facebook.redirect-uri: ${{ secrets.FACEBOOK_REDIRECT_URI }}
-          spring.security.oauth2.client.login-page: ${{ secrets.LOGIN_PAGE }}
+          spring.security.oauth2.client.login-page: ${{ secrets.TEST_LOGIN_PAGE }}
           jwt.secret: ${{ secrets.JWT_SECRET }}
           spring.cloud.gcp.storage.credentials.location: ${{ secrets.GCS_KEY_LOCATION }}
           spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
           spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
           spring.cloud.gcp.storage.key-name: ${{ secrets.GCS_KEY_NAME }}
           server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
-          react.uri: ${{ secrets.REACT_URI }}
+          react.uri: ${{ secrets.TEST_REACT_URI }}
 
       - name: create-json
         id: create-json
@@ -72,9 +73,7 @@ jobs:
         run: |
           docker build -t mylist-spring .
           docker tag mylist-spring minskim22/mylist-spring:${GITHUB_SHA::7}
-          docker tag mylist-spring minskim22/mylist-spring:latest
           docker push minskim22/mylist-spring:${GITHUB_SHA::7}
-          docker push minskim22/mylist-spring:latest
 
   deploy:
     name: Deploy
@@ -92,16 +91,16 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker container prune -f
-            docker pull minskim22/mylist-spring:latest
-            docker tag minskim22/mylist-spring:latest mylist-spring
+            docker pull minskim22/mylist-spring:${GITHUB_SHA::7}
+            docker tag minskim22/mylist-spring:${GITHUB_SHA::7} mylist-spring-test
             
-            if [ "$(docker ps -aq -f name=server)" ]
+            if [ "$(docker ps -aq -f name=test-server)" ]
             then
-              echo "[ spring is running ]"
-              docker stop server
-              docker rm server
+              echo "[ test is running ]"
+              docker stop test-server
+              docker rm test-server
             else
-              echo "[ spring is not running ]"
+              echo "[ test-server is not running ]"
             fi
             
-            docker run -d --name server -p 8080:8080 mylist-spring
+            docker run -d --name test-server -p 8282:8282 mylist-spring-test

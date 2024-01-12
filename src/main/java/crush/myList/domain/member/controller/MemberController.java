@@ -1,9 +1,6 @@
 package crush.myList.domain.member.controller;
 
-import com.google.api.client.http.HttpResponseException;
 import crush.myList.config.security.SecurityMember;
-import crush.myList.domain.image.dto.ImageDto;
-import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.dto.EditProfileReq;
 import crush.myList.domain.member.dto.EditProfileRes;
 import crush.myList.domain.member.dto.MemberDto;
@@ -16,12 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 @ApiResponse(description = "회원 관련 API")
 @RestController
@@ -30,7 +24,42 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/v1/member")
 public class MemberController {
     private final MemberService memberService;
-    private final ImageService imageService;
+
+    @Operation(summary = "특정 회원 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MemberDto.class))}),
+            @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
+    })
+    @GetMapping("/{id}")
+    public JsonBody<MemberDto> getMember(@PathVariable Long id) {
+        MemberDto memberDto = memberService.getMember(id);
+        return JsonBody.of(HttpStatus.OK.value(), "회원 정보 조회 성공", memberDto);
+    }
+
+    @Operation(summary = "내 정보 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = EditProfileRes.class))}),
+            @ApiResponse(responseCode = "400", description = "회원 정보 수정 실패", content = {@Content(mediaType = "application/json")})
+    })
+    @PatchMapping(value = "", consumes = "multipart/form-data")
+    public JsonBody<EditProfileRes> updateInfo(@ModelAttribute EditProfileReq editProfileReq, @AuthenticationPrincipal SecurityMember member) {
+        EditProfileRes res = memberService.updateInfo(editProfileReq, member.getId());
+        return JsonBody.of(HttpStatus.OK.value(), "회원 정보 수정 성공", res);
+    }
+
+    @Operation(summary = "내 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MemberDto.class))}),
+            @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
+    })
+    @GetMapping("/me")
+    public JsonBody<MemberDto> getMember(@AuthenticationPrincipal SecurityMember member) {
+        MemberDto memberDto = memberService.getMember(member.getId());
+        return JsonBody.of(HttpStatus.OK.value(), "회원 정보 조회 성공", memberDto);
+    }
 
     @Operation(summary = "회원 닉네임 중복 검사")
     @ApiResponses(value = {
@@ -54,17 +83,5 @@ public class MemberController {
     public JsonBody<String> changeNickname(@PathVariable String username,  @AuthenticationPrincipal SecurityMember member) {
         memberService.changeUsername(member.getId(), username);
         return JsonBody.of(HttpStatus.OK.value(), "닉네임 변경 성공", username);
-    }
-
-    @Operation(summary = "회원 정보 수정")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = EditProfileRes.class))}),
-            @ApiResponse(responseCode = "400", description = "회원 정보 수정 실패", content = {@Content(mediaType = "application/json")})
-    })
-    @PatchMapping(value = "/info", consumes = "multipart/form-data")
-    public JsonBody<EditProfileRes> updateInfo(@ModelAttribute EditProfileReq editProfileReq, @AuthenticationPrincipal SecurityMember member) {
-        EditProfileRes res = memberService.updateInfo(editProfileReq, member.getId());
-        return JsonBody.of(HttpStatus.OK.value(), "회원 정보 수정 성공", res);
     }
 }
