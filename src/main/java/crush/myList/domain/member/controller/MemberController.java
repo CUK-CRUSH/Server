@@ -38,7 +38,7 @@ public class MemberController {
                     schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "400", description = "이미 사용중인 닉네임", content = {@Content(mediaType = "application/json")})
     })
-    @GetMapping("/nickname/check/{username}")
+    @GetMapping("/nickname/available/{username}")
     public JsonBody<String> checkNickname(@PathVariable String username) {
         memberService.checkUsername(username);
         return JsonBody.of(HttpStatus.OK.value(), "사용 가능한 닉네임", username);
@@ -50,7 +50,7 @@ public class MemberController {
                     schema = @Schema(implementation = String.class))}),
             @ApiResponse(responseCode = "400", description = "닉네임 변경 실패", content = {@Content(mediaType = "application/json")})
     })
-    @PostMapping("/nickname/change/{username}")
+    @PutMapping("/nickname/{username}")
     public JsonBody<String> changeNickname(@PathVariable String username,  @AuthenticationPrincipal SecurityMember member) {
         memberService.changeUsername(member.getId(), username);
         return JsonBody.of(HttpStatus.OK.value(), "닉네임 변경 성공", username);
