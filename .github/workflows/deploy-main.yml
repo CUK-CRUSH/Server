@@ -93,8 +93,8 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker container prune -f
-            docker pull minskim22/mylist-spring:${GITHUB_SHA::7}
-            docker tag minskim22/mylist-spring:${GITHUB_SHA::7} mylist-spring
+            docker pull minskim22/mylist-spring:latest
+            docker tag minskim22/mylist-spring:latest mylist-spring
             
             if [ "$(docker ps -aq -f name=server)" ]
             then

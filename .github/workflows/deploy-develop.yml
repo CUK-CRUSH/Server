@@ -1,4 +1,4 @@
-name: Deploy to GCP Instance using SSH
+name: Deploy Test
 
 on:
   push:
@@ -72,8 +72,8 @@ jobs:
       - name: Docker build
         run: |
           docker build -t mylist-spring .
-          docker tag mylist-spring minskim22/mylist-spring:${GITHUB_SHA::7}
-          docker push minskim22/mylist-spring:${GITHUB_SHA::7}
+          docker tag mylist-spring minskim22/mylist-spring:test
+          docker push minskim22/mylist-spring:test
 
   deploy:
     name: Deploy
@@ -91,8 +91,8 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker container prune -f
-            docker pull minskim22/mylist-spring:${GITHUB_SHA::7}
-            docker tag minskim22/mylist-spring:${GITHUB_SHA::7} mylist-spring-test
+            docker pull minskim22/mylist-spring:test
+            docker tag minskim22/mylist-spring:test mylist-spring-test
             
             if [ "$(docker ps -aq -f name=test-server)" ]
             then
