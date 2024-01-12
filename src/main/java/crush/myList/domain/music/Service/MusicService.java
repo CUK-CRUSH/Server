@@ -25,21 +25,21 @@ public class MusicService {
     private final MusicRepository musicRepository;
 
     public List<MusicDto.Result> getMusics(Long playlistId) {
-        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
-        });
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
 
         List<Music> musics = musicRepository.findAllByPlaylist(playlist);
         return convertToDtoList(musics);
     }
 
     public MusicDto.Result addMusic(SecurityMember memberDetails, Long playlistId, MusicDto.Request request) {
-        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
-        });
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
 
         if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
         Music music = Music.builder()
@@ -54,12 +54,12 @@ public class MusicService {
     }
 
     public void deleteMusic(SecurityMember memberDetails, Long musicId) {
-        Music music = musicRepository.findById(musicId).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.");
-        });
+        Music music = musicRepository.findById(musicId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
+        );
 
         if (!Objects.equals(music.getPlaylist().getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
         musicRepository.delete(music);

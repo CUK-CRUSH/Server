@@ -38,7 +38,7 @@ public class MusicController {
     }
 
     @Operation(summary = "플레이리스트에 음악 추가하기")
-    @PostMapping(value = "/add")
+    @PostMapping(value = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 생성 성공"),
             @ApiResponse(responseCode = "404", description = "음악 생성 실패")

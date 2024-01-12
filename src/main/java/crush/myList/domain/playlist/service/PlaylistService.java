@@ -35,23 +35,23 @@ public class PlaylistService {
     private final ImageService imageService;
 
     public List<PlaylistDto.Result> getPlaylists(String username) {
-        Member member = memberRepository.findByUsername(username).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
-        });
+        Member member = memberRepository.findByUsername(username).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
+        );
 
         List<Playlist> playlistEntities = playlistRepository.findAllByMember(member);
         return convertToDtoList(playlistEntities);
     }
 
     public PlaylistDto.Result addPlaylist(SecurityMember memberDetails, PlaylistDto.PostRequest request, MultipartFile titleImage) {
-        Member member = memberRepository.findByUsername(memberDetails.getUsername()).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
-        });
+        Member member = memberRepository.findByUsername(memberDetails.getUsername()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
+        );
 
         ImageDto imageDto = imageService.saveImageToGcs(titleImage);
-        Image image = imageRepository.findById(imageDto.getId()).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
-        });
+        Image image = imageRepository.findById(imageDto.getId()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다.")
+        );
 
         Playlist playlist = Playlist.builder()
                 .name(request.getPlaylistName())
@@ -64,12 +64,12 @@ public class PlaylistService {
     }
 
     public PlaylistDto.Result updatePlaylist(SecurityMember memberDetails, PlaylistDto.PutRequest request, MultipartFile image) {
-        Playlist playlist = playlistRepository.findById(request.getId()).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
-        });
+        Playlist playlist = playlistRepository.findById(request.getId()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
 
         if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
         playlist.setName(request.getPlaylistName());
@@ -77,9 +77,9 @@ public class PlaylistService {
         if (!image.isEmpty()) {
             imageService.deleteImageToGcs(playlist.getImage().getId());
             ImageDto imageDto = imageService.saveImageToGcs(image);
-            Image newImage = imageRepository.findById(imageDto.getId()).orElseThrow(() -> {
-                return new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
-            });
+            Image newImage = imageRepository.findById(imageDto.getId()).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다.")
+            );
 
             playlist.setImage(newImage);
         }
@@ -88,12 +88,12 @@ public class PlaylistService {
     }
 
     public void deletePlaylist(SecurityMember memberDetails, Long playlistId) {
-        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
-        });
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
 
         if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
         // 이미지, 음악, 플레이리스트 순으로 삭제

@@ -40,7 +40,7 @@ public class PlaylistController {
     }
 
     @Operation(summary = "유저의 플레이리스트 생성하기")
-    @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
             @ApiResponse(responseCode = "401", description = "플레이리스트 생성 실패")
