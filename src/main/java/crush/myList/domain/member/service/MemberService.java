@@ -23,16 +23,18 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j(topic = "MemberService")
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final ImageRepository imageRepository;
     // service
     private final ImageService imageService;
 
+    /** 사용자 닉네임 유효성 검사 */
     public void checkUsername(String username) {
         if (memberRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 닉네임입니다.");
         }
+        // todo: 닉네임 정규식 검사
     }
 
+    /** 사용자 닉네임 변경 */
     public void changeUsername(Long id, String username) {
         checkUsername(username);
 
@@ -40,6 +42,7 @@ public class MemberService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
         member.setUsername(username);
     }
+    /** 사용자 이미지 변경 */
     public void updateImage(EditProfileReq editProfileReq, Member member) throws ResponseStatusException {
         MultipartFile profileImageFile = editProfileReq.getProfileImage();
         MultipartFile backgroundImageFile = editProfileReq.getBackgroundImage();
@@ -65,6 +68,7 @@ public class MemberService {
         }
     }
 
+    /** 사용자 정보 수정 */
     public EditProfileRes updateInfo(EditProfileReq editProfileReq, Long memberId) throws ResponseStatusException {
         Member findMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 회원입니다."));
@@ -88,5 +92,27 @@ public class MemberService {
                 .name(findMember.getName())
                 .introduction(findMember.getIntroduction())
                 .build();
+    }
+
+    /** Member -> MemberDto 변환 */
+    public MemberDto convertDto(Member member) {
+        Image profileImage = member.getProfileImage();
+        Image backgroundImage = member.getBackgroundImage();
+        return MemberDto.builder()
+                .id(member.getId())
+                .oauth2id(member.getOauth2id())
+                .username(member.getUsername())
+                .name(member.getName())
+                .introduction(member.getIntroduction())
+                .profileImageUrl(profileImage == null ? null : profileImage.getUrl())
+                .backgroundImageUrl(backgroundImage == null ? null : backgroundImage.getUrl())
+                .build();
+    }
+
+    /** memberId를 기준으로 사용자 조회 */
+    public MemberDto getMember(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
+        return convertDto(member);
     }
 }

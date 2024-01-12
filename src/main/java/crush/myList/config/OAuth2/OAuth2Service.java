@@ -56,9 +56,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
 
         Member member = memberRepository.findByOauth2id(oauth2Id).orElse(null);
         if (member == null) {
-            String uuid = UUID.randomUUID().toString();
             member = Member.builder()
-                    .username(oAuth2User.getAttribute("name") + "_" + uuid)
                     .name(oAuth2User.getAttribute("name"))
                     .oauth2id(oauth2Id)
                     .build();
@@ -79,9 +77,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
 
         Member member = memberRepository.findByOauth2id(oauth2Id).orElse(null);
         if (member == null) {
-            String uuid = UUID.randomUUID().toString();
             member = Member.builder()
-                    .username(oAuth2User.getAttribute("name") + "_" + uuid)
                     .name(oAuth2User.getAttribute("name"))
                     .oauth2id(oauth2Id)
                     .build();
