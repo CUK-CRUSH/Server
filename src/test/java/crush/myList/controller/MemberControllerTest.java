@@ -34,8 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -65,7 +64,7 @@ public class MemberControllerTest {
                 .build();
         memberRepository.save(member);
         // when
-        testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/check/{username}", "test2")
+        testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/available/{username}", "test2")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
@@ -82,7 +81,7 @@ public class MemberControllerTest {
                 .build();
         memberRepository.save(member);
         // when
-        testReporter.publishEntry(mvc.perform(post("/api/v1/member/nickname/change/{username}", "test2")
+        testReporter.publishEntry(mvc.perform(put("/api/v1/member/nickname/{username}", "test2")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());

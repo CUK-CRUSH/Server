@@ -34,7 +34,7 @@ jwt:
 
 
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
   ssl:
     key-store: classpath:keystore.p12
