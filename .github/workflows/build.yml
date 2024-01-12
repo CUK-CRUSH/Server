@@ -25,7 +25,7 @@ jobs:
         files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml, ./src/main/resources/application-gcs.yml
       env:
         server.port: ${{ secrets.SERVER_PORT }}
-        spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
+        spring.datasource.url: ${{ secrets.BUILD_DATASOURCE_URL }}
         spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
         spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
         spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
