@@ -103,4 +103,4 @@ jobs:
               echo "[ test-server is not running ]"
             fi
             
-            docker run -d --name test-server -p 8282:8282 mylist-spring-test
+            docker run -d --name test-server -p ${{ secrets.TEST_SERVER_PORT }}:${{ secrets.TEST_SERVER_PORT }} mylist-spring-test

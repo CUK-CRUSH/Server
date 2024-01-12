@@ -105,4 +105,4 @@ jobs:
               echo "[ spring is not running ]"
             fi
             
-            docker run -d --name server -p 8080:8080 mylist-spring
+            docker run -d --name server -p ${{ secrets.SERVER_PORT }}:${{ secrets.SERVER_PORT }} mylist-spring
