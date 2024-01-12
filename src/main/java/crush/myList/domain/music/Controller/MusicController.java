@@ -41,6 +41,7 @@ public class MusicController {
     @PostMapping(value = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 생성 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
             @ApiResponse(responseCode = "404", description = "음악 생성 실패")
     })
     public JsonBody<MusicDto.Result> addMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @RequestBody MusicDto.Request request) {
@@ -55,6 +56,7 @@ public class MusicController {
     @DeleteMapping("/{musicId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 삭제 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
             @ApiResponse(responseCode = "404", description = "음악 삭제 실패")
     })
     public JsonBody<Long> deleteMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long musicId) {

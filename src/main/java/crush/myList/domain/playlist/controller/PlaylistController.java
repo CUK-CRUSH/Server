@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,9 +28,9 @@ public class PlaylistController {
     @GetMapping("/user/{username}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 조회 성공"),
-            @ApiResponse(responseCode = "401", description = "플레이리스트 조회 실패")
+            @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음")
     })
-    public JsonBody<List<PlaylistDto.Result>> getUserPlaylists(@PathVariable String username) {
+    public JsonBody<List<PlaylistDto.Response>> getUserPlaylists(@PathVariable String username) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 조회 성공",
@@ -43,17 +42,16 @@ public class PlaylistController {
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
-            @ApiResponse(responseCode = "401", description = "플레이리스트 생성 실패")
+            @ApiResponse(responseCode = "404", description = "인증 문제 발생")
     })
-    public JsonBody<PlaylistDto.Result> addPlaylist(
+    public JsonBody<PlaylistDto.Response> addPlaylist(
             @AuthenticationPrincipal SecurityMember member,
-            @RequestPart String playlistName,
-            @RequestPart(value = "image", required = false) MultipartFile titleImage
+            @ModelAttribute PlaylistDto.Request request
             ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 생성 성공",
-                playlistService.addPlaylist(member, new PlaylistDto.PostRequest(playlistName), titleImage)
+                playlistService.addPlaylist(member, request)
         );
     }
 
@@ -61,23 +59,18 @@ public class PlaylistController {
     @PutMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 정보 수정 성공"),
-            @ApiResponse(responseCode = "401", description = "플레이리스트 정보 수정 실패")
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 변경 실패")
     })
-    public JsonBody<PlaylistDto.Result> updatePlaylist(
+    public JsonBody<PlaylistDto.Response> updatePlaylist(
             @AuthenticationPrincipal SecurityMember member,
             @PathVariable Long playlistId,
-            @RequestPart String playlistName,
-            @RequestPart(value = "image", required = false) MultipartFile titleImage
+            @ModelAttribute PlaylistDto.Request request
     ) {
-        PlaylistDto.PutRequest request = PlaylistDto.PutRequest.builder()
-                .id(playlistId)
-                .playlistName(playlistName)
-                .build();
-
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 수정 완료",
-                playlistService.updatePlaylist(member, request, titleImage)
+                playlistService.updatePlaylist(member, playlistId, request)
         );
     }
 
@@ -85,7 +78,8 @@ public class PlaylistController {
     @DeleteMapping("/{playlistId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 삭제 성공"),
-            @ApiResponse(responseCode = "401", description = "플레이리스트 삭제 실패")
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 삭제 실패")
     })
     public JsonBody<Long> deletePlaylist(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId) {
         playlistService.deletePlaylist(member, playlistId);
