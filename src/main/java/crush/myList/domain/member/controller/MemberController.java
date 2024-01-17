@@ -25,18 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
 
-    @Operation(summary = "특정 회원 정보 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = MemberDto.class))}),
-            @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
-    })
-    @GetMapping("/{id}")
-    public JsonBody<MemberDto> getMember(@PathVariable Long id) {
-        MemberDto memberDto = memberService.getMember(id);
-        return JsonBody.of(HttpStatus.OK.value(), "회원 정보 조회 성공", memberDto);
-    }
-
     @Operation(summary = "내 정보 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", content = {@Content(mediaType = "application/json",
@@ -47,6 +35,18 @@ public class MemberController {
     public JsonBody<EditProfileRes> updateInfo(@ModelAttribute EditProfileReq editProfileReq, @AuthenticationPrincipal SecurityMember member) {
         EditProfileRes res = memberService.updateInfo(editProfileReq, member.getId());
         return JsonBody.of(HttpStatus.OK.value(), "회원 정보 수정 성공", res);
+    }
+
+    @Operation(summary = "특정 회원 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MemberDto.class))}),
+            @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
+    })
+    @GetMapping("/{id}")
+    public JsonBody<MemberDto> getMember(@PathVariable Long id) {
+        MemberDto memberDto = memberService.getMember(id);
+        return JsonBody.of(HttpStatus.OK.value(), "회원 정보 조회 성공", memberDto);
     }
 
     @Operation(summary = "내 정보 조회")
@@ -61,18 +61,6 @@ public class MemberController {
         return JsonBody.of(HttpStatus.OK.value(), "회원 정보 조회 성공", memberDto);
     }
 
-    @Operation(summary = "회원 닉네임 중복 검사")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "사용 가능한 닉네임", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = String.class))}),
-            @ApiResponse(responseCode = "400", description = "이미 사용중인 닉네임", content = {@Content(mediaType = "application/json")})
-    })
-    @GetMapping("/nickname/available/{username}")
-    public JsonBody<String> checkNickname(@PathVariable String username) {
-        memberService.checkUsername(username);
-        return JsonBody.of(HttpStatus.OK.value(), "사용 가능한 닉네임", username);
-    }
-
     @Operation(summary = "회원 닉네임 변경")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공", content = {@Content(mediaType = "application/json",
@@ -83,5 +71,17 @@ public class MemberController {
     public JsonBody<String> changeNickname(@PathVariable String username,  @AuthenticationPrincipal SecurityMember member) {
         memberService.changeUsername(member.getId(), username);
         return JsonBody.of(HttpStatus.OK.value(), "닉네임 변경 성공", username);
+    }
+
+    @Operation(summary = "회원 닉네임 중복 검사")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용 가능한 닉네임", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "400", description = "이미 사용중인 닉네임", content = {@Content(mediaType = "application/json")})
+    })
+    @GetMapping("/nickname/available/{username}")
+    public JsonBody<String> checkNickname(@PathVariable String username) {
+        memberService.checkUsername(username);
+        return JsonBody.of(HttpStatus.OK.value(), "사용 가능한 닉네임", username);
     }
 }
