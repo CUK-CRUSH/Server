@@ -2,6 +2,7 @@ package crush.myList.domain.autocomplete;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -22,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 @Slf4j(topic = "AutocompleteService")
 @RequiredArgsConstructor
 public class AutocompleteAPI {

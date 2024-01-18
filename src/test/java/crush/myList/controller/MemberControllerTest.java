@@ -119,6 +119,7 @@ public class MemberControllerTest {
     }
 
     @Test
+    @Disabled // 매번 테스트마다 GCS에 저장되는 것을 방지하기 위해 비활성화
     @DisplayName("내 정보 수정 테스트")
     void updateMyInfoTest(TestReporter testReporter) throws Exception {
         // given
