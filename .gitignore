@@ -39,3 +39,4 @@ out/
 ### spring ###
 gcs-key.json
 keystore.p12
+application-test.yml
