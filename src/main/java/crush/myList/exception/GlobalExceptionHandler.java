@@ -2,6 +2,7 @@ package crush.myList.exception;
 
 import crush.myList.global.dto.ResponseBody;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,14 +12,14 @@ import org.springframework.web.server.ResponseStatusException;
 public class GlobalExceptionHandler {
     // null pointer exception
     @ExceptionHandler(NullPointerException.class)
-    public ResponseBody handleNullPointerException(NullPointerException e){
+    public ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e){
         log.error(e.getMessage());
-        return ErrorResponse.toResponse(ErrorCode.InternalError);
+        return ResponseEntity.status(ErrorCode.INTERNAL_ERROR.getStatus()).body(ErrorResponse.toResponse(ErrorCode.INTERNAL_ERROR));
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseBody handleResponseStatusException(ResponseStatusException e){
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException e){
         log.error(e.getMessage());
-        return ErrorResponse.toResponse(e);
+        return ResponseEntity.status(e.getStatusCode()).body(ErrorResponse.toResponse(e));
     }
 }
