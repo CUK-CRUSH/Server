@@ -56,7 +56,7 @@ public class PlaylistController {
     }
 
     @Operation(summary = "유저의 플레이리스트 변경하기")
-    @PutMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 정보 수정 성공"),
             @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
