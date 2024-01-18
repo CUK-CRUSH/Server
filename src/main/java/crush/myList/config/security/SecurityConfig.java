@@ -41,6 +41,7 @@ public class SecurityConfig {
         // redirect
         "/login/oauth2/success",
         "/login/oauth2/callback",
+        "/login/oauth2/code/**",
 
         // refresh token으로 access token 재발급
         "/login/token/reissue",
