@@ -25,6 +25,7 @@ jobs:
         files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml, ./src/main/resources/application-gcs.yml
       env:
         server.port: ${{ secrets.SERVER_PORT }}
+        spring.datasource.driver-class-name: ${{ secrets.BUILD_DATASOURCE_DRIVER_CLASS_NAME }}
         spring.datasource.url: ${{ secrets.BUILD_DATASOURCE_URL }}
         spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
         spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
