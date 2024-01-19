@@ -5,6 +5,9 @@ import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.service.PlaylistService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +31,7 @@ public class PlaylistController {
     @GetMapping("/user/{username}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음")
+            @ApiResponse(responseCode = "404", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<List<PlaylistDto.Response>> getUserPlaylists(@PathVariable String username) {
         return JsonBody.of(
@@ -42,7 +45,7 @@ public class PlaylistController {
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
-            @ApiResponse(responseCode = "404", description = "인증 문제 발생")
+            @ApiResponse(responseCode = "404", description = "인증 문제 발생", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<PlaylistDto.Response> addPlaylist(
             @AuthenticationPrincipal SecurityMember member,
@@ -59,8 +62,8 @@ public class PlaylistController {
     @PatchMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 정보 수정 성공"),
-            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
-            @ApiResponse(responseCode = "404", description = "플레이리스트 변경 실패")
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 변경 실패", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<PlaylistDto.Response> updatePlaylist(
             @AuthenticationPrincipal SecurityMember member,
@@ -78,8 +81,8 @@ public class PlaylistController {
     @DeleteMapping("/{playlistId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 삭제 성공"),
-            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
-            @ApiResponse(responseCode = "404", description = "플레이리스트 삭제 실패")
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 삭제 실패", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<Long> deletePlaylist(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId) {
         playlistService.deletePlaylist(member, playlistId);

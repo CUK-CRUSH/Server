@@ -5,6 +5,8 @@ import crush.myList.domain.music.Dto.MusicDto;
 import crush.myList.domain.music.Service.MusicService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class MusicController {
     @GetMapping("")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "음악 조회 실패")
+            @ApiResponse(responseCode = "404", description = "음악 조회 실패", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<List<MusicDto.Result>> getMusics(@PathVariable Long playlistId) {
         return JsonBody.of(
@@ -41,8 +43,8 @@ public class MusicController {
     @PostMapping(value = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 생성 성공"),
-            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
-            @ApiResponse(responseCode = "404", description = "음악 생성 실패")
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "음악 생성 실패", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<MusicDto.Result> addMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @RequestBody MusicDto.Request request) {
         return JsonBody.of(
@@ -56,8 +58,8 @@ public class MusicController {
     @DeleteMapping("/{musicId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 삭제 성공"),
-            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근"),
-            @ApiResponse(responseCode = "404", description = "음악 삭제 실패")
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "음악 삭제 실패", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<Long> deleteMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long musicId) {
         musicService.deleteMusic(member, musicId);
