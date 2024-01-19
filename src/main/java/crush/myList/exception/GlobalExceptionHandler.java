@@ -12,14 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class GlobalExceptionHandler {
     // null pointer exception
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e){
+    public ErrorResponse handleNullPointerException(NullPointerException e){
         log.error(e.getMessage());
-        return ResponseEntity.status(ErrorCode.INTERNAL_ERROR.getStatus()).body(ErrorResponse.toResponse(ErrorCode.INTERNAL_ERROR));
-    }
-
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException e){
-        log.error(e.getMessage());
-        return ResponseEntity.status(e.getStatusCode()).body(ErrorResponse.toResponse(e));
+        return ErrorResponse.toResponse(ErrorCode.INTERNAL_ERROR);
     }
 }
