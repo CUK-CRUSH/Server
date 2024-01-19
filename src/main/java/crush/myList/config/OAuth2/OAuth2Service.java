@@ -2,6 +2,7 @@ package crush.myList.config.OAuth2;
 
 import crush.myList.config.OAuth2.users.FaceBookUser;
 import crush.myList.config.OAuth2.users.GoogleUser;
+import crush.myList.config.OAuth2.users.KakaoUser;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j(topic = "OAuth2UserService")
@@ -26,12 +28,9 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-//        oAuth2User.getAttributes().forEach((k, v) -> {
-//            log.info("key: {}, value: {}", k, v);
-//        });
+//        oAuth2User.getAttributes().forEach((k, v) -> log.info("key: {}, value: {}", k, v));
 //
 //        log.info("registrationId: {}", registrationId);
 //        log.info("name: {}", oAuth2User.getName());
@@ -39,55 +38,57 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         return saveOrUpdate(oAuth2User, registrationId);
     }
 
+    private Member findOrSaveMember(OAuth2User oAuth2User, String registrationId, String name) {
+        String oauth2Id = registrationId + ":" + oAuth2User.getName();
+        return memberRepository.findByOauth2id(oauth2Id)
+                .orElseGet(() -> memberRepository.save(Member.builder()
+                        .oauth2id(oauth2Id)
+                        .name(name)
+                        .build()));
+    }
+
     private OAuth2User saveOrUpdate(OAuth2User oAuth2User, String registrationId) {
-        switch (registrationId) {
-            case "google":
-                return saveOrUpdateGoogleUser(oAuth2User);
-            case "facebook":
-                return saveOrUpdateFacebookUser(oAuth2User);
-            default:
-                Assert.isTrue(false, "지원하지 않는 소셜 로그인 입니다.");
-                return null;
-        }
+        return switch (registrationId) {
+            case "google" -> saveOrUpdateGoogleUser(oAuth2User);
+            case "facebook" -> saveOrUpdateFacebookUser(oAuth2User);
+            case "kakao" -> saveOrUpdateKakaoUser(oAuth2User);
+            default -> throw new OAuth2AuthenticationException("지원하지 않는 OAuth2 공급자입니다.");
+        };
     }
 
     private OAuth2User saveOrUpdateGoogleUser(OAuth2User oAuth2User) {
-        String oauth2Id = oAuth2User.getName();
-
-        Member member = memberRepository.findByOauth2id(oauth2Id).orElse(null);
-        if (member == null) {
-            member = Member.builder()
-                    .name(oAuth2User.getAttribute("name"))
-                    .oauth2id(oauth2Id)
-                    .build();
-            memberRepository.save(member);
-        }
+        Member member = findOrSaveMember(oAuth2User, "google", oAuth2User.getAttribute("name"));
 
         return GoogleUser.builder()
                 .registrationId("google")
                 .memberId(String.valueOf(member.getId()))
-                .oauth2Id(oauth2Id)
+                .oauth2Id(member.getOauth2id())
                 .attributes(oAuth2User.getAttributes())
                 .authorities(oAuth2User.getAuthorities())
                 .build();
     }
 
     private OAuth2User saveOrUpdateFacebookUser(OAuth2User oAuth2User) {
-        String oauth2Id = oAuth2User.getName();
-
-        Member member = memberRepository.findByOauth2id(oauth2Id).orElse(null);
-        if (member == null) {
-            member = Member.builder()
-                    .name(oAuth2User.getAttribute("name"))
-                    .oauth2id(oauth2Id)
-                    .build();
-            memberRepository.save(member);
-        }
+        Member member = findOrSaveMember(oAuth2User, "facebook", oAuth2User.getAttribute("name"));
 
         return FaceBookUser.builder()
                 .registrationId("facebook")
                 .memberId(String.valueOf(member.getId()))
-                .oauth2Id(oauth2Id)
+                .oauth2Id(member.getOauth2id())
+                .attributes(oAuth2User.getAttributes())
+                .authorities(oAuth2User.getAuthorities())
+                .build();
+    }
+
+    private OAuth2User saveOrUpdateKakaoUser(OAuth2User oAuth2User) {
+        Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        Member member = findOrSaveMember(oAuth2User, "kakao", profile.get("nickname").toString());
+
+        return KakaoUser.builder()
+                .registrationId("kakao")
+                .memberId(String.valueOf(member.getId()))
+                .oauth2Id(member.getOauth2id())
                 .attributes(oAuth2User.getAttributes())
                 .authorities(oAuth2User.getAuthorities())
                 .build();
