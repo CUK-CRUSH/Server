@@ -51,7 +51,9 @@ public class SecurityConfig {
 
         // 조회 api
         "/api/v1/playlist/user/**",
-        "/api/v1/playlist/**"
+        "/api/v1/playlist/**",
+
+        "/error",
     };
 
     @Bean
