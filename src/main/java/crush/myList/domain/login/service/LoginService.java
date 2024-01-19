@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
+@Slf4j(topic = "LoginService")
 @Service
 @Transactional
 @RequiredArgsConstructor
