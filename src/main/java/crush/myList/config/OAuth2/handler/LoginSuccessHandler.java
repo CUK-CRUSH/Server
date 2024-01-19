@@ -43,9 +43,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
         return UriComponentsBuilder
                 .newInstance()
-                .scheme("https")
-                .host(envBean.getReactUri())
-                .path("/redirect")
+                .uri(URI.create(envBean.getReactUri()))
                 .queryParams(queryParams)
                 .build()
                 .encode(StandardCharsets.UTF_8)

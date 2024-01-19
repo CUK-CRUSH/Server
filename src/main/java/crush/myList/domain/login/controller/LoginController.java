@@ -25,23 +25,19 @@ import java.util.Map;
 public class LoginController {
     private final LoginService loginService;
 
-    @Operation(summary = "google login token 발급 경로")
-//    @ExampleObject(name = "google login token 발급 경로", value = "/login/oauth2/code/google")
+    @Operation(summary = "google login token 발급 경로", description = "로그인 성공시 URI를 통해 토큰을 발급 받는다.")
     @GetMapping(value = "/oauth2/code/google", produces = "application/json; charset=utf-8")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
-    public JsonBody<TokenDto> redirect(@RequestParam(value = "state") String state,
-                                       @RequestParam(value = "scope", required = false) String scope,
-                                       @RequestParam(value = "authuser", required = false) String authuser,
-                                       @RequestParam(value = "prompt", required = false) String prompt,
-                                       @RequestParam(value = "code") String code) {
-        log.info("state: {}, scope: {}, authuser: {}, prompt: {}, code: {}", state, scope, authuser, prompt, code);
+    public JsonBody<TokenDto> redirect(@RequestParam("access_token") String accessToken,
+                                       @RequestParam("refresh_token") String refreshToken) {
+        log.info("accessToken: {}, refreshToken: {}", accessToken, refreshToken);
         return null;
     }
 
-    @Operation(summary = "로그인 리다이렉트 임시 경로", description = "여기서 받은 code를 통해 토큰을 발급 받는다.")
+    @Operation(summary = "로그인 리다이렉트 테스트용 경로", description = "여기서 받은 code를 통해 토큰을 발급 받는다.")
     @GetMapping("/oauth2/callback")
     public String callback(@RequestParam(value = "code", required = false) String code) {
         return code;

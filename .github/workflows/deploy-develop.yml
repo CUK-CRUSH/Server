@@ -28,12 +28,13 @@ jobs:
           files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml, ./src/main/resources/application-gcs.yml
         env:
           server.port: ${{ secrets.TEST_SERVER_PORT }}
+          spring.datasource.driver-class-name: ${{ secrets.DATASOURCE_DRIVER_CLASS_NAME }}
           spring.datasource.url: ${{ secrets.TEST_DATASOURCE_URL }}
           spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
           spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
           spring.security.oauth2.client.registration.google.client-id: ${{ secrets.GOOGLE_CLIENT_ID }}
           spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.TEST_GOOGLE_REDIRECT_URI }}
           spring.security.oauth2.client.registration.facebook.client-id: ${{ secrets.FACEBOOK_CLIENT_ID }}
           spring.security.oauth2.client.registration.facebook.client-secret: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
           spring.security.oauth2.client.registration.facebook.redirect-uri: ${{ secrets.FACEBOOK_REDIRECT_URI }}

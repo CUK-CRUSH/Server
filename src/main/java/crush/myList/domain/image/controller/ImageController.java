@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/v1/image")
+@RequestMapping("/api/test/image") // 이미지 저장 및 삭제 테스트용
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
