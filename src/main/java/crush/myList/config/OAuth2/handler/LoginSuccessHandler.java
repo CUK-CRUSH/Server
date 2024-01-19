@@ -34,7 +34,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     private final JwtTokenProvider jwtTokenProvider;
     private final EnvBean envBean;
 
-    private String createURI(String accessToken, String refreshToken) {
+    public String createURI(String accessToken, String refreshToken) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("access_token", accessToken);
         queryParams.add("refresh_token", refreshToken);

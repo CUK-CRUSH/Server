@@ -1,8 +1,6 @@
 package crush.myList.domain.member.service;
 
-import crush.myList.domain.image.dto.ImageDto;
 import crush.myList.domain.image.entity.Image;
-import crush.myList.domain.image.repository.ImageRepository;
 import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.dto.EditProfileReq;
 import crush.myList.domain.member.dto.EditProfileRes;
@@ -42,6 +40,7 @@ public class MemberService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
         member.setUsername(username);
     }
+
     /** 사용자 이미지 변경 */
     public void updateImage(EditProfileReq editProfileReq, Member member) throws ResponseStatusException {
         MultipartFile profileImageFile = editProfileReq.getProfileImage();
