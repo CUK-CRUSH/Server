@@ -5,7 +5,6 @@ import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.music.Entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
-import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
@@ -21,11 +20,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -46,7 +44,6 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 조회 테스트")
     @Test
-    @Disabled
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -82,10 +79,10 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 생성 테스트")
     @Test
-    @Disabled
+//    @Disabled
     public void createPlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        final String api = "/api/v1/playlist/add";
+        final String api = "/api/v1/playlist";
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
@@ -103,19 +100,19 @@ public class PlaylistControllerTest {
         // when
         testReporter.publishEntry(
                 mockMvc.perform(
-                        MockMvcRequestBuilders.multipart(api)
+                        multipart(api)
                                 .file(imageFile)
-                                .file("playlistName", "testPlaylist".getBytes())
+                                .param("playlistName", "testPlaylist")
                                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                                 .contentType(MediaType.MULTIPART_FORM_DATA))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.playlistName").value("testPlaylist"))
                         .andReturn().getResponse().getContentAsString()
         );
     }
 
     @DisplayName("플레이리스트 수정 테스트")
     @Test
-    @Disabled
     public void updatePlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -143,9 +140,9 @@ public class PlaylistControllerTest {
         // when
         testReporter.publishEntry(
                 mockMvc.perform(
-                        MockMvcRequestBuilders.multipart(HttpMethod.PUT, api)
+                        multipart(HttpMethod.PATCH, api)
                                 .file(imageFile)
-                                .file("playlistName", "testPlaylist".getBytes())
+                                .param("playlistName", "testPlaylist")
                                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                                 .contentType(MediaType.MULTIPART_FORM_DATA))
                         .andExpect(status().isOk())
@@ -155,7 +152,6 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 삭제 테스트")
     @Test
-    @Disabled
     public void deletePlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -184,6 +180,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 CRUD 통합 테스트")
     @Test
+    @Disabled
     public void playlistCrudTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -195,7 +192,7 @@ public class PlaylistControllerTest {
 
         // TestImageFile
         MockMultipartFile imageFile = new MockMultipartFile(
-                "image", //name
+                "titleImage", //name
                 "testImages.jpg", //originalFilename
                 "image/jpeg",
                 "testImageData".getBytes()
@@ -205,12 +202,12 @@ public class PlaylistControllerTest {
 
         // when
         /* CREATE */
-        final String POST_API = "/api/v1/playlist/add";
+        final String POST_API = "/api/v1/playlist";
         testReporter.publishEntry(
                 mockMvc.perform(
-                        MockMvcRequestBuilders.multipart(POST_API)
+                        multipart(POST_API)
                                 .file(imageFile)
-                                .file("playlistName", "testPlaylist".getBytes())
+                                .param("playlistName", "testPlaylist")
                                 .header("Authorization", accessToken)
                                 .contentType(MediaType.MULTIPART_FORM_DATA))
                         .andExpect(status().isOk())
@@ -226,12 +223,12 @@ public class PlaylistControllerTest {
         );
 
         /* UPDATE */
-        final String PUT_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).get(0).getId().toString();
+        final String PATCH_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).get(0).getId().toString();
         testReporter.publishEntry(
                 mockMvc.perform(
-                        MockMvcRequestBuilders.multipart(HttpMethod.PUT, PUT_API)
+                        multipart(HttpMethod.PATCH, PATCH_API)
                                 .file(imageFile)
-                                .file("playlistName", "testPlaylist".getBytes())
+                                .param("playlistName", "testPlaylist")
                                 .header("Authorization", accessToken)
                                 .contentType(MediaType.MULTIPART_FORM_DATA))
                         .andExpect(status().isOk())
