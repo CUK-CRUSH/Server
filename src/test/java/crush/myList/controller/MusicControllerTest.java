@@ -69,7 +69,7 @@ public class MusicControllerTest {
 
         // when
         /* CREATE */
-        final String POST_API = "/api/v1/playlist/" + playlist.getId().toString() + "/music/add";
+        final String POST_API = "/api/v1/playlist/" + playlist.getId().toString() + "/music";
 
         testReporter.publishEntry(
                 mockMvc.perform(

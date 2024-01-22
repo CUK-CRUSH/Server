@@ -1,7 +1,6 @@
 package crush.myList.domain.playlist.service;
 
 import crush.myList.config.security.SecurityMember;
-import crush.myList.domain.image.dto.ImageDto;
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.image.repository.ImageRepository;
 import crush.myList.domain.image.service.ImageService;
@@ -34,24 +33,26 @@ public class PlaylistService {
 
     private final ImageService imageService;
 
-    public List<PlaylistDto.Result> getPlaylists(String username) {
-        Member member = memberRepository.findByUsername(username).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
-        });
+    public List<PlaylistDto.Response> getPlaylists(String username) {
+        Member member = memberRepository.findByUsername(username).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
+        );
 
         List<Playlist> playlistEntities = playlistRepository.findAllByMember(member);
         return convertToDtoList(playlistEntities);
     }
 
-    public PlaylistDto.Result addPlaylist(SecurityMember memberDetails, PlaylistDto.PostRequest request, MultipartFile titleImage) {
-        Member member = memberRepository.findByUsername(memberDetails.getUsername()).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.");
-        });
+    public PlaylistDto.Response addPlaylist(SecurityMember memberDetails, PlaylistDto.Request request) {
+        Member member = memberRepository.findByUsername(memberDetails.getUsername()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
+        );
 
-        ImageDto imageDto = imageService.saveImageToGcs(titleImage);
-        Image image = imageRepository.findById(imageDto.getId()).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
-        });
+        Image image = null;
+        MultipartFile imageFile = request.getTitleImage();
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            image = imageService.saveImageToGcs_Image(request.getTitleImage());
+        }
 
         Playlist playlist = Playlist.builder()
                 .name(request.getPlaylistName())
@@ -63,23 +64,22 @@ public class PlaylistService {
         return convertToDto(playlist);
     }
 
-    public PlaylistDto.Result updatePlaylist(SecurityMember memberDetails, PlaylistDto.PutRequest request, MultipartFile image) {
-        Playlist playlist = playlistRepository.findById(request.getId()).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
-        });
+    public PlaylistDto.Response updatePlaylist(SecurityMember memberDetails, Long playlistId, PlaylistDto.Request request) {
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
 
         if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
         playlist.setName(request.getPlaylistName());
 
-        if (!image.isEmpty()) {
+        MultipartFile imageFile = request.getTitleImage();
+
+        if (imageFile != null && !imageFile.isEmpty()) {
             imageService.deleteImageToGcs(playlist.getImage().getId());
-            ImageDto imageDto = imageService.saveImageToGcs(image);
-            Image newImage = imageRepository.findById(imageDto.getId()).orElseThrow(() -> {
-                return new ResponseStatusException(HttpStatus.NOT_FOUND, "이미지 저장에 실패했습니다.");
-            });
+            Image newImage = imageService.saveImageToGcs_Image(imageFile);
 
             playlist.setImage(newImage);
         }
@@ -88,32 +88,35 @@ public class PlaylistService {
     }
 
     public void deletePlaylist(SecurityMember memberDetails, Long playlistId) {
-        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.");
-        });
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
 
         if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "플레이리스트에 접근할 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
         // 이미지, 음악, 플레이리스트 순으로 삭제
-        imageService.deleteImageToGcs(playlist.getImage().getId());
+        Image image = playlist.getImage();
+        if (image != null) {
+            imageService.deleteImageToGcs(image.getId());
+        }
         musicRepository.deleteAllByPlaylist(playlist);
         playlistRepository.delete(playlist);
     }
 
     /* Convert Playlist Entity List to Playlist Dto List */
-    private List<PlaylistDto.Result> convertToDtoList(List<Playlist> playlistEntities) {
+    private List<PlaylistDto.Response> convertToDtoList(List<Playlist> playlistEntities) {
         return playlistEntities.stream()
                 .map(this::convertToDto)
                 .toList();
     }
 
-    private PlaylistDto.Result convertToDto(Playlist playlist) {
-        return PlaylistDto.Result.builder()
+    private PlaylistDto.Response convertToDto(Playlist playlist) {
+        return PlaylistDto.Response.builder()
                 .id(playlist.getId())
                 .playlistName(playlist.getName())
-                .thumbnailUrl(playlist.getImage().getUrl())
+                .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                 // counts musics in playlist
                 .numberOfMusics((long) musicRepository.findAllByPlaylist(playlist).size())
                 .build();

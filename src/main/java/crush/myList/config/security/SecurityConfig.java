@@ -51,7 +51,13 @@ public class SecurityConfig {
 
         // 조회 api
         "/api/v1/playlist/user/**",
-        "/api/v1/playlist/**"
+        "/api/v1/playlist/**",
+
+        // 사용자 api
+        "/api/v1/member/{id}",
+        "/api/v1/member/nickname/avaliable/{username}",
+
+        "/error",
     };
 
     @Bean
