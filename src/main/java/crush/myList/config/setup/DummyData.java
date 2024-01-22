@@ -35,8 +35,8 @@ public class DummyData {
 
         Member test = Member.builder()
                 .oauth2id("test:444444444444")
-                .username("test")
-                .name("test")
+                .username("tester")
+                .name("tester")
                 .build();
 
         memberRepository.save(kwangstar);
@@ -49,7 +49,7 @@ public class DummyData {
         Member kwangstar = memberRepository.findByUsername("kwangstar").get();
         Member yunseong = memberRepository.findByUsername("yunseong").get();
         Member donghyun = memberRepository.findByUsername("donghyun").get();
-        Member test = memberRepository.findByUsername("test").get();
+        Member test = memberRepository.findByUsername("tester").get();
 
         // kwangstar
         for (int i=1; i<=10; i++) {
