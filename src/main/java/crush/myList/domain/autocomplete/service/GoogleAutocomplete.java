@@ -3,7 +3,6 @@ package crush.myList.domain.autocomplete.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.w3c.dom.Document;
@@ -26,9 +25,9 @@ import java.util.List;
 @Service
 @Slf4j(topic = "AutocompleteService")
 @RequiredArgsConstructor
-public class AutocompleteService {
-    public static String KOREAN = "ko";
-    public static String ENGLISH = "en";
+public class GoogleAutocomplete implements Autocomplete {
+    public static final String KOREAN = "ko";
+    public static final String ENGLISH = "en";
 
     /** XML에서 문장 정보를 파싱하여 리스트로 반환합니다. */
     public List<String> getList(String xml) throws Exception {
@@ -50,7 +49,7 @@ public class AutocompleteService {
     }
 
     /** 구글 자동완성 API */
-    public List<String> getAutocompleteGoogle(String language, String text) throws ResponseStatusException {
+    public List<String> getAutocomplete(String language, String text) throws ResponseStatusException {
         try {
             // 변환할 문장을 UTF-8로 인코딩
             String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
