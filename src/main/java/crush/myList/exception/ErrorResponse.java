@@ -4,7 +4,7 @@ import crush.myList.global.dto.ResponseBody;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Getter
 @Builder
@@ -17,6 +17,13 @@ public class ErrorResponse implements ResponseBody {
         return ErrorResponse.builder()
                         .status(errorCode.getStatus().value())
                         .message(errorCode.getMessage())
+                        .build();
+    }
+
+    public static ErrorResponse toResponse(ResponseStatusException e){
+        return ErrorResponse.builder()
+                        .status(e.getStatusCode().value())
+                        .message(e.getReason())
                         .build();
     }
 }
