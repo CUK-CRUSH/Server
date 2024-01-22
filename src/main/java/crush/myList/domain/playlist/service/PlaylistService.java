@@ -47,7 +47,12 @@ public class PlaylistService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
-        Image image = imageService.saveImageToGcs_Image(request.getTitleImage());
+        Image image = null;
+        MultipartFile imageFile = request.getTitleImage();
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            image = imageService.saveImageToGcs_Image(request.getTitleImage());
+        }
 
         Playlist playlist = Playlist.builder()
                 .name(request.getPlaylistName())
@@ -72,7 +77,7 @@ public class PlaylistService {
 
         MultipartFile imageFile = request.getTitleImage();
 
-        if (!imageFile.isEmpty()) {
+        if (imageFile != null && !imageFile.isEmpty()) {
             imageService.deleteImageToGcs(playlist.getImage().getId());
             Image newImage = imageService.saveImageToGcs_Image(imageFile);
 
@@ -92,7 +97,10 @@ public class PlaylistService {
         }
 
         // 이미지, 음악, 플레이리스트 순으로 삭제
-        imageService.deleteImageToGcs(playlist.getImage().getId());
+        Image image = playlist.getImage();
+        if (image != null) {
+            imageService.deleteImageToGcs(image.getId());
+        }
         musicRepository.deleteAllByPlaylist(playlist);
         playlistRepository.delete(playlist);
     }
@@ -108,7 +116,7 @@ public class PlaylistService {
         return PlaylistDto.Response.builder()
                 .id(playlist.getId())
                 .playlistName(playlist.getName())
-                .thumbnailUrl(playlist.getImage().getUrl())
+                .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                 // counts musics in playlist
                 .numberOfMusics((long) musicRepository.findAllByPlaylist(playlist).size())
                 .build();

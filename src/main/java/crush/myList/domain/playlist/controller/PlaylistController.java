@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,8 +49,8 @@ public class PlaylistController {
             @ApiResponse(responseCode = "404", description = "인증 문제 발생", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<PlaylistDto.Response> addPlaylist(
-            @AuthenticationPrincipal SecurityMember member,
-            @ModelAttribute PlaylistDto.Request request
+            @ModelAttribute PlaylistDto.Request request,
+            @AuthenticationPrincipal SecurityMember member
             ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),

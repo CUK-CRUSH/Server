@@ -1,6 +1,7 @@
 package crush.myList.domain.playlist.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -15,10 +16,10 @@ public class PlaylistDto {
     @Schema(name = "PlaylistDtoRequest", description = "플레이리스트 추가 요청", type = "multipartForm")
     public static class Request {
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
-        @NotEmpty
+        @NotBlank
         private String playlistName;
 
-        @Schema(name = "titleImage", description = "플레이리스트 이미지입니다.")
+        @Schema(name = "titleImage", description = "플레이리스트 이미지입니다.", type = "string", format = "binary")
         private MultipartFile titleImage;
     }
     @Getter
