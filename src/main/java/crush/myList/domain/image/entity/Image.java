@@ -1,5 +1,6 @@
 package crush.myList.domain.image.entity;
 
+import crush.myList.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,4 +30,10 @@ public class Image {
 
     @Column(name = "url", nullable = false)
     String url;
+
+    @OneToOne(mappedBy = "profileImage", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    private Member memberProfile;
+
+    @OneToOne(mappedBy = "backgroundImage", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    private Member memberBackground;
 }
