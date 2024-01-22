@@ -135,8 +135,8 @@ public class MemberControllerTest {
 
         // when
         testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member").file(profileImageFile).file(backgroundImageFile)
-                .content("username=test2")
-                .content("introduction=test2")
+                .param("username","test2")
+                .param("introduction","test2")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                 .with(csrf()))
                 .andExpect(status().isOk())

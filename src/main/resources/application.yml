@@ -27,8 +27,8 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  # 10 minutes
-  access-token-time: 600000
+  # 100 minutes
+  access-token-time: 6000000
   # 1 day
   refresh-token-time: 86400000
 
