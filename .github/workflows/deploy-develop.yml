@@ -38,10 +38,10 @@ jobs:
           spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.TEST_GOOGLE_REDIRECT_URI }}
           spring.security.oauth2.client.registration.facebook.client-id: ${{ secrets.FACEBOOK_CLIENT_ID }}
           spring.security.oauth2.client.registration.facebook.client-secret: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
-          spring.security.oauth2.client.registration.facebook.redirect-uri: ${{ secrets.FACEBOOK_REDIRECT_URI }}
+          spring.security.oauth2.client.registration.facebook.redirect-uri: ${{ secrets.TEST_FACEBOOK_REDIRECT_URI }}
           spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }}
           spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }}
-          spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_URI }}
+          spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.TEST_KAKAO_REDIRECT_URI }}
 
           spring.security.oauth2.client.login-page: ${{ secrets.TEST_LOGIN_PAGE }}
           jwt.secret: ${{ secrets.JWT_SECRET }}
