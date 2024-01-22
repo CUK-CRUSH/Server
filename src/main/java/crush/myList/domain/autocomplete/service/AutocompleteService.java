@@ -1,17 +1,17 @@
-package crush.myList.domain.autocomplete;
+package crush.myList.domain.autocomplete.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,15 +23,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 @Slf4j(topic = "AutocompleteService")
 @RequiredArgsConstructor
-public class AutocompleteAPI {
+public class AutocompleteService {
     public static String KOREAN = "ko";
     public static String ENGLISH = "en";
 
     /** XML에서 문장 정보를 파싱하여 리스트로 반환합니다. */
-    public static List<String> getList(String xml) throws Exception {
+    public List<String> getList(String xml) throws Exception {
         List<String> list = new ArrayList<>();
 
         // XML 데이터 파싱을 위한 초기화
@@ -50,7 +50,7 @@ public class AutocompleteAPI {
     }
 
     /** 구글 자동완성 API */
-    public static String getAutocompleteGoogle(String language, String text) {
+    public List<String> getAutocompleteGoogle(String language, String text) throws ResponseStatusException {
         try {
             // 변환할 문장을 UTF-8로 인코딩
             String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
@@ -65,15 +65,14 @@ public class AutocompleteAPI {
                 response.append(inputLine);
             }
             br.close();
-            return response.toString();
+            return getList(response.toString());
 
         } catch (Exception e) {
-            log.error("AutocompleteService.getAutocomplete() : {}", e.getMessage());
-            throw new RuntimeException("구글 자동완성 API 서버로부터 응답을 받지 못했습니다.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "구글 자동완성 API 서버와 통신에 실패했습니다. " + e.getMessage());
         }
     }
 
-    private static BufferedReader getBufferedReader(String language, String encodedText) throws IOException {
+    private BufferedReader getBufferedReader(String language, String encodedText) throws IOException {
         URL url = new URL("https://suggestqueries.google.com/complete/search?output=toolbar&hl=" + language + "&q=" + encodedText);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");

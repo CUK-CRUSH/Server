@@ -1,0 +1,35 @@
+package crush.myList.domain.autocomplete.controller;
+
+import crush.myList.domain.autocomplete.service.AutocompleteService;
+import crush.myList.global.dto.JsonBody;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@Tag(name = "Autocomplete", description = "자동완성 API")
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/autocomplete")
+public class AutocompleteController {
+    private final AutocompleteService autocompleteService;
+
+    @Operation(summary = "구글 자동완성 API")
+    @Parameter(name = "language", description = "언어 설정", required = true, examples ={
+            @ExampleObject(name = "한국어", value = "ko"),
+            @ExampleObject(name = "영어", value = "en")
+    })
+    @Parameter(name = "text", description = "검색어", required = true)
+    @GetMapping("/google")
+    public JsonBody<List<String>> getAutocompleteGoogle(@RequestParam String language, @RequestParam String text) {
+        return JsonBody.of(200, "구글 자동완성 결과", autocompleteService.getAutocompleteGoogle(language, text));
+    }
+}

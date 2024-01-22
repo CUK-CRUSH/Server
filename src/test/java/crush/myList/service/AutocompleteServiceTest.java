@@ -1,6 +1,6 @@
-package crush.myList.etc;
+package crush.myList.service;
 
-import crush.myList.domain.autocomplete.AutocompleteAPI;
+import crush.myList.domain.autocomplete.service.AutocompleteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,20 +11,19 @@ import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AutocompleteAPI 테스트")
-public class AutocompleteAPITest {
+public class AutocompleteServiceTest {
     @InjectMocks
-    private AutocompleteAPI autocompleteAPI;
+    private AutocompleteService autocompleteService;
 
     @Test
     @DisplayName("구글 자동완성 API 테스트")
     public void getAutocompleteGoogleTest() throws Exception {
         // given
-        String language = AutocompleteAPI.KOREAN;
+        String language = AutocompleteService.KOREAN;
         String text = "뉴진스";
 
         // when
-        String res = AutocompleteAPI.getAutocompleteGoogle(language, text);
-        List<String> list = AutocompleteAPI.getList(res);
+        List<String> list = autocompleteService.getAutocompleteGoogle(language, text);
 
         // then
         list.forEach(System.out::println);
