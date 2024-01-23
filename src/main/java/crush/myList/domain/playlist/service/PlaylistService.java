@@ -45,15 +45,19 @@ public class PlaylistService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
+        String name = postRequest.getPlaylistName();
+        if (name == null || name.isEmpty()) {
+            name = "Untitled";
+        }
+
         Image image = null;
         MultipartFile imageFile = postRequest.getTitleImage();
-
         if (imageFile != null && !imageFile.isEmpty()) {
             image = imageService.saveImageToGcs_Image(postRequest.getTitleImage());
         }
 
         Playlist playlist = Playlist.builder()
-                .name(postRequest.getPlaylistName())
+                .name(name)
                 .member(member)
                 .image(image)
                 .build();
