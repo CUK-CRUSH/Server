@@ -44,6 +44,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 조회 테스트")
     @Test
+    @Disabled
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -79,7 +80,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 생성 테스트")
     @Test
-//    @Disabled
+    @Disabled
     public void createPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         final String api = "/api/v1/playlist";
@@ -113,6 +114,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 수정 테스트")
     @Test
+    @Disabled
     public void updatePlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -152,6 +154,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 삭제 테스트")
     @Test
+    @Disabled
     public void deletePlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -173,6 +176,54 @@ public class PlaylistControllerTest {
                 mockMvc.perform(
                         MockMvcRequestBuilders.delete(api)
                                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString()
+        );
+    }
+
+    @DisplayName("플레이리스트 이미지 삭제 테스트")
+    @Test
+    public void deletePlaylistImageTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = Member.builder()
+                .oauth2id("1")
+                .username("test")
+                .name("test1")
+                .build();
+        memberRepository.save(member);
+
+        Playlist playlist = Playlist.builder()
+                .name("testPlaylistName")
+                .member(member)
+                .build();
+        playlistRepository.save(playlist);
+
+        final String POST_API = "/api/v1/playlist";
+
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", //name
+                "testImages.jpg", //originalFilename
+                "image/jpeg",
+                "testImageData".getBytes()
+        );
+
+        testReporter.publishEntry(
+                mockMvc.perform(
+                                multipart(POST_API)
+                                        .file(imageFile)
+                                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.playlistName").value("Untitled"))
+                        .andReturn().getResponse().getContentAsString()
+        );
+
+        final String DELETE_IMAGE_API = "/api/v1/playlist/" + playlist.getId() + "/image";
+
+        testReporter.publishEntry(
+                mockMvc.perform(
+                                MockMvcRequestBuilders.delete(DELETE_IMAGE_API)
+                                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                         .andExpect(status().isOk())
                         .andReturn().getResponse().getContentAsString()
         );

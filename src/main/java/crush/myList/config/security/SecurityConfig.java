@@ -51,11 +51,14 @@ public class SecurityConfig {
 
         // 조회 api
         "/api/v1/playlist/user/**",
-        "/api/v1/playlist/**",
+        "/api/v1/music/{playlistId}",
 
         // 사용자 api
         "/api/v1/member/{id}",
         "/api/v1/member/nickname/avaliable/{username}",
+
+        // 자동완성 api
+        "/api/v1/autocomplete/**",
 
         "/error",
     };

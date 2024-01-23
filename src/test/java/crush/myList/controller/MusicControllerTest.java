@@ -69,7 +69,7 @@ public class MusicControllerTest {
 
         // when
         /* CREATE */
-        final String POST_API = "/api/v1/playlist/" + playlist.getId().toString() + "/music";
+        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
 
         testReporter.publishEntry(
                 mockMvc.perform(
@@ -82,7 +82,7 @@ public class MusicControllerTest {
         );
 
         /* READ */
-        final String GET_API = "/api/v1/playlist/" + playlist.getId().toString() + "/music";
+        final String GET_API = "/api/v1/music/" + playlist.getId().toString();
 
         testReporter.publishEntry(
                 mockMvc.perform(
@@ -93,12 +93,13 @@ public class MusicControllerTest {
         );
 
         /* DELETE */
-        final String DELETE_API = "/api/v1/playlist/" + playlist.getId() + "/music/" + musicRepository.findAllByPlaylist(playlist).get(0).getId().toString();
+        final String DELETE_API = "/api/v1/music";
 
         testReporter.publishEntry(
                 mockMvc.perform(
                         MockMvcRequestBuilders.delete(DELETE_API)
-                                .header("Authorization", accessToken))
+                                .header("Authorization", accessToken)
+                                .param("musicId", musicRepository.findAll().get(0).getId().toString()))
                         .andExpect(status().isOk())
                         .andReturn().getResponse().getContentAsString()
         );

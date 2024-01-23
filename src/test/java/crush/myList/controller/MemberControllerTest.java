@@ -102,7 +102,7 @@ public class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("회원 정보 조회 테스트")
+    @DisplayName("회원 정보 조회 테스트 - id로 조회")
     void viewMemberInfoTest(TestReporter testReporter) throws Exception {
         // given
         Member member = Member.builder()
@@ -112,7 +112,24 @@ public class MemberControllerTest {
                 .build();
         memberRepository.save(member);
         // when
-        testReporter.publishEntry(mvc.perform(get("/api/v1/member/{id}", member.getId())
+        testReporter.publishEntry(mvc.perform(get("/api/v1/member/id/{id}", member.getId())
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회 테스트 - 닉네임으로 조회")
+    void viewMemberInfoTest2(TestReporter testReporter) throws Exception {
+        // given
+        Member member = Member.builder()
+                .oauth2id("1")
+                .username("test")
+                .name("test1")
+                .build();
+        memberRepository.save(member);
+        // when
+        testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/{username}", member.getUsername())
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
@@ -135,8 +152,8 @@ public class MemberControllerTest {
 
         // when
         testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member").file(profileImageFile).file(backgroundImageFile)
-                .content("username=test2")
-                .content("introduction=test2")
+                .param("username","test2")
+                .param("introduction","test2")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                 .with(csrf()))
                 .andExpect(status().isOk())
