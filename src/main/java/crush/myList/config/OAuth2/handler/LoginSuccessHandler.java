@@ -40,6 +40,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         queryParams.add("refresh_token", refreshToken);
 
         log.info("reactUri: {}", envBean.getReactUri());
+        log.info("accessToken: {}", accessToken);
 
         return UriComponentsBuilder
                 .newInstance()

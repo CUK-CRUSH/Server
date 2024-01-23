@@ -13,8 +13,8 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: update
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -27,8 +27,8 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  # 10 minutes
-  access-token-time: 600000
+  # 100 minutes
+  access-token-time: 6000000
   # 1 day
   refresh-token-time: 86400000
 
