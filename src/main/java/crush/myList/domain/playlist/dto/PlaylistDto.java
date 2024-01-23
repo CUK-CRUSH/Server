@@ -13,10 +13,24 @@ public class PlaylistDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(name = "PlaylistDtoRequest", description = "플레이리스트 추가 요청", type = "multipartForm")
-    public static class Request {
+    @Schema(name = "PlaylistPostRequest", description = "플레이리스트 추가 요청", type = "multipartForm")
+    public static class PostRequest {
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotBlank
+        private String playlistName;
+
+        @Schema(name = "titleImage", description = "플레이리스트 이미지입니다.", type = "string", format = "binary")
+        private MultipartFile titleImage;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(name = "PlaylistPatchRequest", description = "플레이리스트 수정 요청", type = "multipartForm")
+    public static class PatchRequest {
+        @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         private String playlistName;
 
         @Schema(name = "titleImage", description = "플레이리스트 이미지입니다.", type = "string", format = "binary")

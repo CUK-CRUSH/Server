@@ -42,20 +42,20 @@ public class PlaylistService {
         return convertToDtoList(playlistEntities);
     }
 
-    public PlaylistDto.Response addPlaylist(SecurityMember memberDetails, PlaylistDto.Request request) {
+    public PlaylistDto.Response addPlaylist(SecurityMember memberDetails, PlaylistDto.PostRequest postRequest) {
         Member member = memberRepository.findByUsername(memberDetails.getUsername()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
         Image image = null;
-        MultipartFile imageFile = request.getTitleImage();
+        MultipartFile imageFile = postRequest.getTitleImage();
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            image = imageService.saveImageToGcs_Image(request.getTitleImage());
+            image = imageService.saveImageToGcs_Image(postRequest.getTitleImage());
         }
 
         Playlist playlist = Playlist.builder()
-                .name(request.getPlaylistName())
+                .name(postRequest.getPlaylistName())
                 .member(member)
                 .image(image)
                 .build();
@@ -64,7 +64,7 @@ public class PlaylistService {
         return convertToDto(playlist);
     }
 
-    public PlaylistDto.Response updatePlaylist(SecurityMember memberDetails, Long playlistId, PlaylistDto.Request request) {
+    public PlaylistDto.Response updatePlaylist(SecurityMember memberDetails, Long playlistId, PlaylistDto.PatchRequest patchRequest) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
@@ -73,9 +73,11 @@ public class PlaylistService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
-        playlist.setName(request.getPlaylistName());
+        if (patchRequest.getPlaylistName() != null && !patchRequest.getPlaylistName().isEmpty()) {
+            playlist.setName(patchRequest.getPlaylistName());
+        }
 
-        MultipartFile imageFile = request.getTitleImage();
+        MultipartFile imageFile = patchRequest.getTitleImage();
 
         if (imageFile != null && !imageFile.isEmpty()) {
             imageService.deleteImageToGcs(playlist.getImage().getId());

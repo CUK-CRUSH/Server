@@ -6,7 +6,6 @@ import crush.myList.domain.playlist.service.PlaylistService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,13 +47,13 @@ public class PlaylistController {
             @ApiResponse(responseCode = "404", description = "인증 문제 발생", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<PlaylistDto.Response> addPlaylist(
-            @ModelAttribute PlaylistDto.Request request,
+            @ModelAttribute PlaylistDto.PostRequest postRequest,
             @AuthenticationPrincipal SecurityMember member
             ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 생성 성공",
-                playlistService.addPlaylist(member, request)
+                playlistService.addPlaylist(member, postRequest)
         );
     }
 
@@ -69,12 +67,12 @@ public class PlaylistController {
     public JsonBody<PlaylistDto.Response> updatePlaylist(
             @AuthenticationPrincipal SecurityMember member,
             @PathVariable Long playlistId,
-            @ModelAttribute PlaylistDto.Request request
+            @ModelAttribute PlaylistDto.PatchRequest patchRequest
     ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 수정 완료",
-                playlistService.updatePlaylist(member, playlistId, request)
+                playlistService.updatePlaylist(member, playlistId, patchRequest)
         );
     }
 
