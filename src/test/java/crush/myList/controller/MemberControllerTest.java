@@ -81,7 +81,7 @@ public class MemberControllerTest {
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/available/{username}", "test")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString());
+                .andReturn().getResponse().toString());
     }
 
     @Test
@@ -115,7 +115,7 @@ public class MemberControllerTest {
         testReporter.publishEntry(mvc.perform(put("/api/v1/member/nickname/{username}", "test2")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString());
+                .andReturn().getResponse().toString());
     }
 
     @Test
@@ -139,9 +139,11 @@ public class MemberControllerTest {
     @DisplayName("내 정보 조회 실패 테스트 - 존재하지 않는 사용자")
     void viewMyInfoFailTest(TestReporter testReporter) throws Exception {
         // given
+        String token = jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN);
+        memberRepository.deleteById(1L);
         // when
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/me")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN)))
+                .header("Authorization", "Bearer " + token))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString());
     }
@@ -187,8 +189,8 @@ public class MemberControllerTest {
         // when
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/{id}", "1")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN)))
-                .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString());
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().toString());
     }
 
     @Test
@@ -222,12 +224,14 @@ public class MemberControllerTest {
         // given
         MockMultipartFile profileImageFile = new MockMultipartFile("profileImage", "image.jpg", "image/jpeg", "image".getBytes());
         MockMultipartFile backgroundImageFile = new MockMultipartFile("backgroundImage", "image.jpg", "image/jpeg", "image".getBytes());
+        String token = jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN);
+        memberRepository.deleteById(1L);
 
         // when
         testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member").file(profileImageFile).file(backgroundImageFile)
                 .param("username","test2")
                 .param("introduction","test2")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN))
+                .header("Authorization", "Bearer " + token)
                 .with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString());
