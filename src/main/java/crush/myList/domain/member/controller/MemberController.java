@@ -37,15 +37,27 @@ public class MemberController {
         return JsonBody.of(HttpStatus.OK.value(), "회원 정보 수정 성공", res);
     }
 
-    @Operation(summary = "특정 회원 정보 조회")
+    @Operation(summary = "id로 특정 회원 정보 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = MemberDto.class))}),
             @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
     })
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public JsonBody<MemberDto> getMember(@PathVariable Long id) {
         MemberDto memberDto = memberService.getMember(id);
+        return JsonBody.of(HttpStatus.OK.value(), "회원 정보 조회 성공", memberDto);
+    }
+
+    @Operation(summary = "닉네임으로 특정 회원 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MemberDto.class))}),
+            @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
+    })
+    @GetMapping("/nickname/{username}")
+    public JsonBody<MemberDto> getMember(@PathVariable String username) {
+        MemberDto memberDto = memberService.getMember(username);
         return JsonBody.of(HttpStatus.OK.value(), "회원 정보 조회 성공", memberDto);
     }
 

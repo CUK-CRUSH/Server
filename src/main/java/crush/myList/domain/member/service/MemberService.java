@@ -114,4 +114,11 @@ public class MemberService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
         return convertDto(member);
     }
+
+    /** username을 기준으로 사용자 조회 */
+    public MemberDto getMember(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
+        return convertDto(member);
+    }
 }
