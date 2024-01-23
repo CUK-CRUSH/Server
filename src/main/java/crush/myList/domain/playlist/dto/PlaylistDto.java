@@ -16,7 +16,6 @@ public class PlaylistDto {
     @Schema(name = "PlaylistPostRequest", description = "플레이리스트 추가 요청", type = "multipartForm")
     public static class PostRequest {
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
-        @NotBlank
         private String playlistName;
 
         @Schema(name = "titleImage", description = "플레이리스트 이미지입니다.", type = "string", format = "binary")

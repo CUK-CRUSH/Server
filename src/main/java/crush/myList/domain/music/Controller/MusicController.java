@@ -22,12 +22,12 @@ import java.util.List;
 @RestController
 @Slf4j(topic = "MusicController")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/playlist/{playlistId}/music")
+@RequestMapping("/api/v1/music")
 public class MusicController {
     private final MusicService musicService;
 
     @Operation(summary = "플레이리스트의 음악 조회하기")
-    @GetMapping("")
+    @GetMapping("/{playlistId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 조회 성공"),
             @ApiResponse(responseCode = "404", description = "음악 조회 실패", content = @Content(schema = @Schema(hidden = true)))
@@ -41,7 +41,7 @@ public class MusicController {
     }
 
     @Operation(summary = "플레이리스트에 음악 추가하기")
-    @PostMapping(value = "")
+    @PostMapping(value = "/{playlistId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 생성 성공"),
             @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
@@ -56,13 +56,13 @@ public class MusicController {
     }
 
     @Operation(summary = "유저의 플레이리스트 삭제하기")
-    @DeleteMapping("/{musicId}")
+    @DeleteMapping("")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 삭제 성공"),
             @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "음악 삭제 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<Long> deleteMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long musicId) {
+    public JsonBody<Long> deleteMusic(@AuthenticationPrincipal SecurityMember member, @RequestParam Long musicId) {
         musicService.deleteMusic(member, musicId);
         return JsonBody.of(
                 HttpStatus.OK.value(),
