@@ -45,15 +45,19 @@ public class PlaylistService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
+        String name = postRequest.getPlaylistName();
+        if (name == null || name.isEmpty()) {
+            name = "Untitled";
+        }
+
         Image image = null;
         MultipartFile imageFile = postRequest.getTitleImage();
-
         if (imageFile != null && !imageFile.isEmpty()) {
             image = imageService.saveImageToGcs_Image(postRequest.getTitleImage());
         }
 
         Playlist playlist = Playlist.builder()
-                .name(postRequest.getPlaylistName())
+                .name(name)
                 .member(member)
                 .image(image)
                 .build();
@@ -105,6 +109,22 @@ public class PlaylistService {
         }
         musicRepository.deleteAllByPlaylist(playlist);
         playlistRepository.delete(playlist);
+    }
+
+    public void deletePlaylistImage(SecurityMember memberDetails, Long playlistId) {
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
+
+        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
+        }
+
+        Image image = playlist.getImage();
+        if (image != null) {
+            imageService.deleteImageToGcs(image.getId());
+        }
+        playlist.setImage(null);
     }
 
     /* Convert Playlist Entity List to Playlist Dto List */
