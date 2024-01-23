@@ -2,7 +2,6 @@ package crush.myList.domain.playlist.service;
 
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.image.entity.Image;
-import crush.myList.domain.image.repository.ImageRepository;
 import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
@@ -28,7 +27,6 @@ import java.util.Objects;
 public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final MemberRepository memberRepository;
-    private final ImageRepository imageRepository;
     private final MusicRepository musicRepository;
 
     private final ImageService imageService;
