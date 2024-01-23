@@ -91,4 +91,20 @@ public class PlaylistController {
                 playlistId
         );
     }
+
+    @Operation(summary = "플레이리스트의 이미지 삭제하기")
+    @DeleteMapping("/{playlistId}/image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "플레이리스트 이미지 삭제 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 이미지 삭제 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<Long> deletePlaylistImage(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId) {
+        playlistService.deletePlaylistImage(member, playlistId);
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "플레이리스트 이미지 삭제 완료",
+                playlistId
+        );
+    }
 }
