@@ -1,10 +1,13 @@
 package crush.myList.config.security;
 
+import crush.myList.domain.member.enums.RoleName;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,10 +19,12 @@ public class SecurityMember implements UserDetails {
     private String oauth2id;
     private String username;
     private String name;
+    private RoleName role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        GrantedAuthority authority = new SimpleGrantedAuthority(role.getValue());
+        return List.of(authority);
     }
 
     @Override

@@ -6,6 +6,7 @@ import crush.myList.config.OAuth2.handler.LoginSuccessHandler;
 import crush.myList.config.OAuth2.OAuth2Service;
 import crush.myList.config.jwt.JwtAuthenticationFilter;
 import crush.myList.config.jwt.JwtTokenProvider;
+import crush.myList.domain.member.enums.RoleName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,9 +47,6 @@ public class SecurityConfig {
         // refresh token으로 access token 재발급
         "/login/token/reissue",
 
-        // file upload
-        "/api/v1/image/**",
-
         // 조회 api
         "/api/v1/playlist/user/**",
         "/api/v1/music/{playlistId}",
@@ -56,7 +54,7 @@ public class SecurityConfig {
         // 사용자 api
         "/api/v1/member/id/{id}",
         "/api/v1/member/username/{username}",
-        "/api/v1/member/nickname/avaliable/{username}",
+        "/api/v1/member/nickname/available/{username}",
 
         // 자동완성 api
         "/api/v1/autocomplete/**",
@@ -69,7 +67,8 @@ public class SecurityConfig {
         /* 허용 페이지 등록 */
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(WHITE_LIST).permitAll()  // 모든 사용자 허용 경로
-                        .anyRequest().authenticated())  // 그 외 나머지 경로는 전부 인증 필요
+                        .requestMatchers("/api/v1/**").hasRole(RoleName.USER.getValue())  // 닉네임이 설정된 USER 권한만 허용
+                        .anyRequest().authenticated())  // 그 외 나머지 경로는 전부 로그인 필요
 //                        .anyRequest().permitAll())  // 그 외 나머지 경로는 전부 허용
                 .cors(cors -> cors
                         .configurationSource(request -> {

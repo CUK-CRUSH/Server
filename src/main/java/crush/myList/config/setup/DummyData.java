@@ -16,93 +16,83 @@ import javax.annotation.PostConstruct;
 public class DummyData {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
+
+    // 더미 사용자가 존재하면 업데이트, 없으면 저장
+    public void saveOrUpdateMember(Member member) {
+        memberRepository.findByUsername(member.getUsername())
+                .ifPresentOrElse(
+                        m -> {
+                            m.setOauth2id(member.getOauth2id());
+                            m.setUsername(member.getUsername());
+                            m.setIntroduction(member.getIntroduction());
+                            m.setName(member.getName());
+                            m.setRole(member.getRole());
+                        },
+                        () -> memberRepository.save(member)
+                );
+    }
     public void setupMember() {
-        Member kwangstar = Member.builder()
+        saveOrUpdateMember(Member.builder()
                 .oauth2id("test:111111111111")
                 .username("kwangstar")
                 .name("kwangstar")
-                .build();
-        Member yunseong = Member.builder()
+                .build());
+        saveOrUpdateMember(Member.builder()
                 .oauth2id("test:222222222222")
                 .username("yunseong")
                 .name("yunseong")
-                .build();
-        Member donghyun = Member.builder()
+                .build());
+        saveOrUpdateMember(Member.builder()
                 .oauth2id("test:333333333333")
                 .username("donghyun")
                 .name("donghyun")
-                .build();
-
-        Member test = Member.builder()
+                .build());
+        saveOrUpdateMember(Member.builder()
                 .oauth2id("test:444444444444")
                 .username("tester")
                 .name("tester")
-                .build();
+                .build());
+    }
 
-        try {
-            memberRepository.save(kwangstar);
-            memberRepository.save(yunseong);
-            memberRepository.save(donghyun);
-            memberRepository.save(test);
-        }
-        catch (Exception e) {
-            System.out.println("이미 존재하는 회원 더미 입니다.");
-        }
+    public void saveOrUpdatePlaylist(Playlist playlist) {
+        playlistRepository.findById(playlist.getId())
+                .ifPresentOrElse(
+                        p -> {
+                            p.setName(playlist.getName());
+                            p.setMember(playlist.getMember());
+                        },
+                        () -> playlistRepository.save(playlist)
+                );
     }
 
     public void setupPlaylist() {
         Member kwangstar = memberRepository.findByUsername("kwangstar").get();
         Member yunseong = memberRepository.findByUsername("yunseong").get();
         Member donghyun = memberRepository.findByUsername("donghyun").get();
-        Member test = memberRepository.findByUsername("tester").get();
 
         // kwangstar
         for (int i=1; i<=10; i++) {
-            Playlist playlist = Playlist.builder()
+            saveOrUpdatePlaylist(Playlist.builder()
+                    .id((long) i)
                     .member(kwangstar)
                     .name("kwangstar playlist " + i)
-                    .build();
-            try {
-                playlistRepository.save(playlist);
-            } catch (Exception e) {
-                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
-            }
+                    .build());
         }
         // yunseong
-        for (int i=1; i<=10; i++) {
-            Playlist playlist = Playlist.builder()
+        for (int i=11; i<=20; i++) {
+            saveOrUpdatePlaylist(Playlist.builder()
+                    .id((long) i)
                     .member(yunseong)
                     .name("yunseong playlist " + i)
-                    .build();
-            try {
-                playlistRepository.save(playlist);
-            } catch (Exception e) {
-                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
-            }
+                    .build());
         }
         // donghyun
-        for (int i=1; i<=10; i++) {
-            Playlist playlist = Playlist.builder()
+        for (int i=21; i<=30; i++) {
+            saveOrUpdatePlaylist(Playlist.builder()
+                    .id((long) i)
                     .member(donghyun)
                     .name("donghyun playlist " + i)
-                    .build();
-            try {
-                playlistRepository.save(playlist);
-            } catch (Exception e) {
-                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
-            }
-        }
-        // test
-        for (int i=1; i<=10; i++) {
-            Playlist playlist = Playlist.builder()
-                    .member(test)
-                    .name("test playlist " + i)
-                    .build();
-            try {
-                playlistRepository.save(playlist);
-            } catch (Exception e) {
-                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
-            }
+                    .build());
         }
     }
 

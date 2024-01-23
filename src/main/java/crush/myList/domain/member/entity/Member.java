@@ -36,4 +36,8 @@ public class Member extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "background_image_id")
     private Image backgroundImage;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private Role role;
 }

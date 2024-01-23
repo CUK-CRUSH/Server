@@ -4,6 +4,8 @@ import crush.myList.config.OAuth2.users.FaceBookUser;
 import crush.myList.config.OAuth2.users.GoogleUser;
 import crush.myList.config.OAuth2.users.KakaoUser;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.entity.Role;
+import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +15,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j(topic = "OAuth2UserService")
 @RequiredArgsConstructor
@@ -40,10 +40,15 @@ public class OAuth2Service extends DefaultOAuth2UserService {
 
     private Member findOrSaveMember(OAuth2User oAuth2User, String registrationId, String name) {
         String oauth2Id = registrationId + ":" + oAuth2User.getName();
+        // 임시 유저로 역할 설정
+        Role role = Role.builder()
+                .name(RoleName.TEMPORARY_USER)
+                .build();
         return memberRepository.findByOauth2id(oauth2Id)
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .oauth2id(oauth2Id)
                         .name(name)
+                        .role(role)
                         .build()));
     }
 
