@@ -57,6 +57,9 @@ public class SecurityConfig {
         "/api/v1/member/{id}",
         "/api/v1/member/nickname/avaliable/{username}",
 
+        // 자동완성 api
+        "/api/v1/autocomplete/**",
+
         "/error",
     };
 
