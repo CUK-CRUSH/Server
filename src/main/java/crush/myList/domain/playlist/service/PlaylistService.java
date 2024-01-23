@@ -80,7 +80,9 @@ public class PlaylistService {
         MultipartFile imageFile = patchRequest.getTitleImage();
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            imageService.deleteImageToGcs(playlist.getImage().getId());
+            if (playlist.getImage() != null) {
+                imageService.deleteImageToGcs(playlist.getImage().getId());
+            }
             Image newImage = imageService.saveImageToGcs_Image(imageFile);
 
             playlist.setImage(newImage);
