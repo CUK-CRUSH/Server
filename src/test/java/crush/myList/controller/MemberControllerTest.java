@@ -68,6 +68,23 @@ public class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("닉네임 중복 확인 실패 테스트 - 중복된 닉네임")
+    void checkUsernameFailTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = Member.builder()
+                .oauth2id("1")
+                .username("test")
+                .name("test1")
+                .build();
+        memberRepository.save(member);
+        // when
+        testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/available/{username}", "test")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
     @DisplayName("닉네임 변경 테스트")
     void changeUsernameTest(TestReporter testReporter) throws Exception {
         // given
@@ -85,6 +102,23 @@ public class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("닉네임 변경 실패 테스트 - 중복된 닉네임")
+    void changeUsernameFailTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = Member.builder()
+                .oauth2id("1")
+                .username("test2")
+                .name("test1")
+                .build();
+        memberRepository.save(member);
+        // when
+        testReporter.publishEntry(mvc.perform(put("/api/v1/member/nickname/{username}", "test2")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
     @DisplayName("내 정보 조회 테스트")
     void viewMyInfoTest(TestReporter testReporter) throws Exception {
         // given
@@ -98,6 +132,17 @@ public class MemberControllerTest {
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/me")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
+    @DisplayName("내 정보 조회 실패 테스트 - 존재하지 않는 사용자")
+    void viewMyInfoFailTest(TestReporter testReporter) throws Exception {
+        // given
+        // when
+        testReporter.publishEntry(mvc.perform(get("/api/v1/member/me")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN)))
+                .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString());
     }
 
@@ -136,6 +181,17 @@ public class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("회원 정보 조회 실패 테스트 - 존재하지 않는 사용자")
+    void viewMemberInfoFailTest(TestReporter testReporter) throws Exception {
+        // given
+        // when
+        testReporter.publishEntry(mvc.perform(get("/api/v1/member/{id}", "1")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN)))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
     @Disabled // 매번 테스트마다 GCS에 저장되는 것을 방지하기 위해 비활성화
     @DisplayName("내 정보 수정 테스트")
     void updateMyInfoTest(TestReporter testReporter) throws Exception {
@@ -157,6 +213,23 @@ public class MemberControllerTest {
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                 .with(csrf()))
                 .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
+    @DisplayName("내 정보 수정 실패 테스트 - 존재하지 않는 사용자")
+    void updateMyInfoFailTest(TestReporter testReporter) throws Exception {
+        // given
+        MockMultipartFile profileImageFile = new MockMultipartFile("profileImage", "image.jpg", "image/jpeg", "image".getBytes());
+        MockMultipartFile backgroundImageFile = new MockMultipartFile("backgroundImage", "image.jpg", "image/jpeg", "image".getBytes());
+
+        // when
+        testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member").file(profileImageFile).file(backgroundImageFile)
+                .param("username","test2")
+                .param("introduction","test2")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN))
+                .with(csrf()))
+                .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString());
     }
 }
