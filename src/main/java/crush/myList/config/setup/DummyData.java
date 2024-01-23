@@ -39,10 +39,15 @@ public class DummyData {
                 .name("tester")
                 .build();
 
-        memberRepository.save(kwangstar);
-        memberRepository.save(yunseong);
-        memberRepository.save(donghyun);
-        memberRepository.save(test);
+        try {
+            memberRepository.save(kwangstar);
+            memberRepository.save(yunseong);
+            memberRepository.save(donghyun);
+            memberRepository.save(test);
+        }
+        catch (Exception e) {
+            System.out.println("이미 존재하는 회원 더미 입니다.");
+        }
     }
 
     public void setupPlaylist() {
@@ -57,7 +62,11 @@ public class DummyData {
                     .member(kwangstar)
                     .name("kwangstar playlist " + i)
                     .build();
-            playlistRepository.save(playlist);
+            try {
+                playlistRepository.save(playlist);
+            } catch (Exception e) {
+                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
+            }
         }
         // yunseong
         for (int i=1; i<=10; i++) {
@@ -65,7 +74,11 @@ public class DummyData {
                     .member(yunseong)
                     .name("yunseong playlist " + i)
                     .build();
-            playlistRepository.save(playlist);
+            try {
+                playlistRepository.save(playlist);
+            } catch (Exception e) {
+                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
+            }
         }
         // donghyun
         for (int i=1; i<=10; i++) {
@@ -73,7 +86,11 @@ public class DummyData {
                     .member(donghyun)
                     .name("donghyun playlist " + i)
                     .build();
-            playlistRepository.save(playlist);
+            try {
+                playlistRepository.save(playlist);
+            } catch (Exception e) {
+                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
+            }
         }
         // test
         for (int i=1; i<=10; i++) {
@@ -81,13 +98,21 @@ public class DummyData {
                     .member(test)
                     .name("test playlist " + i)
                     .build();
-            playlistRepository.save(playlist);
+            try {
+                playlistRepository.save(playlist);
+            } catch (Exception e) {
+                System.out.println(playlist.getName() + ": 이미 존재하는 플레이리스트 더미 입니다.");
+            }
         }
     }
 
     @PostConstruct
     public void setupDummyData() {
-        setupMember();
-        setupPlaylist();
+        try {
+            setupMember();
+            setupPlaylist();
+        } catch (Exception e) {
+            System.out.println("더미 데이터 초기화 실패.");
+        }
     }
 }
