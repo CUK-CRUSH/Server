@@ -3,7 +3,10 @@ package crush.myList.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.entity.Role;
+import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.Dto.MusicDto;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
@@ -36,6 +39,8 @@ public class MusicControllerTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private ObjectMapper objectMapper;
@@ -44,10 +49,13 @@ public class MusicControllerTest {
     @Test
     public void musicCrudTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
 
@@ -69,7 +77,7 @@ public class MusicControllerTest {
 
         // when
         /* CREATE */
-        final String POST_API = "/api/v1/playlist/" + playlist.getId().toString() + "/music";
+        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
 
         testReporter.publishEntry(
                 mockMvc.perform(
@@ -82,7 +90,7 @@ public class MusicControllerTest {
         );
 
         /* READ */
-        final String GET_API = "/api/v1/playlist/" + playlist.getId().toString() + "/music";
+        final String GET_API = "/api/v1/music/" + playlist.getId().toString();
 
         testReporter.publishEntry(
                 mockMvc.perform(
@@ -93,12 +101,13 @@ public class MusicControllerTest {
         );
 
         /* DELETE */
-        final String DELETE_API = "/api/v1/playlist/" + playlist.getId() + "/music/" + musicRepository.findAllByPlaylist(playlist).get(0).getId().toString();
+        final String DELETE_API = "/api/v1/music";
 
         testReporter.publishEntry(
                 mockMvc.perform(
                         MockMvcRequestBuilders.delete(DELETE_API)
-                                .header("Authorization", accessToken))
+                                .header("Authorization", accessToken)
+                                .param("musicId", musicRepository.findAll().get(0).getId().toString()))
                         .andExpect(status().isOk())
                         .andReturn().getResponse().getContentAsString()
         );

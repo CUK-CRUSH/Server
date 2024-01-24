@@ -6,21 +6,20 @@ import crush.myList.domain.playlist.service.PlaylistService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@ApiResponse(description = "플레이리스트 API. ")
+@Tag(name = "Playlist", description = "플레이리스트 API")
 @RestController
 @Slf4j(topic = "PlaylistController")
 @RequiredArgsConstructor
@@ -49,13 +48,13 @@ public class PlaylistController {
             @ApiResponse(responseCode = "404", description = "인증 문제 발생", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<PlaylistDto.Response> addPlaylist(
-            @ModelAttribute PlaylistDto.Request request,
+            @ModelAttribute PlaylistDto.PostRequest postRequest,
             @AuthenticationPrincipal SecurityMember member
             ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 생성 성공",
-                playlistService.addPlaylist(member, request)
+                playlistService.addPlaylist(member, postRequest)
         );
     }
 
@@ -69,12 +68,12 @@ public class PlaylistController {
     public JsonBody<PlaylistDto.Response> updatePlaylist(
             @AuthenticationPrincipal SecurityMember member,
             @PathVariable Long playlistId,
-            @ModelAttribute PlaylistDto.Request request
+            @ModelAttribute PlaylistDto.PatchRequest patchRequest
     ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 수정 완료",
-                playlistService.updatePlaylist(member, playlistId, request)
+                playlistService.updatePlaylist(member, playlistId, patchRequest)
         );
     }
 
@@ -90,6 +89,22 @@ public class PlaylistController {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 삭제 완료",
+                playlistId
+        );
+    }
+
+    @Operation(summary = "플레이리스트의 이미지 삭제하기")
+    @DeleteMapping("/{playlistId}/image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "플레이리스트 이미지 삭제 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 이미지 삭제 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<Long> deletePlaylistImage(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId) {
+        playlistService.deletePlaylistImage(member, playlistId);
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "플레이리스트 이미지 삭제 완료",
                 playlistId
         );
     }
