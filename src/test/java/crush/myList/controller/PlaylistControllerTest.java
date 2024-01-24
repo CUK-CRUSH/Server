@@ -47,7 +47,45 @@ public class PlaylistControllerTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @DisplayName("플레이리스트 조회 테스트")
+    @DisplayName("사용자의 모든 플레이리스트 조회 테스트")
+    @Test
+    public void viewAllPlaylistsTest(TestReporter testReporter) throws Exception {
+        // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
+        Member member = Member.builder()
+                .oauth2id("1")
+                .username("test")
+                .name("test1")
+                .role(role)
+                .build();
+        memberRepository.save(member);
+
+        Playlist playlist = Playlist.builder()
+                .name("testPlaylistName")
+                .member(member)
+                .build();
+        playlistRepository.save(playlist);
+
+        Music music = Music.builder()
+                .title("굿굿")
+                .artist("후후")
+                .url("https://youtube.com")
+                .playlist(playlist)
+                .build();
+        musicRepository.save(music);
+
+        final String api = "/api/v1/playlist/user/" + member.getUsername();
+
+        // when
+        testReporter.publishEntry(
+                mockMvc.perform(get(api))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString()
+        );
+    }
+
+    @DisplayName("플레이리스트 단일 조회 테스트")
     @Test
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
@@ -75,7 +113,7 @@ public class PlaylistControllerTest {
                 .build();
         musicRepository.save(music);
 
-        final String api = "/api/v1/playlist/user/" + member.getUsername();
+        final String api = "/api/v1/playlist/" + playlist.getId();
 
         // when
         testReporter.publishEntry(
