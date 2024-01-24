@@ -5,7 +5,10 @@ import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.config.security.SecurityUserDetailsService;
 import crush.myList.domain.member.controller.MemberController;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.entity.Role;
+import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.member.service.MemberService;
 import crush.myList.global.enums.JwtTokenType;
 import io.jsonwebtoken.Claims;
@@ -48,16 +51,21 @@ public class MemberControllerTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @Test
     @DisplayName("닉네임 중복 확인 테스트")
     void checkUsernameTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
         // when
@@ -71,10 +79,13 @@ public class MemberControllerTest {
     @DisplayName("닉네임 중복 확인 실패 테스트 - 중복된 닉네임")
     void checkUsernameFailTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
         // when
@@ -88,14 +99,17 @@ public class MemberControllerTest {
     @DisplayName("닉네임 변경 테스트")
     void changeUsernameTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
         // when
-        testReporter.publishEntry(mvc.perform(put("/api/v1/member/nickname/{username}", "test2")
+        testReporter.publishEntry(mvc.perform(put("/api/v1/member/me/{username}", "test2")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
@@ -105,14 +119,17 @@ public class MemberControllerTest {
     @DisplayName("닉네임 변경 실패 테스트 - 중복된 닉네임")
     void changeUsernameFailTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test2")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
         // when
-        testReporter.publishEntry(mvc.perform(put("/api/v1/member/nickname/{username}", "test2")
+        testReporter.publishEntry(mvc.perform(put("/api/v1/member/me/{username}", "test2")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().toString());
@@ -122,10 +139,13 @@ public class MemberControllerTest {
     @DisplayName("내 정보 조회 테스트")
     void viewMyInfoTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
         // when
@@ -152,10 +172,13 @@ public class MemberControllerTest {
     @DisplayName("회원 정보 조회 테스트 - id로 조회")
     void viewMemberInfoTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
         // when
@@ -169,10 +192,13 @@ public class MemberControllerTest {
     @DisplayName("회원 정보 조회 테스트 - 닉네임으로 조회")
     void viewMemberInfoTest2(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
         // when
@@ -187,8 +213,8 @@ public class MemberControllerTest {
     void viewMemberInfoFailTest(TestReporter testReporter) throws Exception {
         // given
         // when
-        testReporter.publishEntry(mvc.perform(get("/api/v1/member/{id}", "1")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN)))
+        testReporter.publishEntry(mvc.perform(get("/api/v1/member/id/{id}", "999999999"))
+//                .header("Authorization", "Bearer " + jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse().toString());
     }

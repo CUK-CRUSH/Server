@@ -43,7 +43,7 @@ public class MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 회원입니다."));
         member.setUsername(username);
-        if (member.getRole().getName() == RoleName.TEMPORARY_USER) {
+        if (member.getRole().getName() == RoleName.TEMPORARY) {
             Role role = roleRepository.findByName(RoleName.USER)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "역할을 찾을 수 없습니다."));
             member.setRole(role);

@@ -28,8 +28,7 @@ public class MemberController {
 
     @Operation(summary = "id로 특정 회원 정보 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = MemberDto.class))}),
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
     })
     @GetMapping("/id/{id}")
@@ -40,8 +39,7 @@ public class MemberController {
 
     @Operation(summary = "닉네임으로 특정 회원 정보 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = MemberDto.class))}),
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
     })
     @GetMapping("/nickname/{username}")
@@ -52,8 +50,7 @@ public class MemberController {
 
     @Operation(summary = "내 정보 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = MemberDto.class))}),
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "404", description = "회원 정보 조회 실패", content = {@Content(mediaType = "application/json")})
     })
     @GetMapping("/me")
@@ -63,8 +60,7 @@ public class MemberController {
     }
     @Operation(summary = "내 정보 수정")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = EditProfileRes.class))}),
+            @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "회원 정보 수정 실패", content = {@Content(mediaType = "application/json")})
     })
     @PatchMapping(value = "/me", consumes = "multipart/form-data")
@@ -75,8 +71,7 @@ public class MemberController {
 
     @Operation(summary = "회원 닉네임 변경")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "닉네임 변경 성공", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "200", description = "닉네임 변경 성공", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "닉네임 변경 실패", content = {@Content(mediaType = "application/json")})
     })
     @PutMapping("/me/{username}")
@@ -87,8 +82,7 @@ public class MemberController {
 
     @Operation(summary = "회원 닉네임 중복 검사")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "사용 가능한 닉네임", content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "200", description = "사용 가능한 닉네임", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "이미 사용중인 닉네임", content = {@Content(mediaType = "application/json")})
     })
     @GetMapping("/nickname/available/{username}")

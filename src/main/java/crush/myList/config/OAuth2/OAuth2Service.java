@@ -7,6 +7,7 @@ import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Service
 public class OAuth2Service extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -41,9 +43,8 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     private Member findOrSaveMember(OAuth2User oAuth2User, String registrationId, String name) {
         String oauth2Id = registrationId + ":" + oAuth2User.getName();
         // 임시 유저로 역할 설정
-        Role role = Role.builder()
-                .name(RoleName.TEMPORARY_USER)
-                .build();
+        Role role = roleRepository.findByName(RoleName.TEMPORARY)
+                .orElseThrow(() -> new OAuth2AuthenticationException("존재하지 않는 권한입니다."));
         return memberRepository.findByOauth2id(oauth2Id)
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .oauth2id(oauth2Id)

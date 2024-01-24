@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum RoleName {
-    TEMPORARY_USER("TEMPORARY_USER"), USER("USER"), ADMIN("ADMIN");
+    TEMPORARY("ROLE_TEMPORARY"), USER("ROLE_USER"), ADMIN("ROLE_ADMIN");
 
     private final String value;
 }
