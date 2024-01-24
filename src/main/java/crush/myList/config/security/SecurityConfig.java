@@ -36,6 +36,7 @@ public class SecurityConfig {
     private final String[] GET_LIST = {
         // 플레이리스트 조회 api
         "/api/v1/playlist/user/{username}",
+        "/api/v1/playlist/{playlistId}",
         // 음악 조회 api
         "/api/v1/music/{playlistId}",
         // 사용자 조회 api
