@@ -1,12 +1,17 @@
 package crush.myList.config.setup;
 
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.entity.Role;
+import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 
@@ -16,6 +21,7 @@ import javax.annotation.PostConstruct;
 public class DummyData {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
+    private final RoleRepository roleRepository;
 
     // 더미 사용자가 존재하면 업데이트, 없으면 저장
     public void saveOrUpdateMember(Member member) {
@@ -32,25 +38,31 @@ public class DummyData {
                 );
     }
     public void setupMember() {
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new RuntimeException("역할을 찾을 수 없습니다."));
         saveOrUpdateMember(Member.builder()
                 .oauth2id("test:111111111111")
                 .username("kwangstar")
                 .name("kwangstar")
+                .role(role)
                 .build());
         saveOrUpdateMember(Member.builder()
                 .oauth2id("test:222222222222")
                 .username("yunseong")
                 .name("yunseong")
+                .role(role)
                 .build());
         saveOrUpdateMember(Member.builder()
                 .oauth2id("test:333333333333")
                 .username("donghyun")
                 .name("donghyun")
+                .role(role)
                 .build());
         saveOrUpdateMember(Member.builder()
                 .oauth2id("test:444444444444")
                 .username("tester")
                 .name("tester")
+                .role(role)
                 .build());
     }
 
