@@ -49,13 +49,15 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 조회 테스트")
     @Test
-    @Disabled
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
 
