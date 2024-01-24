@@ -160,7 +160,9 @@ public class MemberControllerTest {
     void viewMyInfoFailTest(TestReporter testReporter) throws Exception {
         // given
         String token = jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN);
-        memberRepository.deleteById(1L);
+        if (memberRepository.findById(1L).isPresent()) {
+            memberRepository.deleteById(1L);
+        }
         // when
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/me")
                 .header("Authorization", "Bearer " + token))
@@ -251,7 +253,9 @@ public class MemberControllerTest {
         MockMultipartFile profileImageFile = new MockMultipartFile("profileImage", "image.jpg", "image/jpeg", "image".getBytes());
         MockMultipartFile backgroundImageFile = new MockMultipartFile("backgroundImage", "image.jpg", "image/jpeg", "image".getBytes());
         String token = jwtTokenProvider.createToken("1", JwtTokenType.ACCESS_TOKEN);
-        memberRepository.deleteById(1L);
+        if (memberRepository.findById(1L).isPresent()) {
+            memberRepository.deleteById(1L);
+        }
 
         // when
         testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member").file(profileImageFile).file(backgroundImageFile)
