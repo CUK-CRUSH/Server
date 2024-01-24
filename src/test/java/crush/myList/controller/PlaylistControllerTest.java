@@ -2,7 +2,10 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.entity.Role;
+import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.Entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
@@ -39,6 +42,8 @@ public class PlaylistControllerTest {
     private MusicRepository musicRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private RoleRepository roleRepository;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
@@ -154,13 +159,15 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 삭제 테스트")
     @Test
-    @Disabled
     public void deletePlaylistTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
 
@@ -182,13 +189,17 @@ public class PlaylistControllerTest {
     }
 
     @DisplayName("플레이리스트 이미지 삭제 테스트")
+    @Disabled
     @Test
     public void deletePlaylistImageTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
 

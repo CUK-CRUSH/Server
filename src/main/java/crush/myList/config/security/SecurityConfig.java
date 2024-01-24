@@ -6,9 +6,11 @@ import crush.myList.config.OAuth2.handler.LoginSuccessHandler;
 import crush.myList.config.OAuth2.OAuth2Service;
 import crush.myList.config.jwt.JwtAuthenticationFilter;
 import crush.myList.config.jwt.JwtTokenProvider;
+import crush.myList.domain.member.enums.RoleName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,6 +33,27 @@ public class SecurityConfig {
     private final LoginFailureHandler loginFailureHandler;
     private final EnvBean envBean;
 
+    private final String[] GET_LIST = {
+        // 플레이리스트 조회 api
+        "/api/v1/playlist/user/{username}",
+        // 음악 조회 api
+        "/api/v1/music/{playlistId}",
+        // 사용자 조회 api
+        "/api/v1/member/id/{id}",
+        "/api/v1/member/nickname/{username}",
+        "/api/v1/member/nickname/available/{username}",
+        // 자동완성 api
+        "/api/v1/autocomplete/**",
+        // 에러 페이지
+        "/error",
+    };
+
+    private final String[] TEMPORARY_LIST = {
+        // 사용자 api
+        "/api/v1/member/me",
+        "/api/v1/member/me/{username}",
+    };
+
     private final String[] WHITE_LIST = {
         // swagger
         "/v3/api-docs/**",
@@ -45,30 +68,28 @@ public class SecurityConfig {
 
         // refresh token으로 access token 재발급
         "/login/token/reissue",
-
-        // file upload
-        "/api/v1/image/**",
-
-        // 조회 api
-        "/api/v1/playlist/user/**",
-        "/api/v1/music/{playlistId}",
-
-        // 사용자 api
-        "/api/v1/member/{id}",
-        "/api/v1/member/nickname/avaliable/{username}",
-
-        // 자동완성 api
-        "/api/v1/autocomplete/**",
-
-        "/error",
+//
+//        // 조회 api
+//        "/api/v1/playlist/user/**",
+//        "/api/v1/music/{playlistId}",
+//
+//        // 사용자 api
+//        "/api/v1/member/id/{id}",
+//        "/api/v1/member/username/{username}",
+//        "/api/v1/member/nickname/available/{username}",
+//
+//        "/error",
     };
 
     @Bean
     protected SecurityFilterChain myConfig(HttpSecurity http) throws Exception {
         /* 허용 페이지 등록 */
         http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(WHITE_LIST).permitAll()  // 모든 사용자 허용 경로
-                        .anyRequest().authenticated())  // 그 외 나머지 경로는 전부 인증 필요
+                        .requestMatchers(HttpMethod.GET, GET_LIST).permitAll()  // 모든 사용자 허용 경로 (GET 메소드)
+                        .requestMatchers(TEMPORARY_LIST).hasAnyRole(RoleName.TEMPORARY.name(), RoleName.USER.name())  // 임시 유저 이상만 허용
+                        .requestMatchers("/api/v1/**").hasAnyRole(RoleName.USER.name())  // 닉네임이 설정된 USER 권한 이상만 허용
+                        .requestMatchers(WHITE_LIST).permitAll()  // 모든 사용자 허용 경로 (모든 메소드)
+                        .anyRequest().authenticated())  // 그 외 나머지 경로는 전부 로그인 필요
 //                        .anyRequest().permitAll())  // 그 외 나머지 경로는 전부 허용
                 .cors(cors -> cors
                         .configurationSource(request -> {

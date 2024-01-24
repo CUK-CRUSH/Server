@@ -69,14 +69,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 //    // JWT 토큰에서 인증 정보 조회
-    public Authentication getAuthentication(Jws<Claims> claimsJws) {
+    public Authentication getAuthentication(Jws<Claims> claimsJws) throws IllegalArgumentException {
         String memberId = claimsJws.getBody().getSubject();
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         UserDetails userDetails = securityUserDetailsService.loadUserByUsername(member.getId().toString());
         // todo: 권한 부여 설정해야함
-        return new UsernamePasswordAuthenticationToken(userDetails, "", null);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
 // JWT 토큰에서 회원 정보 추출
