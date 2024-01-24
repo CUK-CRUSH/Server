@@ -1,5 +1,6 @@
 package crush.myList.domain.music.Repository;
 
+import com.google.protobuf.MessageLite;
 import crush.myList.domain.music.Entity.Music;
 import crush.myList.domain.playlist.entity.Playlist;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import java.util.List;
 public interface MusicRepository extends JpaRepository<Music, Long> {
     List<Music> findAllByPlaylist(Playlist playlist);
     void deleteAllByPlaylist(Playlist playlist);
+
+    public Long countByPlaylist(Playlist playlist);
 }
