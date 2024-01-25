@@ -12,7 +12,7 @@ public class MusicDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Request {
+    public static class PostRequest {
         @Schema(name = "title", description = "음악 제목입니다.")
         @NotEmpty
         private String title;
@@ -23,6 +23,22 @@ public class MusicDto {
 
         @Schema(name = "url", description = "음악 링크 이름입니다.")
         @NotBlank
+        private String url;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PatchRequest {
+        @Schema(name = "title", description = "음악 제목입니다.")
+        private String title;
+
+        @Schema(name = "artist", description = "아티스트 이름입니다.")
+        private String artist;
+
+        @Schema(name = "url", description = "음악 링크 이름입니다.")
         private String url;
     }
 
