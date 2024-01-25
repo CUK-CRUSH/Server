@@ -140,7 +140,16 @@ public class PlaylistService {
                 .playlistName(playlist.getName())
                 .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                 // counts musics in playlist
-                .numberOfMusics((long) musicRepository.findAllByPlaylist(playlist).size())
+                .numberOfMusics(musicRepository.countByPlaylist(playlist))
                 .build();
+    }
+
+    // playlistId로 playlist 단일 조회
+    public PlaylistDto.Response getPlaylist(String playlistId) {
+        Playlist playlist = playlistRepository.findById(Long.parseLong(playlistId)).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
+
+        return convertToDto(playlist);
     }
 }

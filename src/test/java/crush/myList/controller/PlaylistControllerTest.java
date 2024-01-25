@@ -2,7 +2,10 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.entity.Role;
+import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.Entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
@@ -40,17 +43,21 @@ public class PlaylistControllerTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @DisplayName("플레이리스트 조회 테스트")
+    @DisplayName("사용자의 모든 플레이리스트 조회 테스트")
     @Test
-    @Disabled
-    public void viewPlaylistTest(TestReporter testReporter) throws Exception {
+    public void viewAllPlaylistsTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
 
@@ -69,6 +76,44 @@ public class PlaylistControllerTest {
         musicRepository.save(music);
 
         final String api = "/api/v1/playlist/user/" + member.getUsername();
+
+        // when
+        testReporter.publishEntry(
+                mockMvc.perform(get(api))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString()
+        );
+    }
+
+    @DisplayName("플레이리스트 단일 조회 테스트")
+    @Test
+    public void viewPlaylistTest(TestReporter testReporter) throws Exception {
+        // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
+        Member member = Member.builder()
+                .oauth2id("1")
+                .username("test")
+                .name("test1")
+                .role(role)
+                .build();
+        memberRepository.save(member);
+
+        Playlist playlist = Playlist.builder()
+                .name("testPlaylistName")
+                .member(member)
+                .build();
+        playlistRepository.save(playlist);
+
+        Music music = Music.builder()
+                .title("굿굿")
+                .artist("후후")
+                .url("https://youtube.com")
+                .playlist(playlist)
+                .build();
+        musicRepository.save(music);
+
+        final String api = "/api/v1/playlist/" + playlist.getId();
 
         // when
         testReporter.publishEntry(
@@ -154,13 +199,15 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 삭제 테스트")
     @Test
-    @Disabled
     public void deletePlaylistTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
 
@@ -182,13 +229,17 @@ public class PlaylistControllerTest {
     }
 
     @DisplayName("플레이리스트 이미지 삭제 테스트")
+    @Disabled
     @Test
     public void deletePlaylistImageTest(TestReporter testReporter) throws Exception {
         // given
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
                 .oauth2id("1")
                 .username("test")
                 .name("test1")
+                .role(role)
                 .build();
         memberRepository.save(member);
 

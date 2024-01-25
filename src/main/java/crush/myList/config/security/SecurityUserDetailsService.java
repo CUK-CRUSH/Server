@@ -22,6 +22,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
                 .oauth2id(member.getOauth2id())
                 .username(member.getUsername())
                 .name(member.getName())
+                .role(member.getRole().getName())
                 .build();
     }
 }

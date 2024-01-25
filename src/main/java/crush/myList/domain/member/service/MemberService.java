@@ -6,7 +6,10 @@ import crush.myList.domain.member.dto.EditProfileReq;
 import crush.myList.domain.member.dto.EditProfileRes;
 import crush.myList.domain.member.dto.MemberDto;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.entity.Role;
+import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j(topic = "MemberService")
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final RoleRepository roleRepository;
     // service
     private final ImageService imageService;
 
@@ -37,8 +41,13 @@ public class MemberService {
         checkUsername(username);
 
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 회원입니다."));
         member.setUsername(username);
+        if (member.getRole().getName() == RoleName.TEMPORARY) {
+            Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "역할을 찾을 수 없습니다."));
+            member.setRole(role);
+        }
     }
 
     /** 사용자 이미지 변경 */
@@ -74,8 +83,7 @@ public class MemberService {
 
         // username 수정
         if (editProfileReq.getUsername() != null) {
-            checkUsername(editProfileReq.getUsername());
-            findMember.setUsername(editProfileReq.getUsername());
+            changeUsername(memberId, editProfileReq.getUsername());
         }
         // introduction 수정
         if (editProfileReq.getIntroduction() != null) {
