@@ -56,8 +56,10 @@ public class MemberControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     public Member createTestMember() {
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
+        Role role = Role.builder()
+                .name(RoleName.USER)
+                .build();
+        roleRepository.save(role);
         return Member.builder()
                 .oauth2id("test:1")
                 .username("test")

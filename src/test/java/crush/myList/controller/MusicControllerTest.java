@@ -46,6 +46,19 @@ public class MusicControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    public Member createTestMember() {
+        Role role = Role.builder()
+                .name(RoleName.USER)
+                .build();
+        roleRepository.save(role);
+        return Member.builder()
+                .oauth2id("test:1")
+                .username("test")
+                .name("test1")
+                .role(role)
+                .build();
+    }
+
     @DisplayName("음악 CRUD 통합테스트")
     @Test
     @Disabled
@@ -119,7 +132,16 @@ public class MusicControllerTest {
     @Test
     public void getMusicsTest(TestReporter testReporter) throws Exception {
         // given
-        final String GET_API = "/api/v1/music/1?page=0";
+        Member member = createTestMember();
+        memberRepository.save(member);
+
+        Playlist playlist = Playlist.builder()
+                .member(member)
+                .name("TestPlaylist")
+                .build();
+        playlistRepository.save(playlist);
+
+        final String GET_API = "/api/v1/music/" + playlist.getId().toString() + "?page=0";
 
         // when
         testReporter.publishEntry(mockMvc.perform(
