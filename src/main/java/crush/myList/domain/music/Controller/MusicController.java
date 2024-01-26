@@ -47,11 +47,26 @@ public class MusicController {
             @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "음악 생성 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<MusicDto.Result> addMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @RequestBody MusicDto.Request request) {
+    public JsonBody<MusicDto.Result> addMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @RequestBody MusicDto.PostRequest postRequest) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "음악 추가 성공",
-                musicService.addMusic(member, playlistId, request)
+                musicService.addMusic(member, playlistId, postRequest)
+        );
+    }
+
+    @Operation(summary = "음악 수정하기")
+    @PatchMapping("")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "음악 수정 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "음악 수정 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<MusicDto.Result> updateMusic(@AuthenticationPrincipal SecurityMember member, @RequestParam Long musicId, @RequestBody MusicDto.PatchRequest patchRequest) {
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "음악 수정 성공",
+                musicService.updateMusic(member, musicId, patchRequest)
         );
     }
 

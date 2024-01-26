@@ -9,6 +9,7 @@ import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
+import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class PlaylistService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
-        List<Playlist> playlistEntities = playlistRepository.findAllByMember(member);
+        List<Playlist> playlistEntities = playlistRepository.findAllByMemberOrderByCreatedDateDesc(member);
         return convertToDtoList(playlistEntities);
     }
 
@@ -45,8 +46,12 @@ public class PlaylistService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
+        if (playlistRepository.countByMember(member) >= LimitConstants.PLAYLIST_LIMIT.getLimit()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("플레이리스트는 %d개까지만 생성할 수 있습니다.", LimitConstants.PLAYLIST_LIMIT.getLimit()));
+        }
+
         String name = postRequest.getPlaylistName();
-        if (name == null || name.isEmpty()) {
+        if (name.isBlank()) {
             name = "Untitled";
         }
 
