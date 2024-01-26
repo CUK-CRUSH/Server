@@ -47,10 +47,8 @@ public class MusicControllerTest {
     private ObjectMapper objectMapper;
 
     public Member createTestMember() {
-        Role role = Role.builder()
-                .name(RoleName.USER)
-                .build();
-        roleRepository.save(role);
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         return Member.builder()
                 .oauth2id("test:1")
                 .username("test")
