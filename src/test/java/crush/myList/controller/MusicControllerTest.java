@@ -114,4 +114,19 @@ public class MusicControllerTest {
                         .andReturn().getResponse().getContentAsString()
         );
     }
+
+    @DisplayName("음악 조회 테스트")
+    @Test
+    public void getMusicsTest() throws Exception {
+        // given
+        final String GET_API = "/api/v1/music/1?page=0";
+
+        // when
+        System.out.println(mockMvc.perform(
+                MockMvcRequestBuilders.get(GET_API)
+        )
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString());
+    }
 }

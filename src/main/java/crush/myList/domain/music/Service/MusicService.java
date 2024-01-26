@@ -10,6 +10,10 @@ import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,12 +29,13 @@ public class MusicService {
     private final PlaylistRepository playlistRepository;
     private final MusicRepository musicRepository;
 
-    public List<MusicDto.Result> getMusics(Long playlistId) {
+    public List<MusicDto.Result> getMusics(Long playlistId, int page) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
+        Pageable pageable = PageRequest.of(page, LimitConstants.PLAYLIST_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.DESC, "createdDate"));
 
-        List<Music> musics = musicRepository.findAllByPlaylist(playlist);
+        Page<Music> musics = musicRepository.findAllByPlaylist(playlist, pageable);
         return convertToDtoList(musics);
     }
 
@@ -97,7 +102,7 @@ public class MusicService {
         musicRepository.delete(music);
     }
 
-    private List<MusicDto.Result> convertToDtoList(List<Music> musicEntities) {
+    private List<MusicDto.Result> convertToDtoList(Page<Music> musicEntities) {
         return musicEntities.stream()
                 .map(this::convertToDto)
                 .toList();
