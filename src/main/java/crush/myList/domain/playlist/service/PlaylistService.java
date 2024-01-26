@@ -51,7 +51,7 @@ public class PlaylistService {
         }
 
         String name = postRequest.getPlaylistName();
-        if (name.isBlank()) {
+        if (name == null || name.isBlank()) {
             name = "Untitled";
         }
 
