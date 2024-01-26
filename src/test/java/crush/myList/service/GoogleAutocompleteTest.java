@@ -23,7 +23,7 @@ public class GoogleAutocompleteTest {
         String text = "뉴진스";
 
         // when
-        List<String> list = googleAutocomplete.getAutocomplete(language, text);
+        List<String> list = googleAutocomplete.getAutocomplete(language, text, 4);
 
         // then
         list.forEach(System.out::println);

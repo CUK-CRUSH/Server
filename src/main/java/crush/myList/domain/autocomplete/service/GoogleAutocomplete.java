@@ -30,7 +30,7 @@ public class GoogleAutocomplete implements Autocomplete {
     public static final String ENGLISH = "en";
 
     /** XML에서 문장 정보를 파싱하여 리스트로 반환합니다. */
-    public List<String> getList(String xml) throws Exception {
+    public List<String> getList(String xml, int maxSize) throws Exception {
         List<String> list = new ArrayList<>();
 
         // XML 데이터 파싱을 위한 초기화
@@ -42,14 +42,15 @@ public class GoogleAutocomplete implements Autocomplete {
 
         // 존재하는 모든 결과 문장을 리스트에 담아서 반환
         NodeList nodeList = document.getElementsByTagName("suggestion");
-        for (int i = 0; i < nodeList.getLength(); i++) {
+        for (int i = 0; i < nodeList.getLength() && i < maxSize; i++) {
             list.add(nodeList.item(i).getAttributes().getNamedItem("data").getNodeValue());
         }
         return list;
     }
 
     /** 구글 자동완성 API */
-    public List<String> getAutocomplete(String language, String text) throws ResponseStatusException {
+    @Override
+    public List<String> getAutocomplete(String language, String text, int maxSize) throws ResponseStatusException {
         try {
             // 변환할 문장을 UTF-8로 인코딩
             String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
@@ -64,7 +65,7 @@ public class GoogleAutocomplete implements Autocomplete {
                 response.append(inputLine);
             }
             br.close();
-            return getList(response.toString());
+            return getList(response.toString(), maxSize);
 
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "구글 자동완성 API 서버와 통신에 실패했습니다. " + e.getMessage());
