@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     List<Playlist> findAllByMember(Member member);
+    Long countByMember(Member member);
+    List<Playlist> findAllByMemberOrderByCreatedDateDesc(Member member);
 }
