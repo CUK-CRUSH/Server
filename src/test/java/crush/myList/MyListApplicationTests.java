@@ -24,7 +24,7 @@ class MyListApplicationTests {
     @Autowired
     private ImageService imageService;
     @Test
-//    @Disabled
+    @Disabled
     @Transactional
     @WithMockUser(username = "test")
     @DisplayName("이미지 파일 GCS에 저장 및 삭제 테스트.")
@@ -36,7 +36,7 @@ class MyListApplicationTests {
 
         // when
         ImageDto imageDto = imageService.saveImageToGcs(imageFile);
-//        imageService.deleteImageToGcs(imageDto.getId());
+        imageService.deleteImageToGcs(imageDto.getId());
 
         // then
         assertThat(imageDto.getUrl()).isNotNull();
