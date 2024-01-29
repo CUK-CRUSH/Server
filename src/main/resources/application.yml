@@ -50,3 +50,6 @@ server:
 
 react:
   uri: ${REACT_URI}
+
+perspective:
+  api-key: ${PERSPECTIVE_API_KEY}
