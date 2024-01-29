@@ -44,9 +44,7 @@ public class SecurityConfig {
         "/api/v1/member/nickname/{username}",
         "/api/v1/member/nickname/available/{username}",
         // 자동완성 api
-        "/api/v1/autocomplete/**",
-        // 에러 페이지
-        "/error",
+        "/api/v1/autocomplete/**"
     };
 
     private final String[] TEMPORARY_LIST = {
@@ -78,8 +76,8 @@ public class SecurityConfig {
 //        "/api/v1/member/id/{id}",
 //        "/api/v1/member/username/{username}",
 //        "/api/v1/member/nickname/available/{username}",
-//
-//        "/error",
+        // 에러 페이지
+        "/error"
     };
 
     @Bean
