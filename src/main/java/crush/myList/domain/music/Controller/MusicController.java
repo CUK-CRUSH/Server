@@ -32,11 +32,12 @@ public class MusicController {
             @ApiResponse(responseCode = "200", description = "음악 조회 성공"),
             @ApiResponse(responseCode = "404", description = "음악 조회 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<List<MusicDto.Result>> getMusics(@PathVariable Long playlistId) {
+    public JsonBody<List<MusicDto.Result>> getMusics(@PathVariable Long playlistId,
+                                                     @RequestParam(required = false, defaultValue = "0") Integer page) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "음악 조회 성공",
-                musicService.getMusics(playlistId)
+                musicService.getMusics(playlistId, page)
         );
     }
 

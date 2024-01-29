@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum LimitConstants {
     PLAYLIST_LIMIT(4),
-    MUSIC_LIMIT(9);
+    MUSIC_LIMIT(9),
+
+    PLAYLIST_PAGE_SIZE(6);
 
     private final int limit;
 }

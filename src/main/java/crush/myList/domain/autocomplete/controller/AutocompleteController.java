@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/v1/autocomplete")
 public class AutocompleteController {
     private final Autocomplete autocomplete;
+    private final static int DEFAULT_MAX_SIZE = 4;
 
     @Operation(summary = "구글 자동완성 API")
     @Parameter(name = "language", description = "언어 설정", required = true, examples ={
@@ -30,6 +31,6 @@ public class AutocompleteController {
     @Parameter(name = "text", description = "검색어", required = true)
     @GetMapping("/google")
     public JsonBody<List<String>> getAutocompleteGoogle(@RequestParam String language, @RequestParam String text) {
-        return JsonBody.of(200, "구글 자동완성 결과", autocomplete.getAutocomplete(language, text));
+        return JsonBody.of(200, "구글 자동완성 결과", autocomplete.getAutocomplete(language, text, DEFAULT_MAX_SIZE));
     }
 }

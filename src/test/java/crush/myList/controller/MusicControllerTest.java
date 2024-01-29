@@ -46,6 +46,17 @@ public class MusicControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    public Member createTestMember() {
+        Role role = roleRepository.findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
+        return Member.builder()
+                .oauth2id("test:1")
+                .username("test")
+                .name("test1")
+                .role(role)
+                .build();
+    }
+
     @DisplayName("음악 CRUD 통합테스트")
     @Test
     @Disabled
@@ -113,5 +124,29 @@ public class MusicControllerTest {
                         .andExpect(status().isOk())
                         .andReturn().getResponse().getContentAsString()
         );
+    }
+
+    @DisplayName("음악 조회 테스트")
+    @Test
+    public void getMusicsTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = createTestMember();
+        memberRepository.save(member);
+
+        Playlist playlist = Playlist.builder()
+                .member(member)
+                .name("TestPlaylist")
+                .build();
+        playlistRepository.save(playlist);
+
+        final String GET_API = "/api/v1/music/" + playlist.getId().toString() + "?page=0";
+
+        // when
+        testReporter.publishEntry(mockMvc.perform(
+                MockMvcRequestBuilders.get(GET_API)
+        )
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString());
     }
 }
