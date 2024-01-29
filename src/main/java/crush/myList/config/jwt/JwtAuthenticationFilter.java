@@ -40,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (!jwtTokenProvider.isAccessToken(claims)) {
                     throw new JwtException("토큰 타입이 올바르지 않습니다.");
                 }
+                log.info("토큰 검증 완료");
                 // 토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
                 Authentication authentication = jwtTokenProvider.getAuthentication(claims);
                 // SecurityContext 에 Authentication 객체를 저장합니다.
@@ -50,6 +51,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) { // 유효하지 않은 토큰
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Expired token");
+        } catch (JwtException e) { // 유효하지 않은 토큰
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid token");
+            log.error(e.getMessage());
         } catch (Exception e) { // 올바르지 않은 토큰
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("Invalid token");
