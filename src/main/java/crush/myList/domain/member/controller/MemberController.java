@@ -9,7 +9,6 @@ import crush.myList.domain.member.service.UsernameService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -89,7 +88,7 @@ public class MemberController {
     })
     @GetMapping("/nickname/available/{username}")
     public JsonBody<String> checkNickname(@PathVariable String username) {
-        usernameService.checkUsername(username);
+        usernameService.checkDuplication(username);
         return JsonBody.of(HttpStatus.OK.value(), "사용 가능한 닉네임", username);
     }
 }
