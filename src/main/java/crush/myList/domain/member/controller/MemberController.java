@@ -5,10 +5,10 @@ import crush.myList.domain.member.dto.EditProfileReq;
 import crush.myList.domain.member.dto.EditProfileRes;
 import crush.myList.domain.member.dto.MemberDto;
 import crush.myList.domain.member.service.MemberService;
+import crush.myList.domain.member.service.UsernameService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/member")
 public class MemberController {
     private final MemberService memberService;
+    private final UsernameService usernameService;
 
     @Operation(summary = "id로 특정 회원 정보 조회")
     @ApiResponses(value = {
@@ -87,7 +88,7 @@ public class MemberController {
     })
     @GetMapping("/nickname/available/{username}")
     public JsonBody<String> checkNickname(@PathVariable String username) {
-        memberService.checkUsername(username);
+        usernameService.checkDuplication(username);
         return JsonBody.of(HttpStatus.OK.value(), "사용 가능한 닉네임", username);
     }
 }

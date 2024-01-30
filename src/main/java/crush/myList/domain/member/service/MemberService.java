@@ -27,18 +27,11 @@ public class MemberService {
     private final RoleRepository roleRepository;
     // service
     private final ImageService imageService;
-
-    /** 사용자 닉네임 유효성 검사 */
-    public void checkUsername(String username) {
-        if (memberRepository.existsByUsername(username)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 닉네임입니다.");
-        }
-        // todo: 닉네임 정규식 검사
-    }
+    private final UsernameService usernameService;
 
     /** 사용자 닉네임 변경 */
     public void changeUsername(Long id, String username) {
-        checkUsername(username);
+        usernameService.checkUsername(username);
 
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 회원입니다."));
