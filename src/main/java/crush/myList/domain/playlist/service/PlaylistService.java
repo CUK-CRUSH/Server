@@ -84,6 +84,14 @@ public class PlaylistService {
             playlist.setName(patchRequest.getPlaylistName());
         }
 
+        if (patchRequest.getDeletePlaylistImage() != null && patchRequest.getDeletePlaylistImage()) {
+            Image image = playlist.getImage();
+            if (image != null) {
+                imageService.deleteImageToGcs(image.getId());
+            }
+            playlist.setImage(null);
+        }
+
         MultipartFile imageFile = patchRequest.getTitleImage();
 
         if (imageFile != null && !imageFile.isEmpty()) {
