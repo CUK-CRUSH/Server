@@ -37,7 +37,6 @@ public class MusicService {
         if (!url.matches("^https://(www\\.)?(youtube\\.com/watch\\?v=|youtu\\.be/)[a-zA-Z0-9_-]{11}([?&].*)?$")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 URL입니다.");
         }
-
         return url;
     }
 
