@@ -35,12 +35,15 @@ public class UsernameService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<PerspectiveDtoResponse> response = restTemplate.postForEntity(url, requestBody, PerspectiveDtoResponse.class);
 
-        if (response.getBody() == null) {
+        try {
+            Double toxicityScore = response.getBody().getAttributeScores().getTOXICITY().getSummaryScore().getValue();
+            if (toxicityScore > BADWORD_THRESHOLD) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임이 부적절합니다.");
+            }
+        } catch (NullPointerException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "통신에 실패했습니다");
-        }
-
-        if (response.getBody().getAttributeScores().getTOXICITY().getSummaryScore().getValue() > BADWORD_THRESHOLD) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임이 부적절합니다.");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류가 발생했습니다.");
         }
     }
 
