@@ -73,17 +73,17 @@ public class MusicService {
         }
 
         String title = patchRequest.getTitle();
-        if (!title.isBlank()) {
+        if (title != null && !title.isBlank()) {
             music.setTitle(title);
         }
 
         String artist = patchRequest.getArtist();
-        if (!artist.isBlank()) {
+        if (artist != null && !artist.isBlank()) {
             music.setArtist(artist);
         }
 
         String url = patchRequest.getUrl();
-        if (!url.isBlank()) {
+        if (url != null && !url.isBlank()) {
             music.setUrl(url);
         }
 

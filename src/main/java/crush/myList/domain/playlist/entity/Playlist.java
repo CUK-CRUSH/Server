@@ -2,9 +2,13 @@ package crush.myList.domain.playlist.entity;
 
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.music.Entity.Music;
 import crush.myList.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "playlist")
@@ -28,4 +32,7 @@ public class Playlist extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_image")
     private Image image;
+
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Music> musics = new ArrayList<>();
 }
