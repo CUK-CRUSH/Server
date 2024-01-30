@@ -70,7 +70,8 @@ public class MemberController {
         return JsonBody.of(HttpStatus.OK.value(), "회원 정보 수정 성공", res);
     }
 
-    @Operation(summary = "회원 닉네임 변경")
+    // todo: deprecated API
+    @Operation(summary = "회원 닉네임 변경. deprecated")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "닉네임 변경 실패", content = {@Content(mediaType = "application/json")})
