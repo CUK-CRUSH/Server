@@ -9,7 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MemberService 테스트")
 public class MemberServiceTest {
@@ -19,14 +21,4 @@ public class MemberServiceTest {
     private MemberRepository memberRepository;
     @Mock
     private ImageService imageService;
-
-    @Test
-    @DisplayName("닉네임 중복 확인 테스트")
-    void checkUsernameTest() {
-        // given
-
-        // when
-
-        // then
-    }
 }
