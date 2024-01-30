@@ -19,4 +19,8 @@ public class EditProfileReq {
     private MultipartFile profileImage;
     @Schema(type = "string", format = "binary", example = "background.jpg")
     private MultipartFile backgroundImage;
+    @Schema(type = "boolean", example = "true", description = "프로필 이미지 삭제 여부")
+    private Boolean deleteProfileImage;
+    @Schema(type = "boolean", example = "true", description = "배경 이미지 삭제 여부")
+    private Boolean deleteBackgroundImage;
 }
