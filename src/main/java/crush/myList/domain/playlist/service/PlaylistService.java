@@ -84,12 +84,13 @@ public class PlaylistService {
             playlist.setName(patchRequest.getPlaylistName());
         }
 
+        /* 플레이리스트 이미지 삭제 여부 검사 */
         if (patchRequest.getDeletePlaylistImage() != null && patchRequest.getDeletePlaylistImage()) {
             Image image = playlist.getImage();
             if (image != null) {
                 imageService.deleteImageToGcs(image.getId());
+                playlist.setImage(null);
             }
-            playlist.setImage(null);
         }
 
         MultipartFile imageFile = patchRequest.getTitleImage();
