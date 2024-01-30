@@ -72,14 +72,10 @@ public class JwtTokenProvider {
     }
 //    // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(Jws<Claims> claimsJws) throws IllegalArgumentException {
-        log.info("getAuthentication");
         String memberId = claimsJws.getBody().getSubject();
-        log.info("memberId: {}", memberId);
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        log.info("member: {}", member);
         UserDetails userDetails = securityUserDetailsService.loadUserByUsername(member.getId().toString());
-        log.info("userDetails: {}", userDetails);
         // todo: 권한 부여 설정해야함
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
