@@ -29,6 +29,18 @@ public class MusicService {
     private final PlaylistRepository playlistRepository;
     private final MusicRepository musicRepository;
 
+    public String musicUrlFilter(String url) {
+        if (url == null || url.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "URL을 입력해주세요.");
+        }
+        // youtube url 형식인지 정규 표현식으로 확인
+        if (!url.matches("^https://(www\\.)?(youtube\\.com/watch\\?v=|youtu\\.be/)[a-zA-Z0-9_-]{11}([?&].*)?$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효하지 않은 URL입니다.");
+        }
+
+        return url;
+    }
+
     public List<MusicDto.Result> getMusics(Long playlistId, int page) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
@@ -55,7 +67,7 @@ public class MusicService {
         Music music = Music.builder()
                 .title(postRequest.getTitle())
                 .artist(postRequest.getArtist())
-                .url(postRequest.getUrl())
+                .url(musicUrlFilter(postRequest.getUrl()))
                 .playlist(playlist)
                 .build();
         musicRepository.save(music);
@@ -82,7 +94,7 @@ public class MusicService {
             music.setArtist(artist);
         }
 
-        String url = patchRequest.getUrl();
+        String url = musicUrlFilter(patchRequest.getUrl());
         if (url != null && !url.isBlank()) {
             music.setUrl(url);
         }
