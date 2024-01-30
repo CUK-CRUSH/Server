@@ -20,8 +20,6 @@ public class UsernameService {
     private final EnvBean envBean;
     private final MemberRepository memberRepository;
 
-    private final Double BADWORD_THRESHOLD = 0.3;
-    private final String PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=";
     private static final String USERNAME_PATTERN = "^[a-zA-Z0-9._]{3,30}$";
     public void checkUsername(String username) {
         checkCharacterRules(username);
@@ -30,6 +28,7 @@ public class UsernameService {
     }
 
     public void checkBadWords(String username) {
+        String PERSPECTIVE_API_URL = "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=";
         final String url = PERSPECTIVE_API_URL + envBean.getPerspectiveApiKey();
         final String requestBody = buildRequestBody(username);
         RestTemplate restTemplate = new RestTemplate();
@@ -37,6 +36,7 @@ public class UsernameService {
 
         try {
             Double toxicityScore = response.getBody().getAttributeScores().getTOXICITY().getSummaryScore().getValue();
+            Double BADWORD_THRESHOLD = 0.3;
             if (toxicityScore > BADWORD_THRESHOLD) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "닉네임이 부적절합니다.");
             }
