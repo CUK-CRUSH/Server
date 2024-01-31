@@ -45,7 +45,6 @@ public class UsernameService {
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
-            log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류가 발생했습니다.");
         }
     }
