@@ -42,6 +42,8 @@ public class UsernameService {
             }
         } catch (NullPointerException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "통신에 실패했습니다");
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류가 발생했습니다.");
         }
