@@ -34,6 +34,9 @@ public class PlaylistDto {
 
         @Schema(name = "titleImage", description = "플레이리스트 이미지입니다.", type = "string", format = "binary")
         private MultipartFile titleImage;
+
+        @Schema(name = "deletePlaylistImage", description = "플레이리스트 이미지 삭제 여부입니다.", type = "boolean")
+        private Boolean deletePlaylistImage;
     }
     @Getter
     @Setter

@@ -27,18 +27,11 @@ public class MemberService {
     private final RoleRepository roleRepository;
     // service
     private final ImageService imageService;
-
-    /** 사용자 닉네임 유효성 검사 */
-    public void checkUsername(String username) {
-        if (memberRepository.existsByUsername(username)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 닉네임입니다.");
-        }
-        // todo: 닉네임 정규식 검사
-    }
+    private final UsernameService usernameService;
 
     /** 사용자 닉네임 변경 */
     public void changeUsername(Long id, String username) {
-        checkUsername(username);
+        usernameService.checkUsername(username);
 
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 회원입니다."));
@@ -50,11 +43,29 @@ public class MemberService {
         }
     }
 
-    /** 사용자 이미지 변경 */
+    /** 사용자 이미지 변경
+     * parameter: EditProfileReq, Member
+     * EditProfileReq: 사용자가 입력한 정보, 이미지 파일
+     * member: 사용자 정보, 반드시 영속 상태인 객체여야함
+     **/
     public void updateImage(EditProfileReq editProfileReq, Member member) throws ResponseStatusException {
         MultipartFile profileImageFile = editProfileReq.getProfileImage();
         MultipartFile backgroundImageFile = editProfileReq.getBackgroundImage();
         try {
+            // 프로필 이미지 삭제
+            if (editProfileReq.getDeleteProfileImage() != null && editProfileReq.getDeleteProfileImage()) {
+                if (member.getProfileImage() != null) {
+                    imageService.deleteImageToGcs(member.getProfileImage());
+                }
+                member.setProfileImage(null);
+            }
+            // 배경 이미지 삭제
+            if (editProfileReq.getDeleteBackgroundImage() != null && editProfileReq.getDeleteBackgroundImage()) {
+                if (member.getBackgroundImage() != null) {
+                    imageService.deleteImageToGcs(member.getBackgroundImage());
+                }
+                member.setBackgroundImage(null);
+            }
             // 이미지가 있으면 기존 이미지 삭제 후 새로 저장
             if (profileImageFile != null && !profileImageFile.isEmpty()) {
                 if (member.getProfileImage() != null) {
@@ -70,6 +81,8 @@ public class MemberService {
                 Image backgroundImage = imageService.saveImageToGcs_Image(backgroundImageFile);
                 member.setBackgroundImage(backgroundImage);
             }
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (RuntimeException e) {
             log.error("MemberController.updateInfo: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다.");

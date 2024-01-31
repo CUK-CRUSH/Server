@@ -19,4 +19,7 @@ public class EnvBean {
 
     @Value("${react.uri}")
     private String reactUri;
+
+    @Value("${perspective.api-key}")
+    private String perspectiveApiKey;
 }

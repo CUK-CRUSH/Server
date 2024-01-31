@@ -36,6 +36,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.FileInputStream;
+import java.net.URL;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -92,6 +95,7 @@ public class MemberControllerTest {
                 .andReturn().getResponse().toString());
     }
 
+    // todo: dprecated api test
     @Test
     @DisplayName("닉네임 변경 테스트")
     void changeUsernameTest(TestReporter testReporter) throws Exception {
@@ -188,20 +192,21 @@ public class MemberControllerTest {
     @DisplayName("내 정보 수정 테스트")
     void updateMyInfoTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .build();
+        Member member = createTestMember();
         memberRepository.save(member);
 
-        MockMultipartFile profileImageFile = new MockMultipartFile("profileImage", "image.jpg", "image/jpeg", "image".getBytes());
-        MockMultipartFile backgroundImageFile = new MockMultipartFile("backgroundImage", "image.jpg", "image/jpeg", "image".getBytes());
+        URL resource = getClass().getResource("/img/test.png");
+        FileInputStream file1 = new FileInputStream(resource.getFile());
+        FileInputStream file2 = new FileInputStream(resource.getFile());
+        MockMultipartFile profileImageFile = new MockMultipartFile("profileImage", "image.jpg", "image/jpeg", file1);
+        MockMultipartFile backgroundImageFile = new MockMultipartFile("backgroundImage", "image.jpg", "image/jpeg", file2);
 
         // when
-        testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member").file(profileImageFile).file(backgroundImageFile)
+        testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member/me").file(profileImageFile).file(backgroundImageFile)
                 .param("username","test2")
                 .param("introduction","test2")
+                .param("deleteProfileImage", "true")
+                .param("deleteBackgroundImage", "true")
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -220,7 +225,7 @@ public class MemberControllerTest {
         memberRepository.deleteById(member.getId());
 
         // when
-        testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member").file(profileImageFile).file(backgroundImageFile)
+        testReporter.publishEntry(mvc.perform(multipart(HttpMethod.PATCH, "/api/v1/member/me").file(profileImageFile).file(backgroundImageFile)
                 .param("username","test2")
                 .param("introduction","test2")
                 .header("Authorization", "Bearer " + token)

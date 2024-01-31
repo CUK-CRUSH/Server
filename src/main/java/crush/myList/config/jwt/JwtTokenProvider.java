@@ -10,6 +10,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import java.util.Date;
 // 해당 컴포넌트는 필터클래스에서 사전 검증을 거칩니다.
 @Component
 @Transactional
+@Slf4j(topic = "JwtTokenProvider")
 @RequiredArgsConstructor
 public class JwtTokenProvider {
     @Value("${jwt.secret}")
@@ -73,7 +75,6 @@ public class JwtTokenProvider {
         String memberId = claimsJws.getBody().getSubject();
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
         UserDetails userDetails = securityUserDetailsService.loadUserByUsername(member.getId().toString());
         // todo: 권한 부여 설정해야함
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
