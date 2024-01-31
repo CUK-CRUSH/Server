@@ -3,6 +3,7 @@ package crush.myList.domain.login.service;
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.global.enums.JwtTokenType;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,8 @@ public class LoginService {
     /**
      * refresh_token 으로 access_token 재발급. x
     * */
-    public Map<String, String> reissue(HttpServletRequest request) {
+    public Map<String, String> reissue(String token) {
         try {
-            String token = jwtTokenProvider.resolveToken(request);
             Jws<Claims> jws = jwtTokenProvider.validateAndParseToken(token);
 
             if (!jwtTokenProvider.isRefreshToken(jws)) {
@@ -41,6 +41,8 @@ public class LoginService {
             return json;
         } catch (ResponseStatusException e) {
             throw e;
+        } catch (ExpiredJwtException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다.");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
         }

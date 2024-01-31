@@ -60,7 +60,6 @@ public class UsernameService {
         if (memberRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 닉네임입니다.");
         }
-        // todo: 닉네임 정규식 검사
     }
 
     private String buildRequestBody(String name) {

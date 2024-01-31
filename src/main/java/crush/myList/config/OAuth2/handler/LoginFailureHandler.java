@@ -16,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j(topic = "LoginFailureHandler")
@@ -25,17 +26,10 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     private final EnvBean envBean;
 
     // todo: 로그인 실패시 리다이렉트 경로
-    private String createURI(String accessToken, String refreshToken) {
-        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        queryParams.add("access_token", accessToken);
-        queryParams.add("refresh_token", refreshToken);
-
+    private String createURI() {
         return UriComponentsBuilder
                 .newInstance()
-                .scheme("https")
-                .host(envBean.getReactUri())
-                .path("/redirect")
-                .queryParams(queryParams)
+                .uri(URI.create(envBean.getReactUri() + "/login"))
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();

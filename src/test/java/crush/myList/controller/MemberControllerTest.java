@@ -1,47 +1,27 @@
 package crush.myList.controller;
 
-import crush.myList.config.EnvBean;
 import crush.myList.config.jwt.JwtTokenProvider;
-import crush.myList.config.security.SecurityUserDetailsService;
-import crush.myList.domain.member.controller.MemberController;
+import crush.myList.domain.member.dto.EditProfileReq;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
-import crush.myList.domain.member.service.MemberService;
 import crush.myList.global.enums.JwtTokenType;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.TestExecutionEvent;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.FileInputStream;
 import java.net.URL;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,7 +44,7 @@ public class MemberControllerTest {
         return Member.builder()
                 .oauth2id("test:1")
                 .username("test")
-                .name("test1")
+                .name("테스트맨")
                 .role(role)
                 .build();
     }
@@ -95,16 +75,18 @@ public class MemberControllerTest {
                 .andReturn().getResponse().toString());
     }
 
-    // todo: dprecated api test
     @Test
     @DisplayName("닉네임 변경 테스트")
     void changeUsernameTest(TestReporter testReporter) throws Exception {
         // given
         Member member = createTestMember();
         memberRepository.save(member);
+
         // when
-        testReporter.publishEntry(mvc.perform(put("/api/v1/member/me/{username}", "test2")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+        testReporter.publishEntry(mvc.perform(patch("/api/v1/member/me")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .param("username", "test2"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString());
     }
@@ -115,9 +97,12 @@ public class MemberControllerTest {
         // given
         Member member = createTestMember();
         memberRepository.save(member);
+
         // when
-        testReporter.publishEntry(mvc.perform(put("/api/v1/member/me/{username}", "test")
-                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+        testReporter.publishEntry(mvc.perform(patch("/api/v1/member/me")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .param("username", "test"))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().toString());
     }
