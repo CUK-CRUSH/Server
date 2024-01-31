@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 public class LoginFailureHandler implements AuthenticationFailureHandler {
     private final EnvBean envBean;
 
-    // todo: 로그인 실패시 리다이렉트 경로
     private String createFailURI() {
         return UriComponentsBuilder
                 .newInstance()
