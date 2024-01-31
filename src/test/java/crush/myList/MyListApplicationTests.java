@@ -26,7 +26,6 @@ class MyListApplicationTests {
     @Test
     @Disabled
     @Transactional
-    @WithMockUser(username = "test")
     @DisplayName("이미지 파일 GCS에 저장 및 삭제 테스트.")
     void saveImageToGcsTest() throws IOException {
         // given
