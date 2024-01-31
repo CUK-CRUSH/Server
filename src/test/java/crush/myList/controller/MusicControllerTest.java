@@ -29,115 +29,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class MusicControllerTest {
+public class MusicControllerTest extends TestHelper {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private PlaylistRepository playlistRepository;
-    @Autowired
-    private MusicRepository musicRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private ObjectMapper objectMapper;
-
-    public Member createTestMember() {
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
-        return Member.builder()
-                .oauth2id("test:1")
-                .username("test")
-                .name("test1")
-                .role(role)
-                .build();
-    }
-
-    @DisplayName("음악 CRUD 통합테스트")
-    @Test
-    @Disabled
-    public void musicCrudTest(TestReporter testReporter) throws Exception {
-        // given
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .role(role)
-                .build();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .member(member)
-                .name("TestPlaylist")
-                .build();
-        playlistRepository.save(playlist);
-
-        MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
-                .title("TestMusic")
-                .artist("TestArtist")
-                .url("https://youtube.com")
-                .build();
-
-        String request = objectMapper.writeValueAsString(postRequestDto);
-
-        final String accessToken = "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN);
-
-        // when
-        /* CREATE */
-        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
-
-        testReporter.publishEntry(
-                mockMvc.perform(
-                        MockMvcRequestBuilders.post(POST_API)
-                                .header("Authorization", accessToken)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(request))
-                        .andExpect(status().isOk())
-                        .andReturn().getResponse().getContentAsString()
-        );
-
-        /* READ */
-        final String GET_API = "/api/v1/music/" + playlist.getId().toString();
-
-        testReporter.publishEntry(
-                mockMvc.perform(
-                        MockMvcRequestBuilders.get(GET_API)
-                )
-                        .andExpect(status().isOk())
-                        .andReturn().getResponse().getContentAsString()
-        );
-
-        /* DELETE */
-        final String DELETE_API = "/api/v1/music";
-
-        testReporter.publishEntry(
-                mockMvc.perform(
-                        MockMvcRequestBuilders.delete(DELETE_API)
-                                .header("Authorization", accessToken)
-                                .param("musicId", musicRepository.findAll().get(0).getId().toString()))
-                        .andExpect(status().isOk())
-                        .andReturn().getResponse().getContentAsString()
-        );
-    }
 
     @DisplayName("음악 조회 테스트")
     @Test
     public void getMusicsTest(TestReporter testReporter) throws Exception {
         // given
         Member member = createTestMember();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .member(member)
-                .name("TestPlaylist")
-                .build();
-        playlistRepository.save(playlist);
+        Playlist playlist = createTestPlaylist(member);
 
         final String GET_API = "/api/v1/music/" + playlist.getId().toString() + "?page=0";
 
@@ -155,13 +61,7 @@ public class MusicControllerTest {
     public void postMusicTest(TestReporter testReporter) throws Exception {
         // given
         Member member = createTestMember();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .member(member)
-                .name("TestPlaylist")
-                .build();
-        playlistRepository.save(playlist);
+        Playlist playlist = createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
                 .title("TestMusic")
@@ -188,13 +88,7 @@ public class MusicControllerTest {
     public void patchMusicTest(TestReporter testReporter) throws Exception {
         // given
         Member member = createTestMember();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .member(member)
-                .name("TestPlaylist")
-                .build();
-        playlistRepository.save(playlist);
+        Playlist playlist = createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
                 .title("TestMusic")
@@ -239,13 +133,7 @@ public class MusicControllerTest {
     public void patchMusicFailTest(TestReporter testReporter) throws Exception {
         // given
         Member member = createTestMember();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .member(member)
-                .name("TestPlaylist")
-                .build();
-        playlistRepository.save(playlist);
+        Playlist playlist = createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
                 .title("TestMusic")

@@ -25,6 +25,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,18 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class PlaylistControllerTest {
+public class PlaylistControllerTest extends TestHelper {
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private PlaylistRepository playlistRepository;
-    @Autowired
-    private MusicRepository musicRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private RoleRepository roleRepository;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
@@ -51,29 +47,9 @@ public class PlaylistControllerTest {
     @Test
     public void viewAllPlaylistsTest(TestReporter testReporter) throws Exception {
         // given
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .role(role)
-                .build();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .name("testPlaylistName")
-                .member(member)
-                .build();
-        playlistRepository.save(playlist);
-
-        Music music = Music.builder()
-                .title("굿굿")
-                .artist("후후")
-                .url("https://youtube.com")
-                .playlist(playlist)
-                .build();
-        musicRepository.save(music);
+        Member member = createTestMember();
+        Playlist playlist = createTestPlaylist(member);
+        Music music = createTestMusic(playlist);
 
         final String api = "/api/v1/playlist/user/" + member.getUsername();
 
@@ -89,29 +65,9 @@ public class PlaylistControllerTest {
     @Test
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .role(role)
-                .build();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .name("testPlaylistName")
-                .member(member)
-                .build();
-        playlistRepository.save(playlist);
-
-        Music music = Music.builder()
-                .title("굿굿")
-                .artist("후후")
-                .url("https://youtube.com")
-                .playlist(playlist)
-                .build();
-        musicRepository.save(music);
+        Member member = createTestMember();
+        Playlist playlist = createTestPlaylist(member);
+        Music music = createTestMusic(playlist);
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
@@ -125,23 +81,12 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 생성 테스트")
     @Test
-    @Disabled
     public void createPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         final String api = "/api/v1/playlist";
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .build();
-        memberRepository.save(member);
+        Member member = createTestMember();
 
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "image", //name
-                "testImages.jpg", //originalFilename
-                "image/jpeg",
-                "testImageData".getBytes()
-        );
+        MockMultipartFile imageFile = createTestImage("titleImage");
 
         // when
         testReporter.publishEntry(
@@ -159,28 +104,11 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 수정 테스트")
     @Test
-    @Disabled
     public void updatePlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .build();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .name("testPlaylistName")
-                .member(member)
-                .build();
-        playlistRepository.save(playlist);
-
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "image", //name
-                "testImages.jpg", //originalFilename
-                "image/jpeg",
-                "testImageData".getBytes()
-        );
+        Member member = createTestMember();
+        Playlist playlist = createTestPlaylist(member);
+        MockMultipartFile imageFile = createTestImage("titleImage");
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
@@ -201,21 +129,8 @@ public class PlaylistControllerTest {
     @Test
     public void deletePlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .role(role)
-                .build();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .name("testPlaylistName")
-                .member(member)
-                .build();
-        playlistRepository.save(playlist);
+        Member member = createTestMember();
+        Playlist playlist = createTestPlaylist(member);
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
@@ -228,35 +143,15 @@ public class PlaylistControllerTest {
         );
     }
 
-    @DisplayName("플레이리스트 이미지 삭제 테스트")
-    @Disabled
+    @DisplayName("플레이리스트 이미지 삭제 테스트 (Deprecated)")
     @Test
     public void deletePlaylistImageTest(TestReporter testReporter) throws Exception {
         // given
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .role(role)
-                .build();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .name("testPlaylistName")
-                .member(member)
-                .build();
-        playlistRepository.save(playlist);
+        Member member = createTestMember();
+        Playlist playlist = createTestPlaylist(member);
+        MockMultipartFile imageFile = createTestImage("titleImage");
 
         final String POST_API = "/api/v1/playlist";
-
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "image", //name
-                "testImages.jpg", //originalFilename
-                "image/jpeg",
-                "testImageData".getBytes()
-        );
 
         testReporter.publishEntry(
                 mockMvc.perform(
@@ -284,122 +179,49 @@ public class PlaylistControllerTest {
     @Test
     public void deletePlaylistImageWithPatchTest(TestReporter testReporter) throws Exception {
         // given
-        Role role = roleRepository.findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .role(role)
-                .build();
-        memberRepository.save(member);
-
-        Playlist playlist = Playlist.builder()
-                .name("testPlaylistName")
-                .member(member)
-                .build();
-        playlistRepository.save(playlist);
+        Member member = createTestMember();
+        Playlist playlist = createTestPlaylist(member);
+        MockMultipartFile imageFile = createTestImage("titleImage");
 
         final String POST_API = "/api/v1/playlist";
-
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "image", //name
-                "testImages.jpg", //originalFilename
-                "image/jpeg",
-                "testImageData".getBytes()
-        );
+        final String UPDATE_API = "/api/v1/playlist/" + playlist.getId();
 
         testReporter.publishEntry(
                 mockMvc.perform(
-                                multipart(POST_API)
+                                multipart(HttpMethod.PATCH, UPDATE_API)
                                         .file(imageFile)
                                         .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                                         .contentType(MediaType.MULTIPART_FORM_DATA))
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.data.playlistName").value("Untitled"))
+                        .andExpect(jsonPath("$.data.playlistName").value("testPlaylistName"))
+                        .andExpect(jsonPath("$.data.thumbnailUrl").isNotEmpty())
                         .andReturn().getResponse().getContentAsString()
         );
 
-        final String DELETE_IMAGE_API = "/api/v1/playlist/" + playlist.getId();
-
         // when
+        // 이미지 삭제 안할 때
         testReporter.publishEntry(
                 mockMvc.perform(
-                                MockMvcRequestBuilders.patch(DELETE_IMAGE_API)
+                                MockMvcRequestBuilders.patch(UPDATE_API)
+                                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                                        .param("deletePlaylistImage", "false")
+                        )
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.thumbnailUrl").isNotEmpty())
+                        .andReturn().getResponse().getContentAsString()
+        );
+
+        // 이미지 삭제 할 때
+        testReporter.publishEntry(
+                mockMvc.perform(
+                                MockMvcRequestBuilders.patch(UPDATE_API)
                                         .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                                         .contentType(MediaType.MULTIPART_FORM_DATA)
                                         .param("deletePlaylistImage", "true")
                         )
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.data.thumbnailUrl").isEmpty())
-                        .andReturn().getResponse().getContentAsString()
-        );
-    }
-
-    @DisplayName("플레이리스트 CRUD 통합 테스트")
-    @Test
-    @Disabled
-    public void playlistCrudTest(TestReporter testReporter) throws Exception {
-        // given
-        Member member = Member.builder()
-                .oauth2id("1")
-                .username("test")
-                .name("test1")
-                .build();
-        memberRepository.save(member);
-
-        // TestImageFile
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "titleImage", //name
-                "testImages.jpg", //originalFilename
-                "image/jpeg",
-                "testImageData".getBytes()
-        );
-
-        final String accessToken = "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN);
-
-        // when
-        /* CREATE */
-        final String POST_API = "/api/v1/playlist";
-        testReporter.publishEntry(
-                mockMvc.perform(
-                        multipart(POST_API)
-                                .file(imageFile)
-                                .param("playlistName", "testPlaylist")
-                                .header("Authorization", accessToken)
-                                .contentType(MediaType.MULTIPART_FORM_DATA))
-                        .andExpect(status().isOk())
-                        .andReturn().getResponse().getContentAsString()
-        );
-
-        /* READ */
-        final String GET_API = "/api/v1/playlist/user/" + member.getUsername();
-        testReporter.publishEntry(
-                mockMvc.perform(get(GET_API))
-                        .andExpect(status().isOk())
-                        .andReturn().getResponse().getContentAsString()
-        );
-
-        /* UPDATE */
-        final String PATCH_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).get(0).getId().toString();
-        testReporter.publishEntry(
-                mockMvc.perform(
-                        multipart(HttpMethod.PATCH, PATCH_API)
-                                .file(imageFile)
-                                .param("playlistName", "testPlaylist")
-                                .header("Authorization", accessToken)
-                                .contentType(MediaType.MULTIPART_FORM_DATA))
-                        .andExpect(status().isOk())
-                        .andReturn().getResponse().getContentAsString()
-        );
-
-        /* DELETE */
-        final String DELETE_API = "/api/v1/playlist/" + playlistRepository.findAllByMember(member).get(0).getId().toString();
-        testReporter.publishEntry(
-                mockMvc.perform(
-                        MockMvcRequestBuilders.delete(DELETE_API)
-                                .header("Authorization", accessToken))
-                        .andExpect(status().isOk())
                         .andReturn().getResponse().getContentAsString()
         );
     }
