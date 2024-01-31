@@ -45,7 +45,7 @@ public class DummyData {
 
     // 더미 사용자가 없으면 저장
     public void createMemberIfNotFound(Member member) {
-        Optional<Member> findMember = memberRepository.findByUsername(member.getUsername());
+        Optional<Member> findMember = memberRepository.findByOauth2id(member.getOauth2id());
         if (findMember.isEmpty()) {
             memberRepository.save(member);
         }
