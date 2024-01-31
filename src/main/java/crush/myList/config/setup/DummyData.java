@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 @Transactional
@@ -23,87 +25,70 @@ public class DummyData {
     private final PlaylistRepository playlistRepository;
     private final RoleRepository roleRepository;
 
-    // 더미 사용자가 존재하면 업데이트, 없으면 저장
-    public void saveOrUpdateMember(Member member) {
-        memberRepository.findByUsername(member.getUsername())
-                .ifPresentOrElse(
-                        m -> {
-                            m.setOauth2id(member.getOauth2id());
-                            m.setUsername(member.getUsername());
-                            m.setIntroduction(member.getIntroduction());
-                            m.setName(member.getName());
-                            m.setRole(member.getRole());
-                        },
-                        () -> memberRepository.save(member)
-                );
+    // 역할이 없으면 생성
+    public void createRoleIfNotFound(RoleName roleName) {
+        Optional<Role> role = roleRepository.findByName(roleName);
+        if (role.isEmpty()) {
+            Role newRole = Role.builder()
+                    .name(roleName)
+                    .build();
+            roleRepository.save(newRole);
+        }
+    }
+
+    public void setUpRole() {
+        RoleName[] roleNames = RoleName.values();
+        for (RoleName roleName : roleNames) {
+            createRoleIfNotFound(roleName);
+        }
+    }
+
+    // 더미 사용자가 없으면 저장
+    public void createMemberIfNotFound(Member member) {
+        Optional<Member> findMember = memberRepository.findByUsername(member.getUsername());
+        if (findMember.isEmpty()) {
+            memberRepository.save(member);
+        }
     }
     public void setupMember() {
         Role role = roleRepository.findByName(RoleName.USER)
                 .orElseThrow(() -> new RuntimeException("역할을 찾을 수 없습니다."));
-        saveOrUpdateMember(Member.builder()
-                .oauth2id("test:111111111111")
+        createMemberIfNotFound(Member.builder()
+                .oauth2id("google:104480974923648794533")
                 .username("kwangstar")
-                .name("kwangstar")
+                .name("장광진")
                 .role(role)
                 .build());
-        saveOrUpdateMember(Member.builder()
-                .oauth2id("test:222222222222")
-                .username("yunseong")
-                .name("yunseong")
-                .role(role)
-                .build());
-        saveOrUpdateMember(Member.builder()
-                .oauth2id("test:333333333333")
-                .username("donghyun")
-                .name("donghyun")
-                .role(role)
-                .build());
-        saveOrUpdateMember(Member.builder()
-                .oauth2id("test:444444444444")
-                .username("tester")
-                .name("tester")
+        createMemberIfNotFound(Member.builder()
+                .oauth2id("google:105094405557103557935")
+                .username("yunstar")
+                .name("이윤성")
                 .role(role)
                 .build());
     }
 
-    public void saveOrUpdatePlaylist(Playlist playlist) {
-        playlistRepository.findById(playlist.getId())
-                .ifPresentOrElse(
-                        p -> {
-                            p.setName(playlist.getName());
-                            p.setMember(playlist.getMember());
-                        },
-                        () -> playlistRepository.save(playlist)
-                );
+    // 더미 플레이리스트가 없으면 저장
+    public void createPlaylistIfNotFound(Playlist playlist) {
+        List<Playlist> findPlaylist = playlistRepository.findByName(playlist.getName());
+        if (findPlaylist.isEmpty()) {
+            playlistRepository.save(playlist);
+        }
     }
 
     public void setupPlaylist() {
         Member kwangstar = memberRepository.findByUsername("kwangstar").get();
-        Member yunseong = memberRepository.findByUsername("yunseong").get();
-        Member donghyun = memberRepository.findByUsername("donghyun").get();
+        Member yunseong = memberRepository.findByUsername("yunstar").get();
 
-        // kwangstar
-        for (int i=1; i<=10; i++) {
-            saveOrUpdatePlaylist(Playlist.builder()
-                    .id((long) i)
+        for (int i=1; i<=3; i++) {
+            // kwangstar 플레이리스트
+            createPlaylistIfNotFound(Playlist.builder()
                     .member(kwangstar)
                     .name("kwangstar playlist " + i)
                     .build());
-        }
-        // yunseong
-        for (int i=11; i<=20; i++) {
-            saveOrUpdatePlaylist(Playlist.builder()
-                    .id((long) i)
+            // yunstar 플레이리스트
+            createPlaylistIfNotFound(Playlist.builder()
                     .member(yunseong)
-                    .name("yunseong playlist " + i)
-                    .build());
-        }
-        // donghyun
-        for (int i=21; i<=30; i++) {
-            saveOrUpdatePlaylist(Playlist.builder()
-                    .id((long) i)
-                    .member(donghyun)
-                    .name("donghyun playlist " + i)
+                    .name("yunstar playlist " + i)
                     .build());
         }
     }
@@ -111,9 +96,11 @@ public class DummyData {
     @PostConstruct
     public void setupDummyData() {
         try {
+            setUpRole();
             setupMember();
             setupPlaylist();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             System.out.println("더미 데이터 초기화 실패.");
         }
     }
