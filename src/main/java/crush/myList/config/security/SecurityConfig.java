@@ -107,18 +107,11 @@ public class SecurityConfig {
                         })) // 권한 없음
                 // 로그인
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage(envBean.getLoginPage()) // 로그인 페이지
+                        .loginPage(envBean.getReactUri() + "/login") // 로그인 페이지
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(OAuth2Service)) // 유저 정보 가져오기
                         .successHandler(loginSuccessHandler) // 로그인 성공
                         .failureHandler(loginFailureHandler) // 로그인 실패
-                        .permitAll()
-                )
-                // 로그아웃
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .sessionManagement(session -> session
