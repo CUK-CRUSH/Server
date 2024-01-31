@@ -2,17 +2,10 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.member.entity.Role;
-import crush.myList.domain.member.enums.RoleName;
-import crush.myList.domain.member.repository.MemberRepository;
-import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.Entity.Music;
-import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
-import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
@@ -24,11 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
