@@ -26,21 +26,18 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     private final EnvBean envBean;
 
     // todo: 로그인 실패시 리다이렉트 경로
-    private String createURI() {
+    private String createFailURI() {
         return UriComponentsBuilder
                 .newInstance()
-                .uri(URI.create(envBean.getReactUri() + "/login"))
+                .uri(URI.create(envBean.getReactUri() + "/login?error=true"))
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();
     }
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        // content-type을 json, 인코딩을 utf-8로 설정
-        response.setContentType("application/json; charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("로그인 실패");
-        log.info(exception.getMessage());
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
+        response.sendRedirect(createFailURI());
+        log.info("로그인 실패: " + exception.getMessage());
         log.info(getExceptionMessage(exception));
     }
 
