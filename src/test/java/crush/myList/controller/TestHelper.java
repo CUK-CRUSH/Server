@@ -34,13 +34,13 @@ public class TestHelper {
      * 테스트용 멤버 생성
      * @return Member
      */
-    protected Member createTestMember() {
+    protected Member createTestMember(String username) {
         Role role = roleRepository.findByName(RoleName.USER)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
-                .oauth2id("test:1")
-                .username("test")
-                .name("test1")
+                .oauth2id("test:" + username)
+                .username(username)
+                .name(username)
                 .role(role)
                 .build();
         memberRepository.save(member);

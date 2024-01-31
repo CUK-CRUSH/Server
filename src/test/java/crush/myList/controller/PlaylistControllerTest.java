@@ -35,7 +35,7 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void viewAllPlaylistsTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
         Music music = createTestMusic(playlist);
 
@@ -53,7 +53,7 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
         Music music = createTestMusic(playlist);
 
@@ -72,7 +72,7 @@ public class PlaylistControllerTest extends TestHelper {
     public void createPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         final String api = "/api/v1/playlist";
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
 
         MockMultipartFile imageFile = createTestImage("titleImage");
 
@@ -94,7 +94,7 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void updatePlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
         MockMultipartFile imageFile = createTestImage("titleImage");
 
@@ -117,7 +117,7 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void deletePlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
 
         final String api = "/api/v1/playlist/" + playlist.getId();
@@ -135,7 +135,7 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void deletePlaylistImageTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
         MockMultipartFile imageFile = createTestImage("titleImage");
 
@@ -167,7 +167,7 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void deletePlaylistImageWithPatchTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
         MockMultipartFile imageFile = createTestImage("titleImage");
 

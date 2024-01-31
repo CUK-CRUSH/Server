@@ -35,7 +35,7 @@ public class MusicControllerTest extends TestHelper {
     @Test
     public void getMusicsTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
 
         final String GET_API = "/api/v1/music/" + playlist.getId().toString() + "?page=0";
@@ -53,7 +53,7 @@ public class MusicControllerTest extends TestHelper {
     @DisplayName("음악 추가 테스트")
     public void postMusicTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
@@ -80,7 +80,7 @@ public class MusicControllerTest extends TestHelper {
     @DisplayName("음악 수정 테스트")
     public void patchMusicTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
@@ -125,7 +125,7 @@ public class MusicControllerTest extends TestHelper {
     @DisplayName("음악 수정 실패 테스트 - 잘못된 URL")
     public void patchMusicFailTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember();
+        Member member = createTestMember("testUser");
         Playlist playlist = createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
