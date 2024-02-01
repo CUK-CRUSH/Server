@@ -2,9 +2,10 @@ package crush.myList.domain.member.entity;
 
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.playlist.entity.Playlist;
-import crush.myList.global.entity.BaseTimeEntity;
+import crush.myList.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +14,10 @@ import java.util.List;
 @Table(name = "member")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Member extends BaseEntity {
     @Column(name= "oauth2id", nullable = false, unique = true, length = 50)
     private String oauth2id;
 

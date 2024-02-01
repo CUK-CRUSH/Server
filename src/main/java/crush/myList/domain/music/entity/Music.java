@@ -1,23 +1,19 @@
 package crush.myList.domain.music.Entity;
 
-import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.playlist.entity.Playlist;
-import crush.myList.global.entity.BaseTimeEntity;
+import crush.myList.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "music")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Music extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
+public class Music extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "playlist_id", nullable = false)
     private Playlist playlist;
