@@ -69,8 +69,8 @@ public class DummyData {
 
     // 더미 플레이리스트가 없으면 저장
     public void createPlaylistIfNotFound(Playlist playlist) {
-        List<Playlist> findPlaylist = playlistRepository.findByName(playlist.getName());
-        if (findPlaylist.isEmpty()) {
+        Long cnt = playlistRepository.countByMember(playlist.getMember());
+        if (cnt < 3) {
             playlistRepository.save(playlist);
         }
     }
