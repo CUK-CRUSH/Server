@@ -2,7 +2,7 @@ package crush.myList.domain.music.Service;
 
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.music.Dto.MusicDto;
-import crush.myList.domain.music.Entity.Music;
+import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;

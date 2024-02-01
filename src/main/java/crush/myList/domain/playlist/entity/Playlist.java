@@ -2,7 +2,7 @@ package crush.myList.domain.playlist.entity;
 
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.music.Entity.Music;
+import crush.myList.domain.music.entity.Music;
 import crush.myList.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

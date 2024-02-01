@@ -1,4 +1,4 @@
-package crush.myList.domain.music.Entity;
+package crush.myList.domain.music.entity;
 
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.global.entity.BaseEntity;
