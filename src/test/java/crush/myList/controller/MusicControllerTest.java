@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.music.Dto.MusicDto;
+import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class MusicControllerTest extends TestHelper {
+public class MusicControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -30,13 +31,17 @@ public class MusicControllerTest extends TestHelper {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private TestUtil testUtil;
+    @Autowired
+    private MusicRepository musicRepository;
 
     @DisplayName("음악 조회 테스트")
     @Test
     public void getMusicsTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
 
         final String GET_API = "/api/v1/music/" + playlist.getId().toString() + "?page=0";
 
@@ -53,8 +58,8 @@ public class MusicControllerTest extends TestHelper {
     @DisplayName("음악 추가 테스트")
     public void postMusicTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
                 .title("TestMusic")
@@ -80,8 +85,8 @@ public class MusicControllerTest extends TestHelper {
     @DisplayName("음악 수정 테스트")
     public void patchMusicTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
                 .title("TestMusic")
@@ -125,8 +130,8 @@ public class MusicControllerTest extends TestHelper {
     @DisplayName("음악 수정 실패 테스트 - 잘못된 URL")
     public void patchMusicFailTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
                 .title("TestMusic")

@@ -2,8 +2,12 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.Entity.Music;
+import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
+import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -25,19 +29,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-public class PlaylistControllerTest extends TestHelper {
+public class PlaylistControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
+    @Autowired
+    private MusicRepository musicRepository;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private RoleRepository roleRepository;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private TestUtil testUtil;
 
     @DisplayName("사용자의 모든 플레이리스트 조회 테스트")
     @Test
     public void viewAllPlaylistsTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
-        Music music = createTestMusic(playlist);
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
 
         final String api = "/api/v1/playlist/user/" + member.getUsername();
 
@@ -53,9 +69,9 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
-        Music music = createTestMusic(playlist);
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
@@ -72,9 +88,9 @@ public class PlaylistControllerTest extends TestHelper {
     public void createPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         final String api = "/api/v1/playlist";
-        Member member = createTestMember("testUser");
+        Member member = testUtil.createTestMember("testUser");
 
-        MockMultipartFile imageFile = createTestImage("titleImage");
+        MockMultipartFile imageFile = testUtil.createTestImage("titleImage");
 
         // when
         testReporter.publishEntry(
@@ -94,9 +110,9 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void updatePlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
-        MockMultipartFile imageFile = createTestImage("titleImage");
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        MockMultipartFile imageFile = testUtil.createTestImage("titleImage");
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
@@ -117,8 +133,8 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void deletePlaylistTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
@@ -135,9 +151,9 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void deletePlaylistImageTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
-        MockMultipartFile imageFile = createTestImage("titleImage");
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        MockMultipartFile imageFile = testUtil.createTestImage("titleImage");
 
         final String POST_API = "/api/v1/playlist";
 
@@ -167,9 +183,9 @@ public class PlaylistControllerTest extends TestHelper {
     @Test
     public void deletePlaylistImageWithPatchTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = createTestMember("testUser");
-        Playlist playlist = createTestPlaylist(member);
-        MockMultipartFile imageFile = createTestImage("titleImage");
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        MockMultipartFile imageFile = testUtil.createTestImage("titleImage");
 
         final String POST_API = "/api/v1/playlist";
         final String UPDATE_API = "/api/v1/playlist/" + playlist.getId();
