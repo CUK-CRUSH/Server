@@ -76,7 +76,6 @@ public class JwtTokenProvider {
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         UserDetails userDetails = securityUserDetailsService.loadUserByUsername(member.getId().toString());
-        // todo: 권한 부여 설정해야함
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

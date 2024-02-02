@@ -20,7 +20,7 @@ public class UsernameService {
     private final EnvBean envBean;
     private final MemberRepository memberRepository;
 
-    private static final String USERNAME_PATTERN = "^[a-zA-Z0-9._]{3,30}$";
+    private static final String USERNAME_PATTERN = "^[a-z0-9._]{3,30}$";
     public void checkUsername(String username) {
         checkCharacterRules(username);
         checkDuplication(username);
@@ -42,6 +42,8 @@ public class UsernameService {
             }
         } catch (NullPointerException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "통신에 실패했습니다");
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류가 발생했습니다.");
         }
@@ -58,7 +60,6 @@ public class UsernameService {
         if (memberRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 존재하는 닉네임입니다.");
         }
-        // todo: 닉네임 정규식 검사
     }
 
     private String buildRequestBody(String name) {

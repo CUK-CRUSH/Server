@@ -22,7 +22,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.UUID;
@@ -99,9 +98,9 @@ public class ImageService {
                 .build();
 
         try {
-            BlobInfo blobInfo = storage.create(imageInfo, convertToWebP(imageFile));
+            Blob blob = storage.create(imageInfo, convertToWebP(imageFile));
             String imageUrl = String.format("https://storage.googleapis.com/%s/%s", envBean.getBucketName(), uuid);
-            String fileName = blobInfo.getName();
+            String fileName = blob.getName();
 
             Image image = Image.builder()
                     .originalName(originalName)

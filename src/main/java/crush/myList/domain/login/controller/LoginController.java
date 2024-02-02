@@ -1,6 +1,7 @@
 package crush.myList.domain.login.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
+import crush.myList.domain.login.dto.ReissueReq;
 import crush.myList.domain.login.dto.TokenDto;
 import crush.myList.domain.login.service.LoginService;
 import crush.myList.global.dto.JsonBody;
@@ -26,28 +27,52 @@ import java.util.Map;
 public class LoginController {
     private final LoginService loginService;
 
+    @Operation(summary = "kakao login token 발급 경로", description = "로그인 성공시 URI를 통해 토큰을 발급 받는다.")
+    @GetMapping(value = "/oauth2/code/kakao", produces = "application/json; charset=utf-8")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인 실패")
+    })
+    public JsonBody<TokenDto> kakaoRedirect(@RequestParam("access_token") String accessToken,
+                                       @RequestParam("refresh_token") String refreshToken) {
+        log.info("accessToken: {}, refreshToken: {}", accessToken, refreshToken);
+        return null;
+    }
+
     @Operation(summary = "google login token 발급 경로", description = "로그인 성공시 URI를 통해 토큰을 발급 받는다.")
     @GetMapping(value = "/oauth2/code/google", produces = "application/json; charset=utf-8")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
-    public JsonBody<TokenDto> redirect(@RequestParam("access_token") String accessToken,
+    public JsonBody<TokenDto> googleRedirect(@RequestParam("access_token") String accessToken,
                                        @RequestParam("refresh_token") String refreshToken) {
         log.info("accessToken: {}, refreshToken: {}", accessToken, refreshToken);
         return null;
     }
 
-    @Operation(summary = "로그인 리다이렉트 테스트용 경로", description = "여기서 받은 code를 통해 토큰을 발급 받는다.")
-    @GetMapping("/oauth2/callback")
-    public String callback(@RequestParam(value = "code", required = false) String code) {
-        return code;
+    @Operation(summary = "facebook login token 발급 경로", description = "로그인 성공시 URI를 통해 토큰을 발급 받는다.")
+    @GetMapping(value = "/oauth2/code/facebook", produces = "application/json; charset=utf-8")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인 실패")
+    })
+    public JsonBody<TokenDto> facebookRedirect(@RequestParam("access_token") String accessToken,
+                                       @RequestParam("refresh_token") String refreshToken) {
+        log.info("accessToken: {}, refreshToken: {}", accessToken, refreshToken);
+        return null;
     }
 
+//    @Operation(summary = "로그인 리다이렉트 테스트용 경로", description = "여기서 받은 code를 통해 토큰을 발급 받는다.")
+//    @GetMapping("/oauth2/callback")
+//    public String callback(@RequestParam(value = "code", required = false) String code) {
+//        return code;
+//    }
+//
     @Operation(summary = "토큰 재발급")
     @PostMapping("/token/reissue")
-    public JsonBody<?> reissue(HttpServletRequest request) {
-        Map<String, String> accessToken = loginService.reissue(request);
+    public JsonBody<?> reissue(@RequestBody ReissueReq refreshToken) {
+        Map<String, String> accessToken = loginService.reissue(refreshToken.getRefreshToken());
         return JsonBody.of(HttpStatus.OK.value(), "토큰 재발급 성공", accessToken);
     }
 }

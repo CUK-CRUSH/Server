@@ -39,12 +39,12 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         queryParams.add("access_token", accessToken);
         queryParams.add("refresh_token", refreshToken);
 
-        log.info("reactUri: {}", envBean.getReactUri());
+        log.info("redirectUri: {}", envBean.getReactUri() + "/redirect");
         log.info("accessToken: {}", accessToken);
 
         return UriComponentsBuilder
                 .newInstance()
-                .uri(URI.create(envBean.getReactUri()))
+                .uri(URI.create(envBean.getReactUri() + "/redirect"))
                 .queryParams(queryParams)
                 .build()
                 .encode(StandardCharsets.UTF_8)

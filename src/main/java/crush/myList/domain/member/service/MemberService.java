@@ -34,7 +34,7 @@ public class MemberService {
         usernameService.checkUsername(username);
 
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
         member.setUsername(username);
         if (member.getRole().getName() == RoleName.TEMPORARY) {
             Role role = roleRepository.findByName(RoleName.USER)
@@ -48,7 +48,7 @@ public class MemberService {
      * EditProfileReq: 사용자가 입력한 정보, 이미지 파일
      * member: 사용자 정보, 반드시 영속 상태인 객체여야함
      **/
-    public void updateImage(EditProfileReq editProfileReq, Member member) throws ResponseStatusException {
+    private void updateImage(EditProfileReq editProfileReq, Member member) throws ResponseStatusException {
         MultipartFile profileImageFile = editProfileReq.getProfileImage();
         MultipartFile backgroundImageFile = editProfileReq.getBackgroundImage();
         try {
@@ -115,7 +115,7 @@ public class MemberService {
     }
 
     /** Member -> MemberDto 변환 */
-    public MemberDto convertDto(Member member) {
+    private MemberDto convertDto(Member member) {
         Image profileImage = member.getProfileImage();
         Image backgroundImage = member.getBackgroundImage();
         return MemberDto.builder()
