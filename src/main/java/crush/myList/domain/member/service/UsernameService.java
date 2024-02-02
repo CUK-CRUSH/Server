@@ -20,7 +20,7 @@ public class UsernameService {
     private final EnvBean envBean;
     private final MemberRepository memberRepository;
 
-    private static final String USERNAME_PATTERN = "^[a-zA-Z0-9._]{3,30}$";
+    private static final String USERNAME_PATTERN = "^[a-z0-9._]{3,30}$";
     public void checkUsername(String username) {
         checkCharacterRules(username);
         checkDuplication(username);
