@@ -41,6 +41,8 @@ jobs:
         spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_URI }}
 
         jwt.secret: ${{ secrets.JWT_SECRET }}
+        jwt.access-token-time: ${{ secrets.ACCESS_TOKEN_TIME }}
+        jwt.refresh-token-time: ${{ secrets.REFRESH_TOKEN_TIME }}
         spring.cloud.gcp.storage.credentials.location: ${{ secrets.GCS_KEY_LOCATION }}
         spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
         spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
