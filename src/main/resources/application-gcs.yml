@@ -6,4 +6,5 @@ spring:
           location: ${GCS_KEY_LOCATION}
         project-id: ${GCS_PROJECT_ID}
         bucket: ${GCS_BUCKET_NAME}
+        bucket-dir: ${GCS_BUCKET_DIR}
         key-name: ${GCS_KEY_NAME}

@@ -99,7 +99,7 @@ public class ImageService {
 
         try {
             Blob blob = storage.create(imageInfo, convertToWebP(imageFile));
-            String imageUrl = String.format("https://storage.googleapis.com/%s/%s", envBean.getBucketName(), uuid);
+            String imageUrl = String.format("https://storage.googleapis.com/%s/%s/%s", envBean.getBucketName(), envBean.getBucketDir(), uuid);
             String fileName = blob.getName();
 
             Image image = Image.builder()
