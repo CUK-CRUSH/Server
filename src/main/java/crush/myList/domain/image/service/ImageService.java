@@ -91,15 +91,16 @@ public class ImageService {
         // 확장자를 webp로 고정
         String ext = "image/webp";
         String uuid = UUID.randomUUID().toString();
+        String filePath = envBean.getBucketDir() + "/" + uuid;
 
-        // 파일은 https://storage.googleapis.com/{버킷_이름}/{UUID}를 통해 조회할 수 있음
-        BlobInfo imageInfo = BlobInfo.newBuilder(envBean.getBucketName(), uuid)
+        // 파일은 https://storage.googleapis.com/{버킷_이름}/{디렉토리}/{UUID}를 통해 조회할 수 있음
+        BlobInfo imageInfo = BlobInfo.newBuilder(envBean.getBucketName(), filePath)
                 .setContentType(ext)
                 .build();
 
         try {
             Blob blob = storage.create(imageInfo, convertToWebP(imageFile));
-            String imageUrl = String.format("https://storage.googleapis.com/%s/%s/%s", envBean.getBucketName(), envBean.getBucketDir(), uuid);
+            String imageUrl = String.format("https://storage.googleapis.com/%s/%s", envBean.getBucketName(), filePath);
             String fileName = blob.getName();
 
             Image image = Image.builder()
