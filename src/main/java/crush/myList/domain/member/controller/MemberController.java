@@ -62,7 +62,7 @@ public class MemberController {
     @Operation(summary = "내 정보 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공", content = {@Content(mediaType = "application/json")}),
-            @ApiResponse(responseCode = "400", description = "회원 정보 수정 실패", content = {@Content(mediaType = "application/json")})
+            @ApiResponse(responseCode = "404", description = "회원 정보 수정 실패", content = {@Content(mediaType = "application/json")})
     })
     @PatchMapping(value = "/me", consumes = "multipart/form-data")
     public JsonBody<EditProfileRes> updateInfo(@ModelAttribute EditProfileReq editProfileReq, @AuthenticationPrincipal SecurityMember member) {

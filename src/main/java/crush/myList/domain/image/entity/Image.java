@@ -1,20 +1,18 @@
 package crush.myList.domain.image.entity;
 
+import crush.myList.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "image")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Image {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Image extends BaseEntity {
     @Column(name = "original_name", nullable = false)
     String originalName;
 

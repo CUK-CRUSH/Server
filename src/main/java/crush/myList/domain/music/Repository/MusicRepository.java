@@ -1,7 +1,6 @@
 package crush.myList.domain.music.Repository;
 
-import com.google.protobuf.MessageLite;
-import crush.myList.domain.music.Entity.Music;
+import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.playlist.entity.Playlist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
