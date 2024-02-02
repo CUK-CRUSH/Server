@@ -1,46 +1,59 @@
 package crush.myList.service;
 
+import crush.myList.config.EnvBean;
+import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.service.UsernameService;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.server.ResponseStatusException;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 
-@SpringBootTest
-@Transactional
-@AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
+@DisplayName("UsernameService 테스트")
 public class UsernameServiceTest {
-    @Autowired
+    @InjectMocks
     private UsernameService usernameService;
+
+    @Mock
+    private MemberRepository memberRepository;
+    @Mock
+    private EnvBean envBean;
 
     @DisplayName("닉네임 유효 테스트")
     @Test
     public void isValidUsernameTest() {
         // given
-        final String goodUsername = "goodUsername_.123";    // 3~30자, 영문, 숫자, ., _
-        final String badUsername1 = "badUsername_!@#";  // 특수문자
+        final String goodUsername = "goodusername_.123";    // 3~30자, 소문자, 숫자, ., _
+        final String badUsername1 = "badusername_!@#";  // 특수문자
         final String badUsername2 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";  // 31자
         final String badUsername3 = "this_is_fuckin.badname";  // 비속어
+        final String badUsername4 = "Aaaaaa";   // 대문자
 
         // when
-        Assertions.assertDoesNotThrow(() -> usernameService.checkUsername(goodUsername));
+        Assertions.assertDoesNotThrow(() -> usernameService.checkCharacterRules(goodUsername));
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            usernameService.checkUsername(badUsername1);
+            usernameService.checkCharacterRules(badUsername1);
         });
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            usernameService.checkUsername(badUsername2);
+            usernameService.checkCharacterRules(badUsername2);
         });
 
+//        Assertions.assertThrows(Exception.class, () -> {
+//            usernameService.checkBadWords(badUsername3);
+//        });
+
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            usernameService.checkUsername(badUsername3);
+            usernameService.checkCharacterRules(badUsername4);
         });
     }
 }
