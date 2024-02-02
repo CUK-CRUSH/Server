@@ -92,7 +92,7 @@ public class MemberService {
     /** 사용자 정보 수정 */
     public EditProfileRes updateInfo(EditProfileReq editProfileReq, Long memberId) throws ResponseStatusException {
         Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
 
         // username 수정
         if (editProfileReq.getUsername() != null) {
