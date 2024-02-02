@@ -5,13 +5,11 @@ import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
-import crush.myList.domain.music.Entity.Music;
+import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 

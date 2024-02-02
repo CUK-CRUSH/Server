@@ -2,7 +2,7 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.music.Entity.Music;
+import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
