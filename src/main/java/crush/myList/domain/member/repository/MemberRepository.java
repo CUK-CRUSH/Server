@@ -12,7 +12,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByOauth2id(String oAuth2Id);
 
-    boolean existsByOauth2id(String oauth2Id);
-
     Boolean existsByUsername(String username);
 }
