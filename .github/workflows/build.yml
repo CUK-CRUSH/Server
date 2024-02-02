@@ -49,7 +49,7 @@ jobs:
         server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
         react.uri: ${{ secrets.REACT_URI }}
         perspective.api-key: ${{ secrets.PERSPECTIVE_API_KEY }}
-        JPA_DDL_AUTO: ${{ secrets.BUILD_JPA_DDL_AUTO }}
+        spring.jpa.hibernate.ddl-auto: ${{ secrets.BUILD_JPA_DDL_AUTO }}
 
     - name: create-json
       id: create-json
