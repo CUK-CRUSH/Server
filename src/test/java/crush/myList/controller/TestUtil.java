@@ -22,19 +22,19 @@ import java.net.URL;
 @Component
 public class TestUtil {
     @Autowired
-    protected RoleRepository roleRepository;
+    private RoleRepository roleRepository;
     @Autowired
-    protected MemberRepository memberRepository;
+    private MemberRepository memberRepository;
     @Autowired
-    protected PlaylistRepository playlistRepository;
+    private PlaylistRepository playlistRepository;
     @Autowired
-    protected MusicRepository musicRepository;
+    private MusicRepository musicRepository;
 
     /**
      * 테스트용 멤버 생성
      * @return Member
      */
-    protected Member createTestMember(String username) {
+    public Member createTestMember(String username) {
         Role role = roleRepository.findByName(RoleName.USER)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 권한입니다."));
         Member member = Member.builder()
@@ -52,7 +52,7 @@ public class TestUtil {
      * 테스트용 플레이리스트 생성
      * @return Playlist
      */
-    protected Playlist createTestPlaylist(Member member) {
+    public Playlist createTestPlaylist(Member member) {
         Playlist playlist = Playlist.builder()
                 .name("testPlaylistName")
                 .member(member)
@@ -66,7 +66,7 @@ public class TestUtil {
      * 테스트용 음악 생성
      * @return Music
      */
-    protected Music createTestMusic(Playlist playlist) {
+    public Music createTestMusic(Playlist playlist) {
         Music music = Music.builder()
                 .title("굿굿")
                 .artist("후후")
@@ -82,7 +82,7 @@ public class TestUtil {
      * 테스트용 이미지 생성
      * @return MockMultipartFile
      */
-    protected MockMultipartFile createTestImage(String imageName) throws IOException {
+    public MockMultipartFile createTestImage(String imageName) throws IOException {
         URL resource = getClass().getResource("/img/test.png");
         FileInputStream file = new FileInputStream(resource.getFile());
 

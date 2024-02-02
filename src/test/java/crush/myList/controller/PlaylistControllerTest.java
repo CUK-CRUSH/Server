@@ -2,12 +2,8 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.member.repository.MemberRepository;
-import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.Entity.Music;
-import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
-import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -34,16 +30,7 @@ public class PlaylistControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private PlaylistRepository playlistRepository;
-    @Autowired
-    private MusicRepository musicRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
     @Autowired
     private TestUtil testUtil;
 
@@ -187,7 +174,6 @@ public class PlaylistControllerTest {
         Playlist playlist = testUtil.createTestPlaylist(member);
         MockMultipartFile imageFile = testUtil.createTestImage("titleImage");
 
-        final String POST_API = "/api/v1/playlist";
         final String UPDATE_API = "/api/v1/playlist/" + playlist.getId();
 
         testReporter.publishEntry(
@@ -227,6 +213,30 @@ public class PlaylistControllerTest {
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.data.thumbnailUrl").isEmpty())
                         .andReturn().getResponse().getContentAsString()
+        );
+    }
+
+    @DisplayName("타인의 플레이리스트 수정")
+    @Test
+    public void updateOthersPlaylistTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Member otherMember = testUtil.createTestMember("otherUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        MockMultipartFile imageFile = testUtil.createTestImage("titleImage");
+
+        final String api = "/api/v1/playlist/" + playlist.getId();
+
+        // when
+        testReporter.publishEntry(
+                mockMvc.perform(
+                        multipart(HttpMethod.PATCH, api)
+                                .file(imageFile)
+                                .param("playlistName", "testPlaylist")
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(otherMember.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .andExpect(status().isForbidden())
+                        .andReturn().getResponse().toString()
         );
     }
 }
