@@ -134,6 +134,7 @@ public class MusicService {
     }
 
     private Music convertToEntity(MusicDto.PostRequest postRequest, Playlist playlist) {
+        // youtube url 형식인지 정규 표현식으로 확인
         String url = musicUrlFilter(postRequest.getUrl());
         return Music.builder()
                 .title(postRequest.getTitle())
