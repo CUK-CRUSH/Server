@@ -36,8 +36,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.sendRedirect(createFailURI());
-        log.info("로그인 실패: " + exception.getMessage());
-        log.info(getExceptionMessage(exception));
+        log.info("로그인 실패: " + exception.getMessage() + ", " + getExceptionMessage(exception));
     }
 
     private String getExceptionMessage(AuthenticationException exception) {

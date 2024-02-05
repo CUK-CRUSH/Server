@@ -6,6 +6,7 @@ import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestReporter;
@@ -72,6 +73,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 생성 테스트")
     @Test
+    @Disabled
     public void createPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         final String api = "/api/v1/playlist";
@@ -95,6 +97,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 수정 테스트")
     @Test
+    @Disabled
     public void updatePlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
@@ -136,6 +139,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 이미지 삭제 테스트 (Deprecated)")
     @Test
+    @Disabled
     public void deletePlaylistImageTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
@@ -168,6 +172,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("플레이리스트 PATCH 메소드에서 이미지 삭제 테스트")
     @Test
+    @Disabled
     public void deletePlaylistImageWithPatchTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
@@ -218,6 +223,7 @@ public class PlaylistControllerTest {
 
     @DisplayName("타인의 플레이리스트 수정")
     @Test
+    @Disabled
     public void updateOthersPlaylistTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");

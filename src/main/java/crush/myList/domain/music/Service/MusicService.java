@@ -44,7 +44,7 @@ public class MusicService {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
-        Pageable pageable = PageRequest.of(page, LimitConstants.PLAYLIST_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageable = PageRequest.of(page, LimitConstants.PLAYLIST_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.ASC, "createdDate"));
 
         Page<Music> musics = musicRepository.findAllByPlaylist(playlist, pageable);
         return convertToDtoList(musics);
@@ -63,15 +63,29 @@ public class MusicService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("플레이리스트에는 %d개의 음악만 추가할 수 있습니다.", LimitConstants.MUSIC_LIMIT.getLimit()));
         }
 
-        Music music = Music.builder()
-                .title(postRequest.getTitle())
-                .artist(postRequest.getArtist())
-                .url(musicUrlFilter(postRequest.getUrl()))
-                .playlist(playlist)
-                .build();
+        Music music = convertToEntity(postRequest, playlist);
         musicRepository.save(music);
 
         return convertToDto(music);
+    }
+
+    public List<MusicDto.Result> addMultipleMusic(SecurityMember memberDetails, Long playlistId, List<MusicDto.PostRequest> postRequests) {
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
+
+        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
+        }
+
+        if (musicRepository.countByPlaylist(playlist) + postRequests.size() > LimitConstants.MUSIC_LIMIT.getLimit()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "플레이리스트에 추가할 수 있는 음악의 개수를 초과했습니다.");
+        }
+
+        List<Music> musics = convertToEntityList(postRequests, playlist);
+        musicRepository.saveAll(musics);
+
+        return convertToDtoList(musics);
     }
 
     public MusicDto.Result updateMusic(SecurityMember memberDetails, Long musicId, MusicDto.PatchRequest patchRequest) {
@@ -113,7 +127,28 @@ public class MusicService {
         musicRepository.delete(music);
     }
 
+    private List<Music> convertToEntityList(List<MusicDto.PostRequest> postRequests, Playlist playlist) {
+        return postRequests.stream()
+                .map(request -> convertToEntity(request, playlist))
+                .toList();
+    }
+
+    private Music convertToEntity(MusicDto.PostRequest postRequest, Playlist playlist) {
+        return Music.builder()
+                .title(postRequest.getTitle())
+                .artist(postRequest.getArtist())
+                .url(postRequest.getUrl())
+                .playlist(playlist)
+                .build();
+    }
+
     private List<MusicDto.Result> convertToDtoList(Page<Music> musicEntities) {
+        return musicEntities.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    private List<MusicDto.Result> convertToDtoList(List<Music> musicEntities) {
         return musicEntities.stream()
                 .map(this::convertToDto)
                 .toList();

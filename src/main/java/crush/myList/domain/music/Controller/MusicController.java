@@ -56,6 +56,21 @@ public class MusicController {
         );
     }
 
+    @Operation(summary = "음악 여러곡 추가하기")
+    @PostMapping("/{playlistId}/multiple")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "음악 추가 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "음악 추가 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<List<MusicDto.Result>> addMultipleMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @RequestBody List<MusicDto.PostRequest> postRequests) {
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "음악 추가 성공",
+                musicService.addMultipleMusic(member, playlistId, postRequests)
+        );
+    }
+
     @Operation(summary = "음악 수정하기")
     @PatchMapping("")
     @ApiResponses(value = {
