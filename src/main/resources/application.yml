@@ -13,7 +13,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO}
     show-sql: false
     properties:
       hibernate:
@@ -22,15 +22,13 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 4MB
-      max-request-size: 16MB
+      max-file-size: 20MB
+      max-request-size: 50MB
 
 jwt:
   secret: ${JWT_SECRET}
-  # 10 minutes
-  access-token-time: 600000
-  # 1 day
-  refresh-token-time: 86400000
+  access-token-time: ${ACCESS_TOKEN_TIME}
+  refresh-token-time: ${REFRESH_TOKEN_TIME}
 
 
 server:

@@ -44,13 +44,17 @@ jobs:
           spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.TEST_KAKAO_REDIRECT_URI }}
 
           jwt.secret: ${{ secrets.JWT_SECRET }}
+          jwt.access-token-time: ${{ secrets.TEST_ACCESS_TOKEN_TIME }}
+          jwt.refresh-token-time: ${{ secrets.TEST_REFRESH_TOKEN_TIME }}
           spring.cloud.gcp.storage.credentials.location: ${{ secrets.GCS_KEY_LOCATION }}
           spring.cloud.gcp.storage.project-id: ${{ secrets.GCS_PROJECT_ID }}
           spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
+          spring.cloud.gcp.storage.bucket-dir: ${{ secrets.TEST_GCS_BUCKET_DIR }}
           spring.cloud.gcp.storage.key-name: ${{ secrets.GCS_KEY_NAME }}
           server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
           react.uri: ${{ secrets.TEST_REACT_URI }}
           perspective.api-key: ${{ secrets.PERSPECTIVE_API_KEY }}
+          spring.jpa.hibernate.ddl-auto: ${{ secrets.TEST_JPA_DDL_AUTO }}
 
       - name: create-json
         id: create-json
