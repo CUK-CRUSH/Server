@@ -20,7 +20,7 @@ public class GoogleAutocompleteTest {
     public void getAutocompleteGoogleTest() throws Exception {
         // given
         String language = GoogleAutocomplete.KOREAN;
-        String text = "newjeans";
+        String text = "뉴진스";
 
         // when
         List<String> list = googleAutocomplete.getAutocomplete(language, text, 4);
