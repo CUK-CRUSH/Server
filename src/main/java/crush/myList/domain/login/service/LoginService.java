@@ -28,6 +28,7 @@ public class LoginService {
     * */
     public Map<String, String> reissue(String token) {
         try {
+            log.info("refresh token: {}", token);
             Jws<Claims> jws = jwtTokenProvider.validateAndParseToken(token);
 
             if (!jwtTokenProvider.isRefreshToken(jws)) {

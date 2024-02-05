@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReissueReq {
-    @Schema(name = "refresh_token", description = "access token 발급용 refresh token 입니다.")
+    @Schema(name = "refreshToken", description = "access token 발급용 refresh token 입니다.")
     private String refreshToken;
 }
