@@ -134,10 +134,11 @@ public class MusicService {
     }
 
     private Music convertToEntity(MusicDto.PostRequest postRequest, Playlist playlist) {
+        String url = musicUrlFilter(postRequest.getUrl());
         return Music.builder()
                 .title(postRequest.getTitle())
                 .artist(postRequest.getArtist())
-                .url(postRequest.getUrl())
+                .url(url)
                 .playlist(playlist)
                 .build();
     }
