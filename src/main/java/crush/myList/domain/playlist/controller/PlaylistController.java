@@ -122,4 +122,36 @@ public class PlaylistController {
                 playlistId
         );
     }
+
+    @Operation(summary = "플레이리스트 좋아요 하기")
+    @PostMapping("/{playlistId}/like")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "플레이리스트 좋아요 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 좋아요 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<Long> likePlaylist(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId) {
+        playlistService.likePlaylist(member, playlistId);
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "플레이리스트 좋아요 완료",
+                playlistId
+        );
+    }
+
+    @Operation(summary = "플레이리스트 좋아요 취소하기")
+    @DeleteMapping("/{playlistId}/like")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "플레이리스트 좋아요 취소 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 좋아요 취소 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<Long> unlikePlaylist(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId) {
+        playlistService.unlikePlaylist(member, playlistId);
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "플레이리스트 좋아요 취소 완료",
+                playlistId
+        );
+    }
 }

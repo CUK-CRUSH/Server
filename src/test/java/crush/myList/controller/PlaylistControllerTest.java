@@ -129,6 +129,47 @@ public class PlaylistControllerTest {
         );
     }
 
+    @DisplayName("플레이리스트 좋아요 추가 테스트")
+    @Test
+    public void likePlaylistTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
+
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/like";
+
+        // when
+        testReporter.publishEntry(
+                mockMvc.perform(
+                        MockMvcRequestBuilders.post(api)
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString()
+        );
+    }
+
+    @DisplayName("플레이리스트 좋아요 취소 테스트")
+    @Test
+    public void unlikePlaylistTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
+        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
+
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/like";
+
+        // when
+        testReporter.publishEntry(
+                mockMvc.perform(
+                        MockMvcRequestBuilders.delete(api)
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString()
+        );
+    }
+
     @DisplayName("플레이리스트 생성 테스트")
     @Test
     @Disabled

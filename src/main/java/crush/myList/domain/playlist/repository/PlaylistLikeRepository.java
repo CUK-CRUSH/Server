@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlaylistLikeRepository extends JpaRepository<PlaylistLike, Long> {
@@ -12,4 +13,6 @@ public interface PlaylistLikeRepository extends JpaRepository<PlaylistLike, Long
     List<PlaylistLike> findAllByMemberId(Long memberId);
 
     Boolean existsByPlaylistIdAndMemberId(Long playlistId, Long memberId);
+
+    Optional<PlaylistLike> findByPlaylistIdAndMemberId(Long playlistId, Long id);
 }
