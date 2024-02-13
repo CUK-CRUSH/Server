@@ -51,7 +51,7 @@ public class RandomRecommendationServiceTest {
                         Playlist.builder().member(Member.builder().id(1L).username("Test").build()).id(8L).name("테스트8").build()
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10L);
+        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
@@ -84,7 +84,7 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10L);
+        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(

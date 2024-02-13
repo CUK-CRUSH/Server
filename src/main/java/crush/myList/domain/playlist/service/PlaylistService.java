@@ -8,6 +8,7 @@ import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
+import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PlaylistService {
     private final PlaylistRepository playlistRepository;
+    private final PlaylistLikeRepository playlistLikeRepository;
     private final MemberRepository memberRepository;
     private final MusicRepository musicRepository;
 
@@ -155,15 +157,22 @@ public class PlaylistService {
                 .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                 // counts musics in playlist
                 .numberOfMusics(musicRepository.countByPlaylist(playlist))
+                .likeCount(playlistLikeRepository.countByPlaylistId(playlist.getId()))
                 .build();
     }
 
     // playlistId로 playlist 단일 조회
-    public PlaylistDto.Response getPlaylist(String playlistId) {
+    public PlaylistDto.Response getPlaylist(String playlistId, SecurityMember securityMember) {
         Playlist playlist = playlistRepository.findById(Long.parseLong(playlistId)).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
 
-        return convertToDto(playlist);
+        PlaylistDto.Response response = convertToDto(playlist);
+        if (securityMember != null) {
+            response.setIsLike(playlistLikeRepository.existsByPlaylistIdAndMemberId(playlist.getId(), securityMember.getId()));
+        } else {
+            response.setIsLike(false);
+        }
+        return response;
     }
 }
