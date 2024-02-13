@@ -46,8 +46,6 @@ public class RandomRecommendationService implements Recommendation {
             playlists = playlistRepository.findAllExceptMember(member);
         }
 
-        log.info("count of playlists: {}", playlists.size());
-
         // 0부터 플레이리스트의 개수의 난수 중 RECOMMENDATION_COUNT개를 추출합니다.
         Random rand = new Random();
         Set<Integer> selected = new HashSet<>();
