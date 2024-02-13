@@ -4,6 +4,8 @@ import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.playlist.entity.Playlist;
+import crush.myList.domain.playlist.entity.PlaylistLike;
+import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Disabled;
@@ -15,10 +17,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PlaylistControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
@@ -53,7 +56,7 @@ public class PlaylistControllerTest {
         );
     }
 
-    @DisplayName("플레이리스트 단일 조회 테스트")
+    @DisplayName("플레이리스트 단일 조회 테스트 - 오프라인")
     @Test
     public void viewPlaylistTest(TestReporter testReporter) throws Exception {
         // given
@@ -64,8 +67,104 @@ public class PlaylistControllerTest {
         final String api = "/api/v1/playlist/" + playlist.getId();
 
         // when
+        MockHttpServletResponse response = mockMvc.perform(get(api))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertThat(response.getContentAsString()).contains("likeCount\":0");
+    }
+
+    @DisplayName("플레이리스트 단일 조회 테스트 - 온라인 && 본인이 좋아요한 플레이리스트")
+    @Test
+    public void viewPlaylistOnlineTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
+        Music music = testUtil.createTestMusic(playlist);
+        String accessToken = jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN);
+
+        final String api = "/api/v1/playlist/" + playlist.getId();
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(get(api)
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertThat(response.getContentAsString()).contains("isLike\":true");
+    }
+
+    @DisplayName("플레이리스트 단일 조회 테스트 - 온라인 && 본인이 좋아요하지 않은 플레이리스트")
+    @Test
+    public void viewPlaylistOnlineNotLikedTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Member otherMember = testUtil.createTestMember("otherUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
+        Music music = testUtil.createTestMusic(playlist);
+        String accessToken = jwtTokenProvider.createToken(otherMember.getId().toString(), JwtTokenType.ACCESS_TOKEN);
+
+        final String api = "/api/v1/playlist/" + playlist.getId();
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(get(api)
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertThat(response.getContentAsString()).contains("likeCount\":1");
+    }
+
+    @DisplayName("플레이리스트 단일 조회 테스트 - 실패")
+    @Test
+    public void viewPlaylistFailTest(TestReporter testReporter) throws Exception {
+        // given
+        testUtil.deletePlaylist(1L);
+        final String api = "/api/v1/playlist/1";
+
+        // when
         testReporter.publishEntry(
                 mockMvc.perform(get(api))
+                        .andExpect(status().isNotFound())
+                        .andReturn().getResponse().toString()
+        );
+    }
+
+    @DisplayName("플레이리스트 좋아요 추가 테스트")
+    @Test
+    public void likePlaylistTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
+
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/like";
+
+        // when
+        testReporter.publishEntry(
+                mockMvc.perform(
+                        MockMvcRequestBuilders.post(api)
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString()
+        );
+    }
+
+    @DisplayName("플레이리스트 좋아요 취소 테스트")
+    @Test
+    public void unlikePlaylistTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
+        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
+
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/like";
+
+        // when
+        testReporter.publishEntry(
+                mockMvc.perform(
+                        MockMvcRequestBuilders.delete(api)
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                         .andExpect(status().isOk())
                         .andReturn().getResponse().getContentAsString()
         );

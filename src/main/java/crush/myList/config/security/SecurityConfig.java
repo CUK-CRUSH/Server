@@ -46,8 +46,8 @@ public class SecurityConfig {
         // 자동완성 api
         "/api/v1/autocomplete/**",
 
-            // 플레이리스트 추천 api
-            "/api/v1/recommendation",
+        // 플레이리스트 추천 api
+        "/api/v1/recommendation",
     };
 
     private final String[] TEMPORARY_LIST = {

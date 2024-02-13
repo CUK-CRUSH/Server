@@ -15,5 +15,5 @@ public interface MusicRepository extends JpaRepository<Music, Long> {
     Page<Music> findAllByPlaylist(Playlist playlist, Pageable pageable);
     void deleteAllByPlaylist(Playlist playlist);
 
-    public Long countByPlaylist(Playlist playlist);
+    public Integer countByPlaylist(Playlist playlist);
 }

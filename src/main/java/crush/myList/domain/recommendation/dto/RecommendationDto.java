@@ -29,6 +29,6 @@ public class RecommendationDto {
         private String thumbnailUrl;
 
         @Schema(name = "numberOfMusics", description = "플레이리스트 음악 개수입니다.")
-        private Long numberOfMusics;
+        private Integer numberOfMusics;
     }
 }
