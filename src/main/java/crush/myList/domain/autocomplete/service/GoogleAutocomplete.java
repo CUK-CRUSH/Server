@@ -29,6 +29,17 @@ public class GoogleAutocomplete implements Autocomplete {
     public static final String KOREAN = "ko";
     public static final String ENGLISH = "en";
 
+
+    /** 문자열에서 각 단어 첫번째 알파벳은 대문자로 변환 */
+    public String capitalizeFirstLetter(String text) {
+        StringBuilder sb = new StringBuilder();
+        String[] words = text.split(" ");
+        for (String word : words) {
+            sb.append(word.substring(0, 1).toUpperCase()).append(word.substring(1)).append(" ");
+        }
+        return sb.toString().trim();
+    }
+
     /** XML에서 문장 정보를 파싱하여 리스트로 반환합니다. */
     public List<String> getList(String xml, int maxSize) throws Exception {
         List<String> list = new ArrayList<>();
@@ -43,7 +54,9 @@ public class GoogleAutocomplete implements Autocomplete {
         // 존재하는 모든 결과 문장을 리스트에 담아서 반환
         NodeList nodeList = document.getElementsByTagName("suggestion");
         for (int i = 0; i < nodeList.getLength() && i < maxSize; i++) {
-            list.add(nodeList.item(i).getAttributes().getNamedItem("data").getNodeValue());
+            String text = nodeList.item(i).getAttributes().getNamedItem("data").getNodeValue();
+            // 첫번째 알파벳을 대문자로 변환하여 리스트에 추가
+            list.add(capitalizeFirstLetter(text));
         }
         return list;
     }
@@ -65,6 +78,7 @@ public class GoogleAutocomplete implements Autocomplete {
                 response.append(inputLine);
             }
             br.close();
+            // 전달받은 메시지를 파싱하여 리스트로 반환합니다.
             return getList(response.toString(), maxSize);
 
         } catch (Exception e) {
