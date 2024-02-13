@@ -4,9 +4,9 @@ import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.music.Repository.MusicRepository;
-import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
+import crush.myList.domain.recommendation.dto.RecommendationDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class RandomRecommendationService implements Recommendation {
      * @param securityMember 로그인한 사용자 정보
      * @return 추천 플레이리스트 목록
      */
-    public List<PlaylistDto.Response> getRecommendation(SecurityMember securityMember) {
+    public List<RecommendationDto.Response> getRecommendation(SecurityMember securityMember) {
         // 로그인한 사용자의 플레이리스트를 제외하고 모든 플레이리스트를 조회합니다.
         Member member = null;
         if (securityMember != null) {
@@ -57,11 +57,12 @@ public class RandomRecommendationService implements Recommendation {
         }
 
         // 추천된 플레이리스트를 PlaylistDto.Response로 변환합니다.
-        List<PlaylistDto.Response> responses = new LinkedList<>();
+        List<RecommendationDto.Response> responses = new LinkedList<>();
 
         for (int i : selected) {
             Playlist playlist = playlists.get(i);
-            responses.add(PlaylistDto.Response.builder()
+            responses.add(RecommendationDto.Response.builder()
+                            .username(playlist.getMember().getUsername())
                             .id(playlist.getId())
                             .playlistName(playlist.getName())
                             .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)

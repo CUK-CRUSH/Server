@@ -2,6 +2,7 @@ package crush.myList.domain.recommendation.controller;
 
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.playlist.dto.PlaylistDto;
+import crush.myList.domain.recommendation.dto.RecommendationDto;
 import crush.myList.domain.recommendation.service.RandomRecommendationService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +34,7 @@ public class RecommendationController {
             @ApiResponse(responseCode = "200", description = "추천 음악 조회 성공"),
             @ApiResponse(responseCode = "404", description = "추천 음악 조회 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<List<PlaylistDto.Response>> getRecommendation(@AuthenticationPrincipal SecurityMember member) {
+    public JsonBody<List<RecommendationDto.Response>> getRecommendation(@AuthenticationPrincipal SecurityMember member) {
         return JsonBody.of(
                 200,
                 "추천 음악 조회 성공",
