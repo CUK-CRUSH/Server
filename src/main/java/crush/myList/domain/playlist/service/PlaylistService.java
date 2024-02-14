@@ -7,6 +7,7 @@ import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.dto.PlaylistDto;
+import crush.myList.domain.playlist.dto.PlaylistLikeMember;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
@@ -211,5 +212,23 @@ public class PlaylistService {
         );
 
         playlistLikeRepository.delete(playlistLike);
+    }
+
+    public List<PlaylistLikeMember> getPlaylistLikes(Long playlistId) {
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
+
+        List<Member> members = playlistLikeRepository.findAllByPlaylist(playlist).stream()
+                .map(PlaylistLike::getMember)
+                .toList();
+        return members.stream()
+                .map(member -> PlaylistLikeMember.builder()
+                        .id(member.getId())
+                        .username(member.getUsername())
+                        .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getUrl() : null)
+                        .build()
+                )
+                .toList();
     }
 }

@@ -129,6 +129,25 @@ public class PlaylistControllerTest {
         );
     }
 
+    @DisplayName("플레이리스트 좋아요 조회 테스트")
+    @Test
+    public void viewPlaylistLikesTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
+        Music music = testUtil.createTestMusic(playlist);
+
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/like";
+
+        // when
+        assertThat(
+                mockMvc.perform(get(api))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString()
+        ).contains("[{\"id\":" + member.getId() + ",\"username\":\"" + member.getUsername() + "\"");
+    }
+
     @DisplayName("플레이리스트 좋아요 추가 테스트")
     @Test
     public void likePlaylistTest(TestReporter testReporter) throws Exception {
