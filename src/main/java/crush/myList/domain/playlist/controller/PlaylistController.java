@@ -48,7 +48,7 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 조회 성공"),
             @ApiResponse(responseCode = "404", description = "플레이리스트 찾을 수 없음", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<PlaylistDto.Response> getPlaylist(@PathVariable String playlistId, @AuthenticationPrincipal SecurityMember securityMember) {
+    public JsonBody<PlaylistDto.Response> getPlaylist(@PathVariable Long playlistId, @AuthenticationPrincipal SecurityMember securityMember) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 조회 성공",
