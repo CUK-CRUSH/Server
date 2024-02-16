@@ -1,12 +1,18 @@
 package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
-import crush.myList.domain.member.dto.EditProfileReq;
+import crush.myList.domain.image.entity.Image;
+import crush.myList.domain.image.repository.ImageRepository;
+import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
+import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.playlist.entity.Playlist;
+import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +31,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 public class MemberControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -37,6 +43,16 @@ public class MemberControllerTest {
     private RoleRepository roleRepository;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private TestUtil testUtil;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private ImageRepository imageRepository;
+    @Autowired
+    private PlaylistRepository playlistRepository;
+    @Autowired
+    private MusicRepository musicRepository;
 
     public Member createTestMember() {
         Role role = roleRepository.findByName(RoleName.USER)
@@ -217,5 +233,57 @@ public class MemberControllerTest {
                 .with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 테스트")
+    void deleteMemberTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("TestMember");
+
+        // when
+        testReporter.publishEntry(mvc.perform(delete("/api/v1/member/me")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+
+        // then
+        Assertions.assertTrue(memberRepository.findById(member.getId()).isEmpty());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 테스트 - 이미지 및 플레이리스트 삭제")
+    void deleteMemberTest2(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("TestMember");
+        Image profileImage = imageService.saveImageToGcs_Image(testUtil.createTestImage("profileImage"));
+        Image backgroundImage = imageService.saveImageToGcs_Image(testUtil.createTestImage("backgroundImage"));
+        member.setProfileImage(profileImage);
+        member.setBackgroundImage(backgroundImage);
+        memberRepository.save(member);
+
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Image playlistImage = imageService.saveImageToGcs_Image(testUtil.createTestImage("playlistImage"));
+        playlist.setImage(playlistImage);
+        playlistRepository.save(playlist);
+
+        Music music = testUtil.createTestMusic(playlist);
+        musicRepository.save(music);
+
+        // when
+        testReporter.publishEntry(mvc.perform(delete("/api/v1/member/me")
+                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+
+        // then
+        Assertions.assertTrue(memberRepository.findById(member.getId()).isEmpty());
+        Assertions.assertTrue(imageRepository.findById(profileImage.getId()).isEmpty());
+        Assertions.assertTrue(imageRepository.findById(backgroundImage.getId()).isEmpty());
+        Assertions.assertTrue(playlistRepository.findById(playlist.getId()).isEmpty());
+        Assertions.assertTrue(imageRepository.findById(playlistImage.getId()).isEmpty());
+        Assertions.assertTrue(musicRepository.findById(music.getId()).isEmpty());
     }
 }
