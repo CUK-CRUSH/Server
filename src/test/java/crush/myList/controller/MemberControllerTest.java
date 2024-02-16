@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
