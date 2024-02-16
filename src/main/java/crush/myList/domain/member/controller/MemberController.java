@@ -91,4 +91,15 @@ public class MemberController {
         usernameService.checkDuplication(username);
         return JsonBody.of(HttpStatus.OK.value(), "사용 가능한 닉네임", username);
     }
+
+    @Operation(summary = "회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공", content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "회원 탈퇴 실패", content = {@Content(mediaType = "application/json")})
+    })
+    @DeleteMapping("/me")
+    public JsonBody<Long> deleteMember(@AuthenticationPrincipal SecurityMember member) {
+        memberService.deleteMember(member);
+        return JsonBody.of(HttpStatus.OK.value(), "회원 탈퇴 성공", member.getId());
+    }
 }
