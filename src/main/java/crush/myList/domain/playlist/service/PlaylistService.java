@@ -226,6 +226,7 @@ public class PlaylistService {
                 .map(member -> PlaylistLikeMember.builder()
                         .id(member.getId())
                         .username(member.getUsername())
+                        .introduction(member.getIntroduction())
                         .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getUrl() : null)
                         .build()
                 )
