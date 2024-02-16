@@ -50,6 +50,11 @@ public class SecurityConfig {
 
         // 플레이리스트 추천 api
         "/api/v1/recommendation",
+
+        // 검색 api
+        "/api/v1/search",
+        "/api/v1/search/playlist",
+        "/api/v1/search/member",
     };
 
     private final String[] TEMPORARY_LIST = {

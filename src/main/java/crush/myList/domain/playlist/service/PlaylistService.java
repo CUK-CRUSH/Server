@@ -164,8 +164,8 @@ public class PlaylistService {
     }
 
     // playlistId로 playlist 단일 조회
-    public PlaylistDto.Response getPlaylist(String playlistId, SecurityMember securityMember) {
-        Playlist playlist = playlistRepository.findById(Long.parseLong(playlistId)).orElseThrow(() ->
+    public PlaylistDto.Response getPlaylist(Long playlistId, SecurityMember securityMember) {
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
 
