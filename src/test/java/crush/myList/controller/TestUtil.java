@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 @Component
 public class TestUtil {
@@ -61,6 +62,16 @@ public class TestUtil {
                 .build();
         playlistRepository.save(playlist);
 
+        List<Playlist> playlists = member.getPlaylists();
+
+        if (playlists == null) {
+            playlists = List.of(playlist);
+        }
+        else {
+            playlists.add(playlist);
+        }
+
+        member.setPlaylists(playlists);
         return playlist;
     }
 
@@ -77,6 +88,15 @@ public class TestUtil {
                 .build();
         musicRepository.save(music);
 
+        List<Music> musics = playlist.getMusics();
+
+        if (musics == null) {
+            musics = List.of(music);
+        } else {
+            musics.add(music);
+        }
+
+        playlist.setMusics(musics);
         return music;
     }
 

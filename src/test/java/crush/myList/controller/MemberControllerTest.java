@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -263,18 +261,14 @@ public class MemberControllerTest {
         Image backgroundImage = imageService.saveImageToGcs_Image(testUtil.createTestImage("backgroundImage"));
         member.setProfileImage(profileImage);
         member.setBackgroundImage(backgroundImage);
+        memberRepository.save(member);
 
         Playlist playlist = testUtil.createTestPlaylist(member);
         Image playlistImage = imageService.saveImageToGcs_Image(testUtil.createTestImage("playlistImage"));
         playlist.setImage(playlistImage);
+        playlistRepository.save(playlist);
 
         Music music = testUtil.createTestMusic(playlist);
-
-        member.setPlaylists(new ArrayList<>(List.of(playlist)));
-        playlist.setMusics(new ArrayList<>(List.of(music)));
-
-        memberRepository.save(member);
-        playlistRepository.save(playlist);
         musicRepository.save(music);
 
         // when
