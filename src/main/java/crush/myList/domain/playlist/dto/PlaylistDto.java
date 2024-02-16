@@ -57,6 +57,12 @@ public class PlaylistDto {
         private String thumbnailUrl;
 
         @Schema(name = "numberOfMusics", description = "플레이리스트 음악 개수입니다.")
-        private Long numberOfMusics;
+        private Integer numberOfMusics;
+
+        @Schema(name = "likeCount", description = "플레이리스트 좋아요 개수입니다.")
+        private Integer likeCount;
+
+        @Schema(name = "isLike", description = "플레이리스트 좋아요 여부입니다.")
+        private Boolean isLike;
     }
 }

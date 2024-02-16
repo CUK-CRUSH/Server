@@ -8,6 +8,8 @@ import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
+import crush.myList.domain.playlist.entity.PlaylistLike;
+import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
@@ -25,6 +27,8 @@ public class TestUtil {
     private MemberRepository memberRepository;
     @Autowired
     private PlaylistRepository playlistRepository;
+    @Autowired
+    private PlaylistLikeRepository playlistLikeRepository;
     @Autowired
     private MusicRepository musicRepository;
 
@@ -90,5 +94,23 @@ public class TestUtil {
                 "image/jpeg",
                 file
         );
+    }
+
+    /**
+     * 테스트용 플레이리스트 좋아요 생성
+     * @return PlaylistLike
+     */
+    public PlaylistLike createTestPlaylistLike(Member member, Playlist playlist) {
+        PlaylistLike playlistLike = PlaylistLike.builder()
+                .member(member)
+                .playlist(playlist)
+                .build();
+        return playlistLikeRepository.save(playlistLike);
+    }
+
+    public void deletePlaylist(Long id) {
+        if (playlistRepository.existsById(id)) {
+            playlistRepository.deleteById(id);
+        }
     }
 }
