@@ -9,8 +9,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "PlaylistLikeMember", description = "플레이리스트 좋아요 누른 사용자 정보입니다.")
-public class PlaylistLikeMember {
+@Schema(name = "LikeMember", description = "플레이리스트 좋아요 누른 사용자 정보입니다.")
+public class LikeMember {
     @Schema(name = "id", description = "사용자 ID", example = "1")
     private Long id;
     @Schema(name = "username", description = "사용자 닉네임", example = "crush")
