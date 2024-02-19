@@ -53,10 +53,6 @@ public class LikeService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
-        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
-        );
-
         PlaylistLike playlistLike = playlistLikeRepository.findByPlaylistIdAndMemberId(playlistId, memberEntity.getId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.BAD_REQUEST, "좋아요를 누르지 않은 플레이리스트입니다.")
         );
@@ -77,6 +73,7 @@ public class LikeService {
                 .map(member -> LikeMember.builder()
                         .id(member.getId())
                         .username(member.getUsername())
+                        .introduction(member.getIntroduction())
                         .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getUrl() : null)
                         .build()
                 )
