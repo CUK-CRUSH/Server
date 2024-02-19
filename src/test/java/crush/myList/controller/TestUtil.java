@@ -7,8 +7,10 @@ import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
+import crush.myList.domain.playlist.repository.GuestBookRepository;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ public class TestUtil {
     private PlaylistLikeRepository playlistLikeRepository;
     @Autowired
     private MusicRepository musicRepository;
+    @Autowired
+    private GuestBookRepository guestBookRepository;
 
     /**
      * 테스트용 멤버 생성
@@ -132,5 +136,16 @@ public class TestUtil {
         if (playlistRepository.existsById(id)) {
             playlistRepository.deleteById(id);
         }
+    }
+
+    public GuestBook createTestGuestBook(Member member, Playlist playlist) {
+        GuestBook guestBook = GuestBook.builder()
+                .member(member)
+                .playlist(playlist)
+                .content("testContent")
+                .build();
+        member.setGuestBooks(List.of(guestBook));
+        playlist.setGuestBooks(List.of(guestBook));
+        return guestBookRepository.save(guestBook);
     }
 }

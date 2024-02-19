@@ -26,13 +26,14 @@ public class Playlist extends BaseEntity {
     @Column(name = "name", nullable = false, columnDefinition = "varchar(30)")
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "title_image")
     private Image image;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Music> musics = new ArrayList<>();
-
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaylistLike> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GuestBook> guestBooks = new ArrayList<>();
 }
