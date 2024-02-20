@@ -24,6 +24,7 @@ public class RandomRecommendationService implements Recommendation {
     private final MusicRepository musicRepository;
 
     private static final int RECOMMENDATION_COUNT = 4;
+    private static final String UNTITLED = "Untitled";
 
     /**
      * 무작위 추천 플레이리스트를 조회합니다.
@@ -41,9 +42,9 @@ public class RandomRecommendationService implements Recommendation {
         List<Playlist> playlists = null;
 
         if (member == null) {
-            playlists = playlistRepository.findAll();
+            playlists = playlistRepository.findAllByNameIsNot(UNTITLED);
         } else {
-            playlists = playlistRepository.findAllExceptMember(member);
+            playlists = playlistRepository.findAllByMemberIsNotAndNameIsNot(member, UNTITLED);
         }
 
         // 0부터 플레이리스트의 개수의 난수 중 RECOMMENDATION_COUNT개를 추출합니다.
