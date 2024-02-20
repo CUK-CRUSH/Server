@@ -20,8 +20,12 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
 
     List<Playlist> findByName(String name);
 
-    @Query("select p from Playlist p where p.member != :member")
+    @Query("select p from Playlist p where p.member != :member and p.name != 'Untitled'")
     ArrayList<Playlist> findAllExceptMember(Member member);
+
+    ArrayList<Playlist> findAllByMemberIsNotAndNameIsNot(Member member, String name);
+
+    ArrayList<Playlist> findAllByNameIsNot(String name);
 
     Page<Playlist> findByNameContaining(String q, Pageable pageable);
 }

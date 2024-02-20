@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchRes {
+public class SearchDto {
     private List<MemberDto> members;
     private List<PlaylistDto> playlists;
 }

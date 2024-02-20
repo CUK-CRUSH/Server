@@ -3,6 +3,7 @@ package crush.myList.controller;
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.playlist.dto.GuestBookDto;
 import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
@@ -417,14 +418,14 @@ public class PlaylistControllerTest {
         Member member = testUtil.createTestMember("testUser");
         Playlist playlist = testUtil.createTestPlaylist(member);
         final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook";
-        final String content = "testContent";
+        final GuestBookDto.Post post = GuestBookDto.Post.builder().content("testContent").build();
 
         // when
         MockHttpServletResponse res = mockMvc.perform(
                         MockMvcRequestBuilders.post(api)
                                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(content))
+                                .content(testUtil.toJson(post)))
                         .andExpect(status().isOk())
                         .andReturn().getResponse();
 
@@ -441,14 +442,14 @@ public class PlaylistControllerTest {
         Playlist playlist = testUtil.createTestPlaylist(member);
         GuestBook guestBook = testUtil.createTestGuestBook(member, playlist);
         final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook/" + guestBook.getId();
-        final String content = "updatedContent";
+        final GuestBookDto.Post post = GuestBookDto.Post.builder().content("updatedContent").build();
 
         // when
         MockHttpServletResponse res = mockMvc.perform(
                         MockMvcRequestBuilders.patch(api)
                                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(content))
+                                .content(testUtil.toJson(post)))
                         .andExpect(status().isOk())
                         .andReturn().getResponse();
 

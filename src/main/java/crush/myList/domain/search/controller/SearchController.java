@@ -2,7 +2,7 @@ package crush.myList.domain.search.controller;
 
 import crush.myList.domain.search.dto.MemberDto;
 import crush.myList.domain.search.dto.PlaylistDto;
-import crush.myList.domain.search.dto.SearchRes;
+import crush.myList.domain.search.dto.SearchDto;
 import crush.myList.domain.search.service.SearchService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +30,9 @@ public class SearchController {
             @ApiResponse(responseCode = "200", description = "검색 성공"),
             @ApiResponse(responseCode = "400", description = "검색어가 없음")
     })
-    public JsonBody<SearchRes> search(@RequestParam(name = "q") String q) {
-        SearchRes searchRes = searchService.search(q);
-        return JsonBody.of(HttpStatus.OK.value(), "검색 성공", searchRes);
+    public JsonBody<SearchDto> search(@RequestParam(name = "q") String q) {
+        SearchDto searchDto = searchService.search(q);
+        return JsonBody.of(HttpStatus.OK.value(), "검색 성공", searchDto);
     }
 
     @Operation(summary = "플레이리스트 검색결과 더보기")
