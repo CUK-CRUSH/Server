@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -51,7 +50,7 @@ public class SearchService {
                 .stream()
                 .map(playlist -> PlaylistDto.builder()
                         .id(playlist.getId())
-                        .name(playlist.getName())
+                        .playlistName(playlist.getName())
                         .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                         .build())
                 .toList();

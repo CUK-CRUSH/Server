@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -17,9 +16,9 @@ public class PlaylistDto {
     @NotNull
     private Long id;
 
-    @Schema(name = "name", description = "플레이리스트 이름입니다.")
+    @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
     @NotEmpty
-    private String name;
+    private String playlistName;
 
     @Schema(name = "thumbnailUrl", description = "썸네일 이미지 주소입니다.")
     private String thumbnailUrl;

@@ -27,7 +27,7 @@ public class SearchControllerTest {
     private TestUtil testUtil;
 
     private final static String expectMember = "\"username\":\"testUser\",\"introduction\":null,\"profileImageUrl\":null";
-    private final static String expectPlaylist = "\"name\":\"testPlaylistName\",\"thumbnailUrl\":null";
+    private final static String expectPlaylist = "\"playlistName\":\"testPlaylistName\",\"thumbnailUrl\":null";
 
     @Test
     @DisplayName("검색 테스트")
