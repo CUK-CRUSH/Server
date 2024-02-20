@@ -184,6 +184,19 @@ public class PlaylistController {
         );
     }
 
+    @Operation(summary = "내가 좋아요한 플레이리스트 조회하기")
+    @GetMapping("/like")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "내가 좋아요한 플레이리스트 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "내가 좋아요한 플레이리스트 조회 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<List<PlaylistDto.Response>> getMyLikePlaylist(@AuthenticationPrincipal SecurityMember member) {
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "내가 좋아요한 플레이리스트 조회 성공",
+                likeService.getLikedPlaylists(member)
+        );
+    }
 
     /**
     #################################################################################################################
