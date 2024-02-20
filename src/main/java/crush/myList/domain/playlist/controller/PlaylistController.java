@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -199,7 +198,7 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 조회 성공"),
             @ApiResponse(responseCode = "404", description = "플레이리스트 방명록 조회 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<List<GuestBookDto>> getPlaylistGuestbook(@PathVariable Long playlistId) {
+    public JsonBody<List<GuestBookDto.Response>> getPlaylistGuestbook(@PathVariable Long playlistId) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 방명록 조회 성공",
@@ -213,15 +212,15 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 작성 성공"),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<GuestBookDto> addPlaylistGuestbook(
+    public JsonBody<GuestBookDto.Response> postPlaylistGuestbook(
             @AuthenticationPrincipal SecurityMember member,
             @PathVariable Long playlistId,
-            @RequestBody String content
+            @RequestBody GuestBookDto.Post request
     ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 방명록 작성 성공",
-                guestBookService.addGuestBook(member, playlistId, content)
+                guestBookService.postGuestBook(member, playlistId, request.getContent())
         );
     }
 
@@ -248,11 +247,11 @@ public class PlaylistController {
             @ApiResponse(responseCode = "404", description = "플레이리스트 방명록 수정 실패", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "400", description = "플레이리스트 방명록 수정 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<GuestBookDto> updatePlaylistGuestbook(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @PathVariable Long guestbookId, @RequestBody String content) {
+    public JsonBody<GuestBookDto.Response> updatePlaylistGuestbook(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @PathVariable Long guestbookId, @RequestBody GuestBookDto.Post request) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 방명록 수정 성공",
-                guestBookService.updateGuestBook(member, playlistId, guestbookId, content)
+                guestBookService.updateGuestBook(member, playlistId, guestbookId, request.getContent())
         );
     }
 }
