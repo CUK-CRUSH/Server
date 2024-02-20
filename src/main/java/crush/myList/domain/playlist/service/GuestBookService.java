@@ -28,9 +28,9 @@ public class GuestBookService {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
 
-    public List<GuestBookDto> getGuestBooks(Long playlistId) {
+    public List<GuestBookDto.Response> getGuestBooks(Long playlistId) {
         return guestBookRepository.findAllByPlaylistId(playlistId).stream()
-                .map((guestBook) -> GuestBookDto.builder()
+                .map((guestBook) -> GuestBookDto.Response.builder()
                         .id(guestBook.getId())
                         .username(guestBook.getMember().getUsername())
                         .content(guestBook.getContent())
@@ -39,7 +39,7 @@ public class GuestBookService {
                 ).toList();
     }
 
-    public GuestBookDto addGuestBook(SecurityMember member, Long playlistId, String content) {
+    public GuestBookDto.Response postGuestBook(SecurityMember member, Long playlistId, String content) {
         Member memberEntity = memberRepository.findByUsername(member.getUsername()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다.")
         );
@@ -52,7 +52,7 @@ public class GuestBookService {
                 .content(content)
                 .build()
         );
-        return GuestBookDto.builder()
+        return GuestBookDto.Response.builder()
                 .id(guestBook.getId())
                 .username(guestBook.getMember().getUsername())
                 .content(guestBook.getContent())
@@ -72,7 +72,7 @@ public class GuestBookService {
         guestBookRepository.delete(guestBook);
     }
 
-    public GuestBookDto updateGuestBook(SecurityMember member, Long playlistId, Long guestbookId, String content) {
+    public GuestBookDto.Response updateGuestBook(SecurityMember member, Long playlistId, Long guestbookId, String content) {
         GuestBook guestBook = guestBookRepository.findById(guestbookId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "방명록을 찾을 수 없습니다.")
         );
@@ -82,7 +82,7 @@ public class GuestBookService {
         }
 
         guestBook.setContent(content);
-        return GuestBookDto.builder()
+        return GuestBookDto.Response.builder()
                 .id(guestBook.getId())
                 .username(guestBook.getMember().getUsername())
                 .content(guestBook.getContent())

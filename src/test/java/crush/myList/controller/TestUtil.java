@@ -1,5 +1,7 @@
 package crush.myList.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
@@ -36,6 +38,8 @@ public class TestUtil {
     private MusicRepository musicRepository;
     @Autowired
     private GuestBookRepository guestBookRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 테스트용 멤버 생성
@@ -147,5 +151,9 @@ public class TestUtil {
         member.setGuestBooks(List.of(guestBook));
         playlist.setGuestBooks(List.of(guestBook));
         return guestBookRepository.save(guestBook);
+    }
+
+    public <T> String toJson(T data) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(data);
     }
 }

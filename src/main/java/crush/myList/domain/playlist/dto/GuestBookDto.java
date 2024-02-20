@@ -1,15 +1,31 @@
 package crush.myList.domain.playlist.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-@Getter
-@Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class GuestBookDto {
-    private Long id;
-    private String username;
-    private String content;
-    private String modifiedDate;
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Post {
+        @NotBlank
+        private String content;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response {
+        private Long id;
+        @NotBlank
+        private String username;
+        @NotBlank
+        private String content;
+        @NotBlank
+        private String modifiedDate;
+    }
 }
