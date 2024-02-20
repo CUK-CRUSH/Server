@@ -4,7 +4,7 @@ import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.search.dto.MemberDto;
 import crush.myList.domain.search.dto.PlaylistDto;
-import crush.myList.domain.search.dto.SearchRes;
+import crush.myList.domain.search.dto.SearchDto;
 import crush.myList.global.enums.LimitConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,8 +61,8 @@ public class SearchService {
      * @return 검색 결과
      * @apiNote 검색 결과를 반환합니다. 검색 결과는 멤버와 플레이리스트 첫번째 페이징으로 구성됩니다.
      */
-    public SearchRes search(String q) {
-        return SearchRes.builder()
+    public SearchDto search(String q) {
+        return SearchDto.builder()
                 .members(searchMembers(q, 0))
                 .playlists(searchPlaylists(q, 0))
                 .build();
