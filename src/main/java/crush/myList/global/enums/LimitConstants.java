@@ -11,7 +11,7 @@ public enum LimitConstants {
 
     PLAYLIST_PAGE_SIZE(9),
 
-    SEARCH_PLAYLIST_PAGE_SIZE(4),
+    SEARCH_PLAYLIST_PAGE_SIZE(6),
     SEARCH_MEMBER_PAGE_SIZE(5);
 
     private final int limit;

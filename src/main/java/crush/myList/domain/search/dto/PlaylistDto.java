@@ -1,6 +1,7 @@
 package crush.myList.domain.search.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -16,8 +17,12 @@ public class PlaylistDto {
     @NotNull
     private Long id;
 
+    @Schema(name = "username", description = "플레이리스트 소유자 이름입니다.")
+    @NotBlank
+    private String username;
+
     @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
-    @NotEmpty
+    @NotBlank
     private String playlistName;
 
     @Schema(name = "thumbnailUrl", description = "썸네일 이미지 주소입니다.")

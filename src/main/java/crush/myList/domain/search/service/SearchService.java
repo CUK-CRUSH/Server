@@ -50,6 +50,7 @@ public class SearchService {
                 .stream()
                 .map(playlist -> PlaylistDto.builder()
                         .id(playlist.getId())
+                        .username(playlist.getMember().getUsername())
                         .playlistName(playlist.getName())
                         .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                         .build())
