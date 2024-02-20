@@ -39,6 +39,8 @@ public class SecurityConfig {
         "/api/v1/playlist/{playlistId}",
         // 플레이리스트 좋아요 조회 api
         "/api/v1/playlist/{playlistId}/like",
+        // 플레이리스트 방명록 조회 api
+        "/api/v1/playlist/{playlistId}/guestbook",
         // 음악 조회 api
         "/api/v1/music/{playlistId}",
         // 사용자 조회 api
@@ -50,6 +52,11 @@ public class SecurityConfig {
 
         // 플레이리스트 추천 api
         "/api/v1/recommendation",
+
+        // 검색 api
+        "/api/v1/search",
+        "/api/v1/search/playlist",
+        "/api/v1/search/member",
     };
 
     private final String[] TEMPORARY_LIST = {

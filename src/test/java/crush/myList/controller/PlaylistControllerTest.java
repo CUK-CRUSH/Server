@@ -3,6 +3,7 @@ package crush.myList.controller;
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
@@ -362,5 +363,88 @@ public class PlaylistControllerTest {
                         .andExpect(status().isForbidden())
                         .andReturn().getResponse().toString()
         );
+    }
+
+    @Test
+    @DisplayName("플레이리스트 방명록 조회")
+    public void getGuestBooksTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        testUtil.createTestGuestBook(member, playlist);
+
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook";
+
+        // when
+        MockHttpServletResponse res = mockMvc.perform(get(api))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse();
+
+        // then
+        assertThat(res.getContentAsString()).contains("testContent");
+        System.out.println(res.getContentAsString());
+    }
+
+    @Test
+    @DisplayName("플레이리스트 방명록 추가")
+    public void addGuestBookTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook";
+        final String content = "testContent";
+
+        // when
+        MockHttpServletResponse res = mockMvc.perform(
+                        MockMvcRequestBuilders.post(api)
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse();
+
+        // then
+        assertThat(res.getContentAsString()).contains("testContent");
+        System.out.println(res.getContentAsString());
+    }
+
+    @Test
+    @DisplayName("플레이리스트 방명록 수정")
+    public void updateGuestBookTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        GuestBook guestBook = testUtil.createTestGuestBook(member, playlist);
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook/" + guestBook.getId();
+        final String content = "updatedContent";
+
+        // when
+        MockHttpServletResponse res = mockMvc.perform(
+                        MockMvcRequestBuilders.patch(api)
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse();
+
+        // then
+        assertThat(res.getContentAsString()).contains("updatedContent");
+        System.out.println(res.getContentAsString());
+    }
+
+    @Test
+    @DisplayName("플레이리스트 방명록 삭제")
+    public void deleteGuestBookTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        GuestBook guestBook = testUtil.createTestGuestBook(member, playlist);
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook/" + guestBook.getId();
+
+        // when
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete(api)
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                        .andExpect(status().isOk());
     }
 }
