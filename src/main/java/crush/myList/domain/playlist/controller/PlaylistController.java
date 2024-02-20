@@ -2,6 +2,7 @@ package crush.myList.domain.playlist.controller;
 
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.playlist.dto.PlaylistDto;
+import crush.myList.domain.playlist.dto.PlaylistLikeMember;
 import crush.myList.domain.playlist.service.PlaylistService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -120,6 +121,20 @@ public class PlaylistController {
                 HttpStatus.OK.value(),
                 "플레이리스트 이미지 삭제 완료",
                 playlistId
+        );
+    }
+
+    @Operation(summary = "플레이리스트의 좋아요 누른 사용자 조회하기")
+    @GetMapping("/{playlistId}/like")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "플레이리스트 좋아요 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "플레이리스트 좋아요 조회 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<List<PlaylistLikeMember>> getPlaylistLike(@PathVariable Long playlistId) {
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "플레이리스트 좋아요 조회 성공",
+                playlistService.getPlaylistLikes(playlistId)
         );
     }
 

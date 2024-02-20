@@ -37,6 +37,8 @@ public class SecurityConfig {
         // 플레이리스트 조회 api
         "/api/v1/playlist/user/{username}",
         "/api/v1/playlist/{playlistId}",
+        // 플레이리스트 좋아요 조회 api
+        "/api/v1/playlist/{playlistId}/like",
         // 음악 조회 api
         "/api/v1/music/{playlistId}",
         // 사용자 조회 api
