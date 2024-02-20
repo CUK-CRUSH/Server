@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Playlist", description = "플레이리스트 API")
+@Tag(name = "Playlist", description = "플레이리스트 관련 API 모두 보기")
 @RestController
 @Slf4j(topic = "PlaylistController")
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class PlaylistController {
     private final LikeService likeService;
     private final GuestBookService guestBookService;
 
-    @Operation(summary = "유저의 플레이리스트 조회하기")
+    @Operation(summary = "유저의 플레이리스트 조회하기", tags = {"플레이리스트"})
     @GetMapping("/user/{username}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 조회 성공"),
@@ -48,7 +48,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트 단일 조회")
+    @Operation(summary = "플레이리스트 단일 조회", tags = {"플레이리스트"})
     @GetMapping("/{playlistId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 조회 성공"),
@@ -62,7 +62,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "유저의 플레이리스트 생성하기")
+    @Operation(summary = "유저의 플레이리스트 생성하기", tags = {"플레이리스트"})
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 생성 성공"),
@@ -79,7 +79,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "유저의 플레이리스트 변경하기")
+    @Operation(summary = "유저의 플레이리스트 변경하기", tags = {"플레이리스트"})
     @PatchMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 정보 수정 성공"),
@@ -98,7 +98,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "유저의 플레이리스트 삭제하기")
+    @Operation(summary = "유저의 플레이리스트 삭제하기", tags = {"플레이리스트"})
     @DeleteMapping("/{playlistId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 삭제 성공"),
@@ -114,7 +114,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트의 이미지 삭제하기")
+    @Operation(summary = "플레이리스트의 이미지 삭제하기", tags = {"플레이리스트"})
     @DeleteMapping("/{playlistId}/image")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 이미지 삭제 성공"),
@@ -139,7 +139,7 @@ public class PlaylistController {
      */
 
 
-    @Operation(summary = "플레이리스트의 좋아요 누른 사용자 조회하기")
+    @Operation(summary = "플레이리스트의 좋아요 누른 사용자 조회하기", tags = {"좋아요"})
     @GetMapping("/{playlistId}/like")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 좋아요 조회 성공"),
@@ -153,7 +153,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트 좋아요 하기")
+    @Operation(summary = "플레이리스트 좋아요 하기", tags = {"좋아요"})
     @PostMapping("/{playlistId}/like")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 좋아요 성공"),
@@ -169,7 +169,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트 좋아요 취소하기")
+    @Operation(summary = "플레이리스트 좋아요 취소하기", tags = {"좋아요"})
     @DeleteMapping("/{playlistId}/like")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 좋아요 취소 성공"),
@@ -193,7 +193,7 @@ public class PlaylistController {
      */
 
 
-    @Operation(summary = "플레이리스트 방명록 조회하기")
+    @Operation(summary = "플레이리스트 방명록 조회하기", tags = {"방명록"})
     @GetMapping("/{playlistId}/guestbook")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 조회 성공"),
@@ -207,7 +207,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트 방명록 작성하기")
+    @Operation(summary = "플레이리스트 방명록 작성하기", tags = {"방명록"})
     @PostMapping("/{playlistId}/guestbook")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 작성 성공"),
@@ -225,7 +225,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트 방명록 삭제하기")
+    @Operation(summary = "플레이리스트 방명록 삭제하기", tags = {"방명록"})
     @DeleteMapping("/{playlistId}/guestbook/{guestbookId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 삭제 성공"),
@@ -241,7 +241,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트 방명록 수정하기")
+    @Operation(summary = "플레이리스트 방명록 수정하기", tags = {"방명록"})
     @PatchMapping("/{playlistId}/guestbook/{guestbookId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 수정 성공"),
