@@ -53,6 +53,8 @@ public class PlaylistControllerTest {
         testReporter.publishEntry(
                 mockMvc.perform(get(api))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data[0].id").value(playlist.getId()))
+                        .andExpect(jsonPath("$.data[0].username").value(member.getUsername()))
                         .andReturn().getResponse().getContentAsString()
         );
     }
