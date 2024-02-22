@@ -156,6 +156,7 @@ public class PlaylistService {
         return PlaylistDto.Response.builder()
                 .id(playlist.getId())
                 .playlistName(playlist.getName())
+                .username(playlist.getMember().getUsername())
                 .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                 // counts musics in playlist
                 .numberOfMusics(musicRepository.countByPlaylist(playlist))
