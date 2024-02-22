@@ -9,9 +9,13 @@ import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
+import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -82,12 +86,14 @@ public class LikeService {
     }
 
     // 내가 좋아요한 playlist 조회
-    public List<PlaylistDto.Response> getLikedPlaylists(SecurityMember member) {
-        Member memberEntity = memberRepository.findByUsername(member.getUsername()).orElseThrow(() ->
+    public List<PlaylistDto.Response> getLikedPlaylists(String username, Integer page) {
+        Member memberEntity = memberRepository.findByUsername(username).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 
-        List<Playlist> likedPlaylists = playlistLikeRepository.findAllByMember(memberEntity).stream()
+        Pageable pageable = PageRequest.of(page, LimitConstants.LIKED_PLAYLIST_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.DESC, "createdDate"));
+
+        List<Playlist> likedPlaylists = playlistLikeRepository.findAllByMember(memberEntity, pageable).stream()
                 .map(PlaylistLike::getPlaylist)
                 .toList();
 
