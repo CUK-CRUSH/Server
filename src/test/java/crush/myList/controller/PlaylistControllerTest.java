@@ -197,23 +197,34 @@ public class PlaylistControllerTest {
         Member member1 = testUtil.createTestMember("testUser");
         Member member2 = testUtil.createTestMember("otherUser");
 
-        Playlist playlist1 = testUtil.createTestPlaylist(member1);
-        Playlist playlist2 = testUtil.createTestPlaylist(member2);
-
-        PlaylistLike playlistLike1 = testUtil.createTestPlaylistLike(member1, playlist1);
-        PlaylistLike playlistLike2 = testUtil.createTestPlaylistLike(member1, playlist2);
+        for (int i = 0; i < 10; i++) {
+            Playlist playlist = testUtil.createTestPlaylist(member2);
+            PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member1, playlist);
+            System.out.println(i);
+        }
 
         final String api = "/api/v1/playlist/like";
 
         // when
         testReporter.publishEntry(
                 mockMvc.perform(get(api)
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                        .param("page", "0"))
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.data[0].id").value(playlist1.getId()))
-                        .andExpect(jsonPath("$.data[1].id").value(playlist2.getId()))
+                        .andExpect(jsonPath("$.data.length()").value(8))
                         .andReturn().getResponse().getContentAsString()
         );
+
+        testReporter.publishEntry(
+                mockMvc.perform(get(api)
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                .param("page", "1"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.length()").value(2))
+                        .andReturn().getResponse().getContentAsString()
+        );
+
+
     }
 
     @DisplayName("플레이리스트 생성 테스트")
