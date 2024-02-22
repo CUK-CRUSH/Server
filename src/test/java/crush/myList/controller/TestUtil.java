@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -73,11 +74,9 @@ public class TestUtil {
         List<Playlist> playlists = member.getPlaylists();
 
         if (playlists == null) {
-            playlists = List.of(playlist);
+            playlists = new LinkedList<>();
         }
-        else {
-            playlists.add(playlist);
-        }
+        playlists.add(playlist);
 
         member.setPlaylists(playlists);
         return playlist;
@@ -99,10 +98,9 @@ public class TestUtil {
         List<Music> musics = playlist.getMusics();
 
         if (musics == null) {
-            musics = List.of(music);
-        } else {
-            musics.add(music);
+            musics = new LinkedList<>();
         }
+        musics.add(music);
 
         playlist.setMusics(musics);
         return music;
