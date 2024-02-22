@@ -53,6 +53,10 @@ public class PlaylistDto {
         @NotEmpty
         private String playlistName;
 
+        @Schema(name = "username", description = "플레이리스트 생성자 이름입니다.")
+        @NotEmpty
+        private String username;
+
         @Schema(name = "thumbnailUrl", description = "썸네일 이미지 주소입니다.")
         private String thumbnailUrl;
 

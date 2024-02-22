@@ -105,6 +105,7 @@ public class LikeService {
                 .map(playlist -> PlaylistDto.Response.builder()
                         .id(playlist.getId())
                         .playlistName(playlist.getName())
+                        .username(playlist.getMember().getUsername())
                         .numberOfMusics(playlist.getMusics() == null ? 0 : playlist.getMusics().size())
                         .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                         .likeCount(playlistLikeRepository.countByPlaylistId(playlist.getId()))
