@@ -86,12 +86,8 @@ public class LikeService {
     }
 
     // 내가 좋아요한 playlist 조회
-    public List<PlaylistDto.Response> getLikedPlaylists(SecurityMember member, Integer page) {
-        if (member == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
-        }
-
-        Member memberEntity = memberRepository.findByUsername(member.getUsername()).orElseThrow(() ->
+    public List<PlaylistDto.Response> getLikedPlaylists(String username, Integer page) {
+        Member memberEntity = memberRepository.findByUsername(username).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
 

@@ -190,43 +190,6 @@ public class PlaylistControllerTest {
         );
     }
 
-    @DisplayName("내가 좋아요한 플레이리스트 조회 테스트")
-    @Test
-    public void viewMyLikedPlaylistsTest(TestReporter testReporter) throws Exception {
-        // given
-        Member member1 = testUtil.createTestMember("testUser");
-        Member member2 = testUtil.createTestMember("otherUser");
-
-        for (int i = 0; i < 10; i++) {
-            Playlist playlist = testUtil.createTestPlaylist(member2);
-            PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member1, playlist);
-            System.out.println(i);
-        }
-
-        final String api = "/api/v1/playlist/like";
-
-        // when
-        testReporter.publishEntry(
-                mockMvc.perform(get(api)
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN))
-                                        .param("page", "0"))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.data.length()").value(8))
-                        .andReturn().getResponse().getContentAsString()
-        );
-
-        testReporter.publishEntry(
-                mockMvc.perform(get(api)
-                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN))
-                                .param("page", "1"))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.data.length()").value(2))
-                        .andReturn().getResponse().getContentAsString()
-        );
-
-
-    }
-
     @DisplayName("플레이리스트 생성 테스트")
     @Test
     @Disabled

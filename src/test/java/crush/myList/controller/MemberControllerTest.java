@@ -12,6 +12,7 @@ import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.playlist.entity.Playlist;
+import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import org.junit.jupiter.api.*;
@@ -29,6 +30,7 @@ import java.net.URL;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
@@ -285,5 +287,42 @@ public class MemberControllerTest {
         Assertions.assertTrue(playlistRepository.findById(playlist.getId()).isEmpty());
         Assertions.assertTrue(imageRepository.findById(playlistImage.getId()).isEmpty());
         Assertions.assertTrue(musicRepository.findById(music.getId()).isEmpty());
+    }
+
+    @DisplayName("내가 좋아요한 플레이리스트 조회 테스트")
+    @Test
+    public void viewMyLikedPlaylistsTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member1 = testUtil.createTestMember("testUser");
+        Member member2 = testUtil.createTestMember("otherUser");
+
+        for (int i = 0; i < 10; i++) {
+            Playlist playlist = testUtil.createTestPlaylist(member2);
+            PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member1, playlist);
+            System.out.println(i);
+        }
+
+        final String api = "/api/v1/member/playlist/like";
+
+        // when
+        testReporter.publishEntry(
+                mvc.perform(get(api)
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                .param("page", "0")
+                                .param("username", member1.getUsername()))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.length()").value(8))
+                        .andReturn().getResponse().getContentAsString()
+        );
+
+        testReporter.publishEntry(
+                mvc.perform(get(api)
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                                .param("page", "1")
+                                .param("username", member1.getUsername()))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.length()").value(2))
+                        .andReturn().getResponse().getContentAsString()
+        );
     }
 }
