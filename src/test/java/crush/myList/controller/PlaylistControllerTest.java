@@ -403,6 +403,7 @@ public class PlaylistControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(testUtil.toJson(post)))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.member.username").value(member.getUsername()))
                         .andReturn().getResponse();
 
         // then
@@ -427,6 +428,7 @@ public class PlaylistControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(testUtil.toJson(post)))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.member.username").value(member.getUsername()))
                         .andReturn().getResponse();
 
         // then
