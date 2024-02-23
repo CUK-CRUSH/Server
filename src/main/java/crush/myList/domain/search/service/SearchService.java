@@ -53,6 +53,7 @@ public class SearchService {
                         .username(playlist.getMember().getUsername())
                         .playlistName(playlist.getName())
                         .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
+                        .numberOfMusics(playlist.getMusics() == null ? 0 : playlist.getMusics().size())
                         .build())
                 .toList();
     }
