@@ -30,13 +30,8 @@ public class GuestBookService {
 
     public List<GuestBookDto.Response> getGuestBooks(Long playlistId) {
         return guestBookRepository.findAllByPlaylistId(playlistId).stream()
-                .map((guestBook) -> GuestBookDto.Response.builder()
-                        .id(guestBook.getId())
-                        .username(guestBook.getMember().getUsername())
-                        .content(guestBook.getContent())
-                        .modifiedDate(guestBook.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                        .build()
-                ).toList();
+                .map(guestBook -> convertToResponse(guestBook, false))
+                .toList();
     }
 
     public GuestBookDto.Response postGuestBook(SecurityMember member, Long playlistId, String content) {
@@ -52,12 +47,7 @@ public class GuestBookService {
                 .content(content)
                 .build()
         );
-        return GuestBookDto.Response.builder()
-                .id(guestBook.getId())
-                .username(guestBook.getMember().getUsername())
-                .content(guestBook.getContent())
-                .modifiedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .build();
+        return convertToResponse(guestBook, true);
     }
 
     public void deleteGuestBook(SecurityMember member, Long playlistId, Long guestbookId) {
@@ -82,11 +72,23 @@ public class GuestBookService {
         }
 
         guestBook.setContent(content);
+        return convertToResponse(guestBook, true);
+    }
+
+    private GuestBookDto.Response convertToResponse(GuestBook guestBook, Boolean isModified) {
         return GuestBookDto.Response.builder()
                 .id(guestBook.getId())
-                .username(guestBook.getMember().getUsername())
+                .member(GuestBookDto.Response.MemberDto.builder()
+                        .id(guestBook.getMember().getId())
+                        .username(guestBook.getMember().getUsername())
+                        .name(guestBook.getMember().getName())
+                        .profileImageUrl(guestBook.getMember().getProfileImage() != null ?
+                                guestBook.getMember().getProfileImage().getUrl() : null)
+                        .build())
                 .content(guestBook.getContent())
-                .modifiedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .modifiedDate(isModified ?
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) :
+                        guestBook.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
     }
 }
