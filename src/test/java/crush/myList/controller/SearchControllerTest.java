@@ -2,7 +2,7 @@ package crush.myList.controller;
 
 
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.music.mongo.document.Music;
 import crush.myList.domain.playlist.entity.Playlist;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
