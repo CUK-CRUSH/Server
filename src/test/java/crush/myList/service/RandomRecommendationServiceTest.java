@@ -3,7 +3,7 @@ package crush.myList.service;
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
@@ -53,7 +53,7 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
+        given(musicRepository.countByPlaylistId(anyLong())).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
@@ -86,7 +86,7 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
+        given(musicRepository.countByPlaylistId(anyLong())).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(

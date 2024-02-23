@@ -2,7 +2,7 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.music.mongo.document.Music;
 import crush.myList.domain.playlist.dto.GuestBookDto;
 import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
@@ -249,6 +249,7 @@ public class PlaylistControllerTest {
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
+        // when
         testReporter.publishEntry(
                 mockMvc.perform(
                         MockMvcRequestBuilders.delete(api)

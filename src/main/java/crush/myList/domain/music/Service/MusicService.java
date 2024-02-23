@@ -1,9 +1,9 @@
-package crush.myList.domain.music.Service;
+package crush.myList.domain.music.service;
 
 import crush.myList.config.security.SecurityMember;
-import crush.myList.domain.music.Dto.MusicDto;
-import crush.myList.domain.music.entity.Music;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.dto.MusicDto;
+import crush.myList.domain.music.mongo.document.Music;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.LimitConstants;
@@ -46,7 +46,7 @@ public class MusicService {
         );
         Pageable pageable = PageRequest.of(page, LimitConstants.PLAYLIST_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.ASC, "createdDate"));
 
-        Page<Music> musics = musicRepository.findAllByPlaylist(playlist, pageable);
+        Page<Music> musics = musicRepository.findAllByPlaylistId(playlist.getId(), pageable);
         return convertToDtoList(musics);
     }
 
@@ -59,7 +59,7 @@ public class MusicService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
-        if (musicRepository.countByPlaylist(playlist) >= LimitConstants.MUSIC_LIMIT.getLimit()) {
+        if (musicRepository.countByPlaylistId(playlist.getId()) >= LimitConstants.MUSIC_LIMIT.getLimit()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("플레이리스트에는 %d개의 음악만 추가할 수 있습니다.", LimitConstants.MUSIC_LIMIT.getLimit()));
         }
 
@@ -78,7 +78,7 @@ public class MusicService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
-        if (musicRepository.countByPlaylist(playlist) + postRequests.size() > LimitConstants.MUSIC_LIMIT.getLimit()) {
+        if (musicRepository.countByPlaylistId(playlist.getId()) + postRequests.size() > LimitConstants.MUSIC_LIMIT.getLimit()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "플레이리스트에 추가할 수 있는 음악의 개수를 초과했습니다.");
         }
 
@@ -88,12 +88,16 @@ public class MusicService {
         return convertToDtoList(musics);
     }
 
-    public MusicDto.Result updateMusic(SecurityMember memberDetails, Long musicId, MusicDto.PatchRequest patchRequest) {
+    public MusicDto.Result updateMusic(SecurityMember memberDetails, String musicId, MusicDto.PatchRequest patchRequest) {
         Music music = musicRepository.findById(musicId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
         );
 
-        if (!Objects.equals(music.getPlaylist().getMember().getUsername(), memberDetails.getUsername())) {
+        Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
+
+        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
@@ -115,12 +119,15 @@ public class MusicService {
         return convertToDto(music);
     }
 
-    public void deleteMusic(SecurityMember memberDetails, Long musicId) {
+    public void deleteMusic(SecurityMember memberDetails, String musicId) {
         Music music = musicRepository.findById(musicId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
         );
+        Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
 
-        if (!Objects.equals(music.getPlaylist().getMember().getUsername(), memberDetails.getUsername())) {
+        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
         }
 
@@ -140,7 +147,7 @@ public class MusicService {
                 .title(postRequest.getTitle())
                 .artist(postRequest.getArtist())
                 .url(url)
-                .playlist(playlist)
+                .playlistId(playlist.getId())
                 .build();
     }
 

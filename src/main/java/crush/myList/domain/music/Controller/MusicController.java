@@ -1,8 +1,8 @@
-package crush.myList.domain.music.Controller;
+package crush.myList.domain.music.controller;
 
 import crush.myList.config.security.SecurityMember;
-import crush.myList.domain.music.Dto.MusicDto;
-import crush.myList.domain.music.Service.MusicService;
+import crush.myList.domain.music.dto.MusicDto;
+import crush.myList.domain.music.service.MusicService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -78,7 +78,7 @@ public class MusicController {
             @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "음악 수정 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<MusicDto.Result> updateMusic(@AuthenticationPrincipal SecurityMember member, @RequestParam Long musicId, @RequestBody MusicDto.PatchRequest patchRequest) {
+    public JsonBody<MusicDto.Result> updateMusic(@AuthenticationPrincipal SecurityMember member, @RequestParam String musicId, @RequestBody MusicDto.PatchRequest patchRequest) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "음악 수정 성공",
@@ -93,7 +93,7 @@ public class MusicController {
             @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "404", description = "음악 삭제 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<Long> deleteMusic(@AuthenticationPrincipal SecurityMember member, @RequestParam Long musicId) {
+    public JsonBody<String> deleteMusic(@AuthenticationPrincipal SecurityMember member, @RequestParam String musicId) {
         musicService.deleteMusic(member, musicId);
         return JsonBody.of(
                 HttpStatus.OK.value(),
