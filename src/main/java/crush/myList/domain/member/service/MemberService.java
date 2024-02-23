@@ -1,5 +1,6 @@
 package crush.myList.domain.member.service;
 
+import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.dto.EditProfileReq;
@@ -10,6 +11,7 @@ import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
+import crush.myList.domain.playlist.entity.Playlist;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -141,5 +145,38 @@ public class MemberService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
         return convertDto(member);
+    }
+
+    /** 회원 탈퇴 */
+    public void deleteMember(SecurityMember securityMember) {
+        Member member = memberRepository.findById(securityMember.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
+
+        // 이미지 삭제
+        Image profileImage = member.getProfileImage();
+        Image backgroundImage = member.getBackgroundImage();
+        List<Playlist> playlists = member.getPlaylists();
+
+        if (profileImage != null) {
+            imageService.deleteImageToGcs(profileImage);
+        }
+
+        if (backgroundImage != null) {
+            imageService.deleteImageToGcs(backgroundImage);
+        }
+
+        if (playlists != null) {
+            playlists.forEach(playlist -> {
+                if (playlist.getImage() != null) {
+                    try {
+                        imageService.deleteImageToGcs(playlist.getImage());
+                    } catch (RuntimeException e) {
+                        log.error("MemberService.deleteMember: {}", e.getMessage());
+                    }
+                }
+            });
+        }
+
+        memberRepository.delete(member);
     }
 }

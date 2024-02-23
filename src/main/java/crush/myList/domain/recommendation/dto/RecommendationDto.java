@@ -13,13 +13,13 @@ public class RecommendationDto {
     @AllArgsConstructor
     @Schema(name = "RecommendationResponse", description = "추천 플레이리스트 응답입니다.")
     public static class Response {
-        @Schema(name = "username", description = "플레이리스트 소유자 이름입니다.")
-        @NotEmpty
-        private String username;
-
         @Schema(name = "id", description = "플레이리스트 ID입니다.")
         @NotNull
         private Long id;
+
+        @Schema(name = "username", description = "플레이리스트 소유자 이름입니다.")
+        @NotEmpty
+        private String username;
 
         @Schema(name = "playlistName", description = "플레이리스트 이름입니다.")
         @NotEmpty

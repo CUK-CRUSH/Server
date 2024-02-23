@@ -1,5 +1,7 @@
 package crush.myList.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
@@ -7,8 +9,10 @@ import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.entity.Music;
 import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
+import crush.myList.domain.playlist.repository.GuestBookRepository;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,8 @@ import org.springframework.stereotype.Component;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class TestUtil {
@@ -31,6 +37,10 @@ public class TestUtil {
     private PlaylistLikeRepository playlistLikeRepository;
     @Autowired
     private MusicRepository musicRepository;
+    @Autowired
+    private GuestBookRepository guestBookRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 테스트용 멤버 생성
@@ -61,6 +71,14 @@ public class TestUtil {
                 .build();
         playlistRepository.save(playlist);
 
+        List<Playlist> playlists = member.getPlaylists();
+
+        if (playlists == null) {
+            playlists = new LinkedList<>();
+        }
+        playlists.add(playlist);
+
+        member.setPlaylists(playlists);
         return playlist;
     }
 
@@ -77,6 +95,14 @@ public class TestUtil {
                 .build();
         musicRepository.save(music);
 
+        List<Music> musics = playlist.getMusics();
+
+        if (musics == null) {
+            musics = new LinkedList<>();
+        }
+        musics.add(music);
+
+        playlist.setMusics(musics);
         return music;
     }
 
@@ -112,5 +138,20 @@ public class TestUtil {
         if (playlistRepository.existsById(id)) {
             playlistRepository.deleteById(id);
         }
+    }
+
+    public GuestBook createTestGuestBook(Member member, Playlist playlist) {
+        GuestBook guestBook = GuestBook.builder()
+                .member(member)
+                .playlist(playlist)
+                .content("testContent")
+                .build();
+        member.setGuestBooks(List.of(guestBook));
+        playlist.setGuestBooks(List.of(guestBook));
+        return guestBookRepository.save(guestBook);
+    }
+
+    public <T> String toJson(T data) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(data);
     }
 }

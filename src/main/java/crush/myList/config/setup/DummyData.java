@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+//@Component
 @Transactional
 @RequiredArgsConstructor
 public class DummyData {

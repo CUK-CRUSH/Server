@@ -6,9 +6,12 @@ import crush.myList.domain.member.dto.EditProfileRes;
 import crush.myList.domain.member.dto.MemberDto;
 import crush.myList.domain.member.service.MemberService;
 import crush.myList.domain.member.service.UsernameService;
+import crush.myList.domain.playlist.dto.PlaylistDto;
+import crush.myList.domain.playlist.service.LikeService;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Member", description = "회원 API")
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
     private final UsernameService usernameService;
+    private final LikeService likeService;
 
     @Operation(summary = "id로 특정 회원 정보 조회")
     @ApiResponses(value = {
@@ -90,5 +96,34 @@ public class MemberController {
     public JsonBody<String> checkNickname(@PathVariable String username) {
         usernameService.checkDuplication(username);
         return JsonBody.of(HttpStatus.OK.value(), "사용 가능한 닉네임", username);
+    }
+
+    @Operation(summary = "회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공", content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "회원 탈퇴 실패", content = {@Content(mediaType = "application/json")})
+    })
+    @DeleteMapping("/me")
+    public JsonBody<Long> deleteMember(@AuthenticationPrincipal SecurityMember member) {
+        memberService.deleteMember(member);
+        return JsonBody.of(HttpStatus.OK.value(), "회원 탈퇴 성공", member.getId());
+    }
+
+    @Operation(summary = "사용자가 좋아요한 플레이리스트 조회하기", tags = {"좋아요"})
+    @GetMapping("/playlist/like")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자가 좋아요한 플레이리스트 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "사용자가 좋아요한 플레이리스트 조회 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<List<PlaylistDto.Response>> getUserLikedPlaylist(
+            @AuthenticationPrincipal SecurityMember member,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = true) String username
+    ) {
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "내가 좋아요한 플레이리스트 조회 성공",
+                likeService.getLikedPlaylists(username, page)
+        );
     }
 }
