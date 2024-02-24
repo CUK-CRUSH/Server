@@ -19,32 +19,31 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @RequiredArgsConstructor
 @EnableMongoAuditing
-@EnableTransactionManagement
 @EnableMongoRepositories(basePackages = "crush.myList.domain.*.mongo.repository")
-public class MongoConfig extends AbstractMongoClientConfiguration {
-    private final EnvBean envBean;
-
-    @Bean
-    public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
-        return new MongoTransactionManager(dbFactory);
-    }
-
-    @Bean
-    public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), getDatabaseName());
-    }
-
-    @Override
-    protected String getDatabaseName() {
-        return envBean.getMongoDatabase();
-    }
-
-    @Override
-    public MongoClient mongoClient() {
-        final ConnectionString connectionString = new ConnectionString(envBean.getMongoUri());
-        final MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
-                .applyConnectionString(connectionString)
-                .build();
-        return MongoClients.create(mongoClientSettings);
-    }
+public class MongoConfig {
+//    private final EnvBean envBean;
+//
+//    @Bean
+//    public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+//        return new MongoTransactionManager(dbFactory);
+//    }
+//
+//    @Bean
+//    public MongoTemplate mongoTemplate() {
+//        return new MongoTemplate(mongoClient(), getDatabaseName());
+//    }
+//
+//    @Override
+//    protected String getDatabaseName() {
+//        return envBean.getMongoDatabase();
+//    }
+//
+//    @Override
+//    public MongoClient mongoClient() {
+//        final ConnectionString connectionString = new ConnectionString(envBean.getMongoUri());
+//        final MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+//                .applyConnectionString(connectionString)
+//                .build();
+//        return MongoClients.create(mongoClientSettings);
+//    }
 }
