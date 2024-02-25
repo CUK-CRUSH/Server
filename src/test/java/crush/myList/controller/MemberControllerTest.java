@@ -73,7 +73,7 @@ public class MemberControllerTest {
     @DisplayName("닉네임 중복 확인 실패 테스트 - 중복된 닉네임")
     void checkUsernameFailTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = testUtil.createTestMember("TestMember");
+        Member member = testUtil.createTestMember("test");
         memberRepository.save(member);
         // when
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/available/{username}", "test")
@@ -102,7 +102,7 @@ public class MemberControllerTest {
     @DisplayName("닉네임 변경 실패 테스트 - 중복된 닉네임")
     void changeUsernameFailTest(TestReporter testReporter) throws Exception {
         // given
-        Member member = testUtil.createTestMember("TestMember");
+        Member member = testUtil.createTestMember("test");
         memberRepository.save(member);
 
         // when
