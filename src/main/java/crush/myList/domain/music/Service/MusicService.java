@@ -93,6 +93,8 @@ public class MusicService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
         );
 
+        System.out.println("music.getPlaylistId() = " + music.getPlaylistId());
+
         Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );

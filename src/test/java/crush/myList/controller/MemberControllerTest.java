@@ -17,6 +17,7 @@ import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
@@ -33,8 +34,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Transactional
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 public class MemberControllerTest {
     @Autowired
@@ -55,6 +56,11 @@ public class MemberControllerTest {
     private PlaylistRepository playlistRepository;
     @Autowired
     private MusicRepository musicRepository;
+
+    @AfterEach
+    void cleanUp() {
+        musicRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("닉네임 중복 확인 테스트")

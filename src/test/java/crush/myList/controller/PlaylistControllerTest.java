@@ -3,16 +3,14 @@ package crush.myList.controller;
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.music.mongo.document.Music;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.dto.GuestBookDto;
 import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestReporter;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +36,13 @@ public class PlaylistControllerTest {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private TestUtil testUtil;
+    @Autowired
+    private MusicRepository musicRepository;
+
+    @AfterEach
+    void cleanUp() {
+        musicRepository.deleteAll();
+    }
 
     @DisplayName("사용자의 모든 플레이리스트 조회 테스트")
     @Test
