@@ -144,11 +144,11 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 좋아요 조회 성공"),
             @ApiResponse(responseCode = "404", description = "플레이리스트 좋아요 조회 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<List<LikeMember>> getPlaylistLike(@PathVariable Long playlistId) {
+    public JsonBody<List<LikeMember>> getPlaylistLike(@PathVariable Long playlistId, @RequestParam(required = false, defaultValue = "0") Integer page) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 좋아요 조회 성공",
-                likeService.getLikeMembers(playlistId)
+                likeService.getLikeMembers(playlistId, page)
         );
     }
 
@@ -197,11 +197,11 @@ public class PlaylistController {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 조회 성공"),
             @ApiResponse(responseCode = "404", description = "플레이리스트 방명록 조회 실패", content = @Content(schema = @Schema(hidden = true)))
     })
-    public JsonBody<List<GuestBookDto.Response>> getPlaylistGuestbook(@PathVariable Long playlistId) {
+    public JsonBody<List<GuestBookDto.Response>> getPlaylistGuestbook(@PathVariable Long playlistId, @RequestParam(required = false, defaultValue = "0") Integer page) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
                 "플레이리스트 방명록 조회 성공",
-                guestBookService.getGuestBooks(playlistId)
+                guestBookService.getGuestBooks(playlistId, page)
         );
     }
 

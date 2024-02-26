@@ -138,8 +138,11 @@ public class PlaylistControllerTest {
         // given
         Member member = testUtil.createTestMember("testUser");
         Playlist playlist = testUtil.createTestPlaylist(member);
-        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
-        Music music = testUtil.createTestMusic(playlist);
+
+        for (int i = 0; i < 20; i++) {
+            Member newMember = testUtil.createTestMember("testUser" + i);
+            testUtil.createTestPlaylistLike(newMember, playlist);
+        }
 
         final String api = "/api/v1/playlist/" + playlist.getId() + "/like";
 
@@ -147,8 +150,9 @@ public class PlaylistControllerTest {
         assertThat(
                 mockMvc.perform(get(api))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.length()").value(15))
                         .andReturn().getResponse().getContentAsString()
-        ).contains("[{\"id\":" + member.getId() + ",\"username\":\"" + member.getUsername() + "\"");
+        ).contains("testUser6");
     }
 
     @DisplayName("플레이리스트 좋아요 추가 테스트")
@@ -372,14 +376,20 @@ public class PlaylistControllerTest {
     public void getGuestBooksTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
+        Member otherUser = testUtil.createTestMember("otherUser");
+
         Playlist playlist = testUtil.createTestPlaylist(member);
-        testUtil.createTestGuestBook(member, playlist);
+
+        for (int i = 0; i < 20; i++) {
+            testUtil.createTestGuestBook(otherUser, playlist);
+        }
 
         final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook";
 
         // when
         MockHttpServletResponse res = mockMvc.perform(get(api))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.length()").value(15))
                         .andReturn().getResponse();
 
         // then
