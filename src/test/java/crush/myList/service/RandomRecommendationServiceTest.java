@@ -3,11 +3,12 @@ package crush.myList.service;
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
 import crush.myList.domain.recommendation.service.RandomRecommendationService;
+import crush.myList.global.enums.LimitConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,13 +54,13 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
+        given(musicRepository.countByPlaylistId(anyLong())).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
 
         // then
-        assertThat(recommendation).hasSize(6);
+        assertThat(recommendation).hasSize(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit());
         then(playlistRepository).should().findAllByNameIsNot(eq("Untitled"));
     }
 
@@ -86,7 +87,7 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
+        given(musicRepository.countByPlaylistId(anyLong())).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(
@@ -94,7 +95,7 @@ public class RandomRecommendationServiceTest {
         );
 
         // then
-        assertThat(recommendation).hasSize(6);
+        assertThat(recommendation).hasSize(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit());
         then(playlistRepository).should().findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"));
     }
 }

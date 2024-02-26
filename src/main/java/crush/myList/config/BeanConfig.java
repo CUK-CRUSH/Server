@@ -17,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.io.IOException;
 
 @Configuration
-@EnableJpaAuditing // JPA Auditing 활성화
 @RequiredArgsConstructor
 public class BeanConfig {
     private final EnvBean envBean;

@@ -2,12 +2,15 @@ package crush.myList.controller;
 
 
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.music.mongo.document.Music;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -26,6 +29,13 @@ public class SearchControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private TestUtil testUtil;
+    @Autowired
+    private MusicRepository musicRepository;
+
+    @AfterEach
+    void cleanUp() {
+        musicRepository.deleteAll();
+    }
 
     private final static String expectMember = "\"username\":\"testUser\",\"introduction\":null,\"profileImageUrl\":null";
     private final static String expectPlaylist = "\"playlistName\":\"testPlaylistName\",\"thumbnailUrl\":null";

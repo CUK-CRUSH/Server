@@ -5,7 +5,7 @@ import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
-import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.music.mongo.document.Music;
 import crush.myList.domain.playlist.entity.Playlist;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -67,7 +67,7 @@ public class TestEntityMaker {
     /** 새로운 music 엔티티를 생성 */
     public Music createMusic(Playlist playlist) {
         return Music.builder()
-                .playlist(playlist)
+                .playlistId(playlist.getId())
                 .title("테스트 제목")
                 .artist("테스트 아티스트")
                 .url("테스트 url")

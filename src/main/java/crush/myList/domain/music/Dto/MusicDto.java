@@ -1,4 +1,4 @@
-package crush.myList.domain.music.Dto;
+package crush.myList.domain.music.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -50,7 +50,7 @@ public class MusicDto {
     public static class Result {
         @Schema(name = "id", description = "음악 ID입니다.")
         @NotNull
-        private Long id;
+        private String id;
 
         @Schema(name = "title", description = "음악 제목입니다.")
         @NotEmpty

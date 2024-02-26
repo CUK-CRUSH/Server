@@ -11,6 +11,7 @@ import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
+    private final MusicRepository musicRepository;
     // service
     private final ImageService imageService;
     private final UsernameService usernameService;
@@ -165,18 +167,18 @@ public class MemberService {
             imageService.deleteImageToGcs(backgroundImage);
         }
 
-        if (playlists != null) {
-            playlists.forEach(playlist -> {
-                if (playlist.getImage() != null) {
-                    try {
-                        imageService.deleteImageToGcs(playlist.getImage());
-                    } catch (RuntimeException e) {
-                        log.error("MemberService.deleteMember: {}", e.getMessage());
-                    }
+        playlists.forEach(playlist -> {
+            // 플레이리스트 이미지 삭제
+            if (playlist.getImage() != null) {
+                try {
+                    imageService.deleteImageToGcs(playlist.getImage());
+                } catch (RuntimeException e) {
+                    log.error("MemberService.deleteMember: {}", e.getMessage());
                 }
-            });
-        }
-
+            }
+            // 음악 삭제
+            musicRepository.deleteAllByPlaylistId(playlist.getId());
+        });
         memberRepository.delete(member);
     }
 }
