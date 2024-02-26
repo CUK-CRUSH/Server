@@ -16,7 +16,9 @@ public enum LimitConstants {
     GUESTBOOK_PAGE_SIZE(15),
 
     SEARCH_PLAYLIST_PAGE_SIZE(8),
-    SEARCH_MEMBER_PAGE_SIZE(10);
+    SEARCH_MEMBER_PAGE_SIZE(10),
+
+    PLAYLIST_RECOMMENDATION_SIZE(6);
 
     private final int limit;
 }

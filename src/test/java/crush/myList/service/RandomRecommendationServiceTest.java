@@ -59,7 +59,7 @@ public class RandomRecommendationServiceTest {
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
 
         // then
-        assertThat(recommendation).hasSize(4);
+        assertThat(recommendation).hasSize(6);
         then(playlistRepository).should().findAllByNameIsNot(eq("Untitled"));
     }
 
@@ -94,7 +94,7 @@ public class RandomRecommendationServiceTest {
         );
 
         // then
-        assertThat(recommendation).hasSize(4);
+        assertThat(recommendation).hasSize(6);
         then(playlistRepository).should().findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"));
     }
 }
