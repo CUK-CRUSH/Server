@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class RandomRecommendationServiceTest {
     @Test
     public void getLogoutRandomRecommendationTest() {
         // given
-        given(playlistRepository.findAllByNameIsNot(eq("Untitled"))).willReturn(
+        given(playlistRepository.findAll(any(Specification.class))).willReturn(
                 new ArrayList<>(
                         List.of(
                                 Playlist.builder().member(Member.builder().id(1L).username("Test").build()).id(1L).name("테스트1").build(),
@@ -59,7 +60,7 @@ public class RandomRecommendationServiceTest {
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
 
         // then
-        assertThat(recommendation).hasSize(6);
+        assertThat(recommendation).hasSize(7);
         then(playlistRepository).should().findAllByNameIsNot(eq("Untitled"));
     }
 
@@ -94,7 +95,7 @@ public class RandomRecommendationServiceTest {
         );
 
         // then
-        assertThat(recommendation).hasSize(6);
+        assertThat(recommendation).hasSize(7);
         then(playlistRepository).should().findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"));
     }
 }
