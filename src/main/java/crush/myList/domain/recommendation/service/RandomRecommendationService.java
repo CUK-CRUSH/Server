@@ -7,10 +7,12 @@ import crush.myList.domain.music.Repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
+import crush.myList.domain.recommendation.specification.RecommendationSpecification;
 import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,20 +41,21 @@ public class RandomRecommendationService implements Recommendation {
             member = memberRepository.findById(securityMember.getId()).orElse(null);
         }
 
-        List<Playlist> playlists = null;
+        Specification<Playlist> spec = Specification.where(RecommendationSpecification.withoutTitle(UNTITLED));
 
-        if (member == null) {
-            playlists = playlistRepository.findAllByNameIsNot(UNTITLED);
-        } else {
-            playlists = playlistRepository.findAllByMemberIsNotAndNameIsNot(member, UNTITLED);
+        if (member != null) {
+            spec = spec.and(RecommendationSpecification.withoutMember(member));
         }
+
+        List<Playlist> playlists = playlistRepository.findAll(spec);
 
         // 0부터 플레이리스트의 개수의 난수 중 RECOMMENDATION_COUNT개를 추출합니다.
         Random rand = new Random();
         Set<Integer> selected = new HashSet<>();
         int n = playlists.size();
+        int totalRecommendationCount = Math.min(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit(), n);
 
-        while (selected.size() < Math.min(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit(), n)) {
+        while (selected.size() < totalRecommendationCount) {
             int randomNum = rand.nextInt(n);
             selected.add(randomNum);
         }
@@ -61,7 +64,9 @@ public class RandomRecommendationService implements Recommendation {
         List<RecommendationDto.Response> responses = new LinkedList<>();
 
         for (int i : selected) {
+            System.out.println("i = " + i);
             Playlist playlist = playlists.get(i);
+
             responses.add(RecommendationDto.Response.builder()
                             .username(playlist.getMember().getUsername())
                             .id(playlist.getId())
@@ -70,6 +75,8 @@ public class RandomRecommendationService implements Recommendation {
                             .numberOfMusics(musicRepository.countByPlaylist(playlist))
                             .build());
         }
+
+        Collections.shuffle(responses);
         return responses;
     }
 }
