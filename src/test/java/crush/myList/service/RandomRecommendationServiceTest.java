@@ -8,6 +8,7 @@ import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
 import crush.myList.domain.recommendation.service.RandomRecommendationService;
+import crush.myList.global.enums.LimitConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +60,7 @@ public class RandomRecommendationServiceTest {
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
 
         // then
-        assertThat(recommendation).hasSize(6);
+        assertThat(recommendation).hasSize(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit());
         then(playlistRepository).should().findAllByNameIsNot(eq("Untitled"));
     }
 
@@ -94,7 +95,7 @@ public class RandomRecommendationServiceTest {
         );
 
         // then
-        assertThat(recommendation).hasSize(6);
+        assertThat(recommendation).hasSize(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit());
         then(playlistRepository).should().findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"));
     }
 }
