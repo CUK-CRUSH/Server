@@ -7,8 +7,8 @@ import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
-import crush.myList.domain.music.entity.Music;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.mongo.document.Music;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -54,6 +54,8 @@ public class TestUtil {
                 .username(username)
                 .name(username)
                 .role(role)
+                .playlists(new ArrayList<>())
+                .guestBooks(new ArrayList<>())
                 .build();
         memberRepository.save(member);
 
@@ -74,7 +76,7 @@ public class TestUtil {
         List<Playlist> playlists = member.getPlaylists();
 
         if (playlists == null) {
-            playlists = new LinkedList<>();
+            playlists = new ArrayList<>();
         }
         playlists.add(playlist);
 
@@ -91,18 +93,9 @@ public class TestUtil {
                 .title("굿굿")
                 .artist("후후")
                 .url("https://youtube.com/watch?v=test")
-                .playlist(playlist)
+                .playlistId(playlist.getId())
                 .build();
         musicRepository.save(music);
-
-        List<Music> musics = playlist.getMusics();
-
-        if (musics == null) {
-            musics = new LinkedList<>();
-        }
-        musics.add(music);
-
-        playlist.setMusics(musics);
         return music;
     }
 

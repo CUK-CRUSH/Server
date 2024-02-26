@@ -56,6 +56,9 @@ jobs:
           perspective.api-key: ${{ secrets.PERSPECTIVE_API_KEY }}
           spring.jpa.hibernate.ddl-auto: ${{ secrets.JPA_DDL_AUTO }}
 
+          spring.data.mongodb.uri: ${{ secrets.MONGODB_URI }}
+          spring.data.mongodb.database: ${{ secrets.MONGODB_DATABASE }}
+
       - name: create-json
         id: create-json
         uses: jsdaniell/create-json@v1.2.2

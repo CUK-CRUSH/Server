@@ -3,25 +3,25 @@ package crush.myList.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.music.Dto.MusicDto;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.dto.MusicDto;
+import crush.myList.domain.music.mongo.document.Music;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestReporter;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -39,6 +39,11 @@ public class MusicControllerTest {
     private TestUtil testUtil;
     @Autowired
     private MusicRepository musicRepository;
+
+    @AfterEach
+    void cleanUp() {
+        musicRepository.deleteAll();
+    }
 
     @DisplayName("음악 조회 테스트")
     @Test
@@ -77,13 +82,13 @@ public class MusicControllerTest {
         final String POST_API = "/api/v1/music/" + playlist.getId().toString();
 
         // when
-        testReporter.publishEntry(mockMvc.perform(
+        MockHttpServletResponse res = mockMvc.perform(
                 MockMvcRequestBuilders.post(POST_API)
                         .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
+                .andReturn().getResponse();
     }
 
     @Test
@@ -112,51 +117,34 @@ public class MusicControllerTest {
         final String POST_API = "/api/v1/music/" + playlist.getId().toString() + "/multiple";
 
         // when
-        testReporter.publishEntry(mockMvc.perform(
+        MockHttpServletResponse res = mockMvc.perform(
                 MockMvcRequestBuilders.post(POST_API)
                         .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
+                .andReturn().getResponse();
     }
 
     @Test
     @DisplayName("음악 수정 테스트")
-    @Disabled
+//    @Disabled
     public void patchMusicTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
         Playlist playlist = testUtil.createTestPlaylist(member);
-
-        MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
-                .title("TestMusic")
-                .artist("TestArtist")
-                .url("https://youtube.com/watch?v=urx8-yfpY7c")
-                .build();
-
-        String request = objectMapper.writeValueAsString(postRequestDto);
-
-        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
+        Music music = testUtil.createTestMusic(playlist);
 
         // when
-        testReporter.publishEntry(mockMvc.perform(
-                MockMvcRequestBuilders.post(POST_API)
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
-
         MusicDto.PatchRequest patchRequestDto = MusicDto.PatchRequest.builder()
-                .title("TestMusic2")
-                .artist("TestArtist2")
+                .title("updatedTitle")
+                .artist("updatedArtist")
                 .url("https://youtube.com/watch?v=urx8-yfpY7c")
                 .build();
 
         String patchRequest = objectMapper.writeValueAsString(patchRequestDto);
 
-        final String PATCH_API = "/api/v1/music?musicId=" + musicRepository.findAll().get(0).getId().toString();
+        final String PATCH_API = "/api/v1/music?musicId=" + music.getId();
 
         testReporter.publishEntry(mockMvc.perform(
                 MockMvcRequestBuilders.patch(PATCH_API)

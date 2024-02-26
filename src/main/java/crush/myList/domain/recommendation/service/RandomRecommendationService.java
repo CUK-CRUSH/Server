@@ -3,7 +3,7 @@ package crush.myList.domain.recommendation.service;
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
@@ -72,7 +72,7 @@ public class RandomRecommendationService implements Recommendation {
                             .id(playlist.getId())
                             .playlistName(playlist.getName())
                             .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
-                            .numberOfMusics(musicRepository.countByPlaylist(playlist))
+                            .numberOfMusics(musicRepository.countByPlaylistId(playlist.getId()))
                             .build());
         }
 
