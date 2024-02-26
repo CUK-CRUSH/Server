@@ -3,6 +3,7 @@ package crush.myList.domain.playlist.service;
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.dto.LikeMember;
 import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
@@ -30,6 +31,7 @@ public class LikeService {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
     private final PlaylistLikeRepository playlistLikeRepository;
+    private final MusicRepository musicRepository;
 
     // playlistId로 playlist 좋아요
     public void likePlaylist(SecurityMember member, Long playlistId) {
@@ -66,12 +68,14 @@ public class LikeService {
     }
 
     // playlistId로 playlist 좋아요 멤버 조회
-    public List<LikeMember> getLikeMembers(Long playlistId) {
+    public List<LikeMember> getLikeMembers(Long playlistId, Integer page) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
 
-        List<Member> members = playlistLikeRepository.findAllByPlaylist(playlist).stream()
+        Pageable pageable = PageRequest.of(page, LimitConstants.LIKED_MEMBER_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.DESC, "createdDate"));
+
+        List<Member> members = playlistLikeRepository.findAllByPlaylist(playlist, pageable).stream()
                 .map(PlaylistLike::getMember)
                 .toList();
         return members.stream()
@@ -97,12 +101,13 @@ public class LikeService {
                 .map(PlaylistLike::getPlaylist)
                 .toList();
 
+
         return likedPlaylists.stream()
                 .map(playlist -> PlaylistDto.Response.builder()
                         .id(playlist.getId())
                         .playlistName(playlist.getName())
                         .username(playlist.getMember().getUsername())
-                        .numberOfMusics(playlist.getMusics() == null ? 0 : playlist.getMusics().size())
+                        .numberOfMusics(musicRepository.countByPlaylistId(playlist.getId()))
                         .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                         .likeCount(playlistLikeRepository.countByPlaylistId(playlist.getId()))
                         .isLike(true)

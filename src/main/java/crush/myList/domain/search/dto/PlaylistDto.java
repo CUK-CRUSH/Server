@@ -27,4 +27,7 @@ public class PlaylistDto {
 
     @Schema(name = "thumbnailUrl", description = "썸네일 이미지 주소입니다.")
     private String thumbnailUrl;
+
+    @Schema(name = "numberOfMusics", description = "플레이리스트에 포함된 음악 수입니다.")
+    private Integer numberOfMusics;
 }

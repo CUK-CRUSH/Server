@@ -2,17 +2,15 @@ package crush.myList.controller;
 
 import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.music.entity.Music;
+import crush.myList.domain.music.mongo.document.Music;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.dto.GuestBookDto;
 import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestReporter;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +36,13 @@ public class PlaylistControllerTest {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private TestUtil testUtil;
+    @Autowired
+    private MusicRepository musicRepository;
+
+    @AfterEach
+    void cleanUp() {
+        musicRepository.deleteAll();
+    }
 
     @DisplayName("사용자의 모든 플레이리스트 조회 테스트")
     @Test
@@ -138,8 +143,11 @@ public class PlaylistControllerTest {
         // given
         Member member = testUtil.createTestMember("testUser");
         Playlist playlist = testUtil.createTestPlaylist(member);
-        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
-        Music music = testUtil.createTestMusic(playlist);
+
+        for (int i = 0; i < 20; i++) {
+            Member newMember = testUtil.createTestMember("testUser" + i);
+            testUtil.createTestPlaylistLike(newMember, playlist);
+        }
 
         final String api = "/api/v1/playlist/" + playlist.getId() + "/like";
 
@@ -147,8 +155,9 @@ public class PlaylistControllerTest {
         assertThat(
                 mockMvc.perform(get(api))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.length()").value(15))
                         .andReturn().getResponse().getContentAsString()
-        ).contains("[{\"id\":" + member.getId() + ",\"username\":\"" + member.getUsername() + "\"");
+        ).contains("testUser6");
     }
 
     @DisplayName("플레이리스트 좋아요 추가 테스트")
@@ -249,6 +258,7 @@ public class PlaylistControllerTest {
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
+        // when
         testReporter.publishEntry(
                 mockMvc.perform(
                         MockMvcRequestBuilders.delete(api)
@@ -372,14 +382,20 @@ public class PlaylistControllerTest {
     public void getGuestBooksTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
+        Member otherUser = testUtil.createTestMember("otherUser");
+
         Playlist playlist = testUtil.createTestPlaylist(member);
-        testUtil.createTestGuestBook(member, playlist);
+
+        for (int i = 0; i < 20; i++) {
+            testUtil.createTestGuestBook(otherUser, playlist);
+        }
 
         final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook";
 
         // when
         MockHttpServletResponse res = mockMvc.perform(get(api))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.length()").value(15))
                         .andReturn().getResponse();
 
         // then
@@ -403,6 +419,7 @@ public class PlaylistControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(testUtil.toJson(post)))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.member.username").value(member.getUsername()))
                         .andReturn().getResponse();
 
         // then
@@ -427,6 +444,7 @@ public class PlaylistControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(testUtil.toJson(post)))
                         .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.data.member.username").value(member.getUsername()))
                         .andReturn().getResponse();
 
         // then

@@ -8,9 +8,13 @@ import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.GuestBookRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
+import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,15 +32,12 @@ public class GuestBookService {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
 
-    public List<GuestBookDto.Response> getGuestBooks(Long playlistId) {
-        return guestBookRepository.findAllByPlaylistId(playlistId).stream()
-                .map((guestBook) -> GuestBookDto.Response.builder()
-                        .id(guestBook.getId())
-                        .username(guestBook.getMember().getUsername())
-                        .content(guestBook.getContent())
-                        .modifiedDate(guestBook.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                        .build()
-                ).toList();
+    public List<GuestBookDto.Response> getGuestBooks(Long playlistId, Integer page) {
+        Pageable pageable = PageRequest.of(page, LimitConstants.GUESTBOOK_PAGE_SIZE.getLimit(), Sort.by("modifiedDate").descending());
+
+        return guestBookRepository.findAllByPlaylistId(playlistId, pageable).stream()
+                .map(guestBook -> convertToResponse(guestBook, false))
+                .toList();
     }
 
     public GuestBookDto.Response postGuestBook(SecurityMember member, Long playlistId, String content) {
@@ -52,12 +53,7 @@ public class GuestBookService {
                 .content(content)
                 .build()
         );
-        return GuestBookDto.Response.builder()
-                .id(guestBook.getId())
-                .username(guestBook.getMember().getUsername())
-                .content(guestBook.getContent())
-                .modifiedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .build();
+        return convertToResponse(guestBook, true);
     }
 
     public void deleteGuestBook(SecurityMember member, Long playlistId, Long guestbookId) {
@@ -82,11 +78,23 @@ public class GuestBookService {
         }
 
         guestBook.setContent(content);
+        return convertToResponse(guestBook, true);
+    }
+
+    private GuestBookDto.Response convertToResponse(GuestBook guestBook, Boolean isModified) {
         return GuestBookDto.Response.builder()
                 .id(guestBook.getId())
-                .username(guestBook.getMember().getUsername())
+                .member(GuestBookDto.Response.MemberDto.builder()
+                        .id(guestBook.getMember().getId())
+                        .username(guestBook.getMember().getUsername())
+                        .name(guestBook.getMember().getName())
+                        .profileImageUrl(guestBook.getMember().getProfileImage() != null ?
+                                guestBook.getMember().getProfileImage().getUrl() : null)
+                        .build())
                 .content(guestBook.getContent())
-                .modifiedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .modifiedDate(isModified ?
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) :
+                        guestBook.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
     }
 }

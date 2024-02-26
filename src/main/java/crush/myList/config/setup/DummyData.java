@@ -5,13 +5,15 @@ import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
+import crush.myList.domain.music.entity.MusicEntity;
+import crush.myList.domain.music.mongo.document.Music;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
+import crush.myList.domain.music.repository.MusicJpaRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -24,6 +26,8 @@ public class DummyData {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
     private final RoleRepository roleRepository;
+    private final MusicRepository musicRepository;
+    private final MusicJpaRepository musicJpaRepository;
 
     // 역할이 없으면 생성
     public void createRoleIfNotFound(RoleName roleName) {
@@ -93,12 +97,32 @@ public class DummyData {
         }
     }
 
+    // 더미 음악이 없으면 저장
+    public void createMusicEntity(MusicEntity music) {
+        musicJpaRepository.save(music);
+    }
+
+    public void setupMusicEntity() {
+        List<Playlist> playlists = playlistRepository.findAll();
+        for (Playlist playlist : playlists) {
+            for (int i=1; i<=5; i++) {
+                createMusicEntity(MusicEntity.builder()
+                        .playlist(playlist)
+                        .title(playlist.getName() + " music " + i)
+                        .artist("artist " + i)
+                        .url("https://www.youtube.com/watch?v=12345" + i)
+                        .build());
+            }
+        }
+    }
+
     @PostConstruct
     public void setupDummyData() {
         try {
             setUpRole();
             setupMember();
             setupPlaylist();
+            setupMusicEntity();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("더미 데이터 초기화 실패.");

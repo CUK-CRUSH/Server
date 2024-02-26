@@ -1,6 +1,7 @@
 package crush.myList.domain.search.service;
 
 import crush.myList.domain.member.repository.MemberRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.search.dto.MemberDto;
 import crush.myList.domain.search.dto.PlaylistDto;
@@ -22,6 +23,7 @@ import java.util.List;
 public class SearchService {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
+    private final MusicRepository musicRepository;
 
     /** @param q 검색어
      * @param page 페이지
@@ -53,6 +55,7 @@ public class SearchService {
                         .username(playlist.getMember().getUsername())
                         .playlistName(playlist.getName())
                         .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
+                        .numberOfMusics(musicRepository.countByPlaylistId(playlist.getId()))
                         .build())
                 .toList();
     }

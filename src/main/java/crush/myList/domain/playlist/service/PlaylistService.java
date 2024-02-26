@@ -5,11 +5,9 @@ import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.dto.PlaylistDto;
-import crush.myList.domain.playlist.dto.LikeMember;
 import crush.myList.domain.playlist.entity.Playlist;
-import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.LimitConstants;
@@ -125,7 +123,7 @@ public class PlaylistService {
         if (image != null) {
             imageService.deleteImageToGcs(image.getId());
         }
-        musicRepository.deleteAllByPlaylist(playlist);
+        musicRepository.deleteAllByPlaylistId(playlist.getId());
         playlistRepository.delete(playlist);
     }
 
@@ -159,7 +157,7 @@ public class PlaylistService {
                 .username(playlist.getMember().getUsername())
                 .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
                 // counts musics in playlist
-                .numberOfMusics(musicRepository.countByPlaylist(playlist))
+                .numberOfMusics(musicRepository.countByPlaylistId(playlist.getId()))
                 .likeCount(playlistLikeRepository.countByPlaylistId(playlist.getId()))
                 .build();
     }
