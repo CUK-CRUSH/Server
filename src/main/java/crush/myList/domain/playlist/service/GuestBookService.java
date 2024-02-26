@@ -8,9 +8,13 @@ import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.GuestBookRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
+import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,8 +32,10 @@ public class GuestBookService {
     private final MemberRepository memberRepository;
     private final PlaylistRepository playlistRepository;
 
-    public List<GuestBookDto.Response> getGuestBooks(Long playlistId) {
-        return guestBookRepository.findAllByPlaylistId(playlistId).stream()
+    public List<GuestBookDto.Response> getGuestBooks(Long playlistId, Integer page) {
+        Pageable pageable = PageRequest.of(page, LimitConstants.GUESTBOOK_PAGE_SIZE.getLimit(), Sort.by("modifiedDate").descending());
+
+        return guestBookRepository.findAllByPlaylistId(playlistId, pageable).stream()
                 .map(guestBook -> convertToResponse(guestBook, false))
                 .toList();
     }

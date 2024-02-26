@@ -299,7 +299,6 @@ public class MemberControllerTest {
         for (int i = 0; i < 10; i++) {
             Playlist playlist = testUtil.createTestPlaylist(member2);
             PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member1, playlist);
-            System.out.println(i);
         }
 
         final String api = "/api/v1/member/playlist/like";
