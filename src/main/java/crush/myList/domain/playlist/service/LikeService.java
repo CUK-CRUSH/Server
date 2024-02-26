@@ -68,12 +68,14 @@ public class LikeService {
     }
 
     // playlistId로 playlist 좋아요 멤버 조회
-    public List<LikeMember> getLikeMembers(Long playlistId) {
+    public List<LikeMember> getLikeMembers(Long playlistId, Integer page) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
 
-        List<Member> members = playlistLikeRepository.findAllByPlaylist(playlist).stream()
+        Pageable pageable = PageRequest.of(page, LimitConstants.LIKED_MEMBER_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.DESC, "createdDate"));
+
+        List<Member> members = playlistLikeRepository.findAllByPlaylist(playlist, pageable).stream()
                 .map(PlaylistLike::getMember)
                 .toList();
         return members.stream()

@@ -7,6 +7,7 @@ import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
+import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,6 @@ public class RandomRecommendationService implements Recommendation {
     private final MemberRepository memberRepository;
     private final MusicRepository musicRepository;
 
-    private static final int RECOMMENDATION_COUNT = 4;
     private static final String UNTITLED = "Untitled";
 
     /**
@@ -52,7 +52,7 @@ public class RandomRecommendationService implements Recommendation {
         Set<Integer> selected = new HashSet<>();
         int n = playlists.size();
 
-        while (selected.size() < Math.min(RECOMMENDATION_COUNT, n)) {
+        while (selected.size() < Math.min(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit(), n)) {
             int randomNum = rand.nextInt(n);
             selected.add(randomNum);
         }
