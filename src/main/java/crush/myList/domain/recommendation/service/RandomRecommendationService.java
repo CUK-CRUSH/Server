@@ -34,7 +34,7 @@ public class RandomRecommendationService implements Recommendation {
      * @param securityMember 로그인한 사용자 정보
      * @return 추천 플레이리스트 목록
      */
-    public List<RecommendationDto.Response> getRecommendation(SecurityMember securityMember) {
+    public List<RecommendationDto.Response> getRecommendation(SecurityMember securityMember, Long currentPlaylistId) {
         // 로그인한 사용자의 플레이리스트를 제외하고 모든 플레이리스트를 조회합니다.
         Member member = null;
         if (securityMember != null) {
@@ -45,6 +45,10 @@ public class RandomRecommendationService implements Recommendation {
 
         if (member != null) {
             spec = spec.and(RecommendationSpecification.withoutMember(member));
+        }
+
+        if (currentPlaylistId != null) {
+            spec = spec.and(RecommendationSpecification.withoutPlaylistId(currentPlaylistId));
         }
 
         List<Playlist> playlists = playlistRepository.findAll(spec);

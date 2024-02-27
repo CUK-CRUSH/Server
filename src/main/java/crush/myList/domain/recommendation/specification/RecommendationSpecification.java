@@ -13,7 +13,11 @@ public class RecommendationSpecification {
         return (root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get("member"), member);
     }
 
-    public static Specification<Playlist> withoutImage() {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get("image"));
+    public static Specification<Playlist> withoutPlaylistId(Long playlistId) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get("id"), playlistId);
+    }
+
+    public static Specification<Playlist> withImage() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get("image"));
     }
 }
