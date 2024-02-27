@@ -68,7 +68,6 @@ public class RandomRecommendationService implements Recommendation {
         List<RecommendationDto.Response> responses = new LinkedList<>();
 
         for (int i : selected) {
-            System.out.println("i = " + i);
             Playlist playlist = playlists.get(i);
 
             responses.add(RecommendationDto.Response.builder()

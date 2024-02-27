@@ -3,11 +3,12 @@ package crush.myList.service;
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
-import crush.myList.domain.music.Repository.MusicRepository;
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
 import crush.myList.domain.recommendation.service.RandomRecommendationService;
+import crush.myList.global.enums.LimitConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,14 +55,14 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
+        given(musicRepository.countByPlaylistId(any(Long.class))).willReturn(10);
 
         // when
-        List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
+        List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null, null);
 
         // then
         assertThat(recommendation).hasSize(7);
-        then(playlistRepository).should().findAllByNameIsNot(eq("Untitled"));
+        then(playlistRepository).should().findAll(any(Specification.class));
     }
 
     @DisplayName("로그인 시 무작위 추천 플레이리스트 조회 테스트")
@@ -73,7 +74,7 @@ public class RandomRecommendationServiceTest {
                         Member.builder().id(1L).username("test").build()
                 )
         );
-        given(playlistRepository.findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"))).willReturn(
+        given(playlistRepository.findAll(any(Specification.class))).willReturn(
                 new ArrayList<>(
                         List.of(
                                 Playlist.builder().member(Member.builder().id(1L).username("Test").build()).id(1L).name("테스트1").build(),
@@ -87,15 +88,17 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylist(any(Playlist.class))).willReturn(10);
+        given(musicRepository.countByPlaylistId(any(Long.class))).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(
-                SecurityMember.builder().id(1L).username("test").build()
+                SecurityMember.builder().id(1L).username("test").build(),
+                null
         );
 
         // then
-        assertThat(recommendation).hasSize(7);
-        then(playlistRepository).should().findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"));
+        assertThat(recommendation).hasSize(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit());
+        then(memberRepository).should().findById(any());
+        then(playlistRepository).should().findAll(any(Specification.class));
     }
 }
