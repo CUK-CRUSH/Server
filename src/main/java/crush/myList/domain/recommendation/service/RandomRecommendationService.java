@@ -41,7 +41,8 @@ public class RandomRecommendationService implements Recommendation {
             member = memberRepository.findById(securityMember.getId()).orElse(null);
         }
 
-        Specification<Playlist> spec = Specification.where(RecommendationSpecification.withoutTitle(UNTITLED));
+        Specification<Playlist> spec = Specification.where(RecommendationSpecification.withoutTitle(UNTITLED))
+                .and(RecommendationSpecification.withImage());
 
         if (member != null) {
             spec = spec.and(RecommendationSpecification.withoutMember(member));
