@@ -122,7 +122,7 @@ public class MemberController {
     ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
-                "내가 좋아요한 플레이리스트 조회 성공",
+                "사용자가 좋아요한 플레이리스트 조회 성공",
                 likeService.getLikedPlaylists(username, page)
         );
     }

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class RandomRecommendationServiceTest {
     @Test
     public void getLogoutRandomRecommendationTest() {
         // given
-        given(playlistRepository.findAllByNameIsNot(eq("Untitled"))).willReturn(
+        given(playlistRepository.findAll(any(Specification.class))).willReturn(
                 new ArrayList<>(
                         List.of(
                                 Playlist.builder().member(Member.builder().id(1L).username("Test").build()).id(1L).name("테스트1").build(),
@@ -54,14 +55,14 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylistId(anyLong())).willReturn(10);
+        given(musicRepository.countByPlaylistId(any(Long.class))).willReturn(10);
 
         // when
-        List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null);
+        List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(null, null);
 
         // then
-        assertThat(recommendation).hasSize(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit());
-        then(playlistRepository).should().findAllByNameIsNot(eq("Untitled"));
+        assertThat(recommendation).hasSize(7);
+        then(playlistRepository).should().findAll(any(Specification.class));
     }
 
     @DisplayName("로그인 시 무작위 추천 플레이리스트 조회 테스트")
@@ -73,7 +74,7 @@ public class RandomRecommendationServiceTest {
                         Member.builder().id(1L).username("test").build()
                 )
         );
-        given(playlistRepository.findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"))).willReturn(
+        given(playlistRepository.findAll(any(Specification.class))).willReturn(
                 new ArrayList<>(
                         List.of(
                                 Playlist.builder().member(Member.builder().id(1L).username("Test").build()).id(1L).name("테스트1").build(),
@@ -87,15 +88,17 @@ public class RandomRecommendationServiceTest {
                         )
                 )
         );
-        given(musicRepository.countByPlaylistId(anyLong())).willReturn(10);
+        given(musicRepository.countByPlaylistId(any(Long.class))).willReturn(10);
 
         // when
         List<RecommendationDto.Response> recommendation = randomRecommendationService.getRecommendation(
-                SecurityMember.builder().id(1L).username("test").build()
+                SecurityMember.builder().id(1L).username("test").build(),
+                null
         );
 
         // then
         assertThat(recommendation).hasSize(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit());
-        then(playlistRepository).should().findAllByMemberIsNotAndNameIsNot(any(), eq("Untitled"));
+        then(memberRepository).should().findById(any());
+        then(playlistRepository).should().findAll(any(Specification.class));
     }
 }
