@@ -81,6 +81,7 @@ public class TestUtil {
         playlists.add(playlist);
 
         member.setPlaylists(playlists);
+        memberRepository.save(member);
         return playlist;
     }
 
@@ -124,7 +125,29 @@ public class TestUtil {
                 .member(member)
                 .playlist(playlist)
                 .build();
-        return playlistLikeRepository.save(playlistLike);
+        playlistLikeRepository.save(playlistLike);
+
+        List<PlaylistLike> likesForMember = member.getLikes();
+        List<PlaylistLike> likesForPlaylist = playlist.getLikes();
+
+        if (likesForMember == null) {
+            likesForMember = new ArrayList<>();
+        }
+
+        if (likesForPlaylist == null) {
+            likesForPlaylist = new ArrayList<>();
+        }
+
+        likesForMember.add(playlistLike);
+        likesForPlaylist.add(playlistLike);
+
+        member.setLikes(likesForMember);
+        playlist.setLikes(likesForPlaylist);
+
+        memberRepository.save(member);
+        playlistRepository.save(playlist);
+
+        return playlistLike;
     }
 
     public void deletePlaylist(Long id) {

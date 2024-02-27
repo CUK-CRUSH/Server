@@ -5,8 +5,6 @@ import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.image.repository.ImageRepository;
 import crush.myList.domain.image.service.ImageService;
 import crush.myList.domain.member.entity.Member;
-import crush.myList.domain.member.entity.Role;
-import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.mongo.document.Music;
@@ -17,7 +15,6 @@ import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.global.enums.JwtTokenType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
@@ -250,7 +247,7 @@ public class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("회원 탈퇴 테스트 - 이미지 및 플레이리스트 삭제")
+    @DisplayName("회원 탈퇴 테스트 - 이미지 및 플레이리스트 / 좋아요 삭제")
     void deleteMemberTest2(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("TestMember");
@@ -264,6 +261,8 @@ public class MemberControllerTest {
         Image playlistImage = imageService.saveImageToGcs_Image(testUtil.createTestImage("playlistImage"));
         playlist.setImage(playlistImage);
         playlistRepository.save(playlist);
+
+        PlaylistLike playlistLike = testUtil.createTestPlaylistLike(member, playlist);
 
         Music music = testUtil.createTestMusic(playlist);
         musicRepository.save(music);
