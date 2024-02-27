@@ -4,24 +4,22 @@ import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.playlist.entity.Playlist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
-    List<Playlist> findAllByMember(Member member);
+public interface PlaylistRepository extends JpaRepository<Playlist, Long>, JpaSpecificationExecutor<Playlist> {
+    List<Playlist> findAll(@Nullable Specification<Playlist> spec);
     Long countByMember(Member member);
     List<Playlist> findAllByMemberOrderByCreatedDateDesc(Member member);
 
     List<Playlist> findByName(String name);
-
-    @Query("select p from Playlist p where p.member != :member and p.name != 'Untitled'")
-    ArrayList<Playlist> findAllExceptMember(Member member);
 
     ArrayList<Playlist> findAllByMemberIsNotAndNameIsNot(Member member, String name);
 

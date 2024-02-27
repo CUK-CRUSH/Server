@@ -6,5 +6,5 @@ import crush.myList.domain.recommendation.dto.RecommendationDto;
 import java.util.List;
 
 public interface Recommendation {
-    List<RecommendationDto.Response> getRecommendation(SecurityMember member);
+    List<RecommendationDto.Response> getRecommendation(SecurityMember member, Long currentPlaylistId);
 }

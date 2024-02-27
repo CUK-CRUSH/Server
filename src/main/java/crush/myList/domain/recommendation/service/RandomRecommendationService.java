@@ -7,10 +7,12 @@ import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.recommendation.dto.RecommendationDto;
+import crush.myList.domain.recommendation.specification.RecommendationSpecification;
 import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,27 +34,32 @@ public class RandomRecommendationService implements Recommendation {
      * @param securityMember 로그인한 사용자 정보
      * @return 추천 플레이리스트 목록
      */
-    public List<RecommendationDto.Response> getRecommendation(SecurityMember securityMember) {
+    public List<RecommendationDto.Response> getRecommendation(SecurityMember securityMember, Long currentPlaylistId) {
         // 로그인한 사용자의 플레이리스트를 제외하고 모든 플레이리스트를 조회합니다.
         Member member = null;
         if (securityMember != null) {
             member = memberRepository.findById(securityMember.getId()).orElse(null);
         }
 
-        List<Playlist> playlists = null;
+        Specification<Playlist> spec = Specification.where(RecommendationSpecification.withoutTitle(UNTITLED));
 
-        if (member == null) {
-            playlists = playlistRepository.findAllByNameIsNot(UNTITLED);
-        } else {
-            playlists = playlistRepository.findAllByMemberIsNotAndNameIsNot(member, UNTITLED);
+        if (member != null) {
+            spec = spec.and(RecommendationSpecification.withoutMember(member));
         }
+
+        if (currentPlaylistId != null) {
+            spec = spec.and(RecommendationSpecification.withoutPlaylistId(currentPlaylistId));
+        }
+
+        List<Playlist> playlists = playlistRepository.findAll(spec);
 
         // 0부터 플레이리스트의 개수의 난수 중 RECOMMENDATION_COUNT개를 추출합니다.
         Random rand = new Random();
         Set<Integer> selected = new HashSet<>();
         int n = playlists.size();
+        int totalRecommendationCount = Math.min(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit(), n);
 
-        while (selected.size() < Math.min(LimitConstants.PLAYLIST_RECOMMENDATION_SIZE.getLimit(), n)) {
+        while (selected.size() < totalRecommendationCount) {
             int randomNum = rand.nextInt(n);
             selected.add(randomNum);
         }
@@ -62,6 +69,7 @@ public class RandomRecommendationService implements Recommendation {
 
         for (int i : selected) {
             Playlist playlist = playlists.get(i);
+
             responses.add(RecommendationDto.Response.builder()
                             .username(playlist.getMember().getUsername())
                             .id(playlist.getId())
@@ -70,6 +78,8 @@ public class RandomRecommendationService implements Recommendation {
                             .numberOfMusics(musicRepository.countByPlaylistId(playlist.getId()))
                             .build());
         }
+
+        Collections.shuffle(responses);
         return responses;
     }
 }
