@@ -118,12 +118,12 @@ public class MemberController {
     public JsonBody<List<PlaylistDto.Response>> getUserLikedPlaylist(
             @AuthenticationPrincipal SecurityMember member,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = true) String username
+            @RequestParam(required = false) String username
     ) {
         return JsonBody.of(
                 HttpStatus.OK.value(),
-                "내가 좋아요한 플레이리스트 조회 성공",
-                likeService.getLikedPlaylists(username, page)
+                "사용자가 좋아요한 플레이리스트 조회 성공",
+                likeService.getLikedPlaylists(member, username, page)
         );
     }
 }

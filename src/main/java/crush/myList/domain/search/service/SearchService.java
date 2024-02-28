@@ -30,7 +30,7 @@ public class SearchService {
      * @return 검색 결과
      */
     public List<MemberDto> searchMembers(String q, int page) {
-        Pageable pageable = PageRequest.of(page, LimitConstants.SEARCH_PLAYLIST_PAGE_SIZE.getLimit());
+        Pageable pageable = PageRequest.of(page, LimitConstants.SEARCH_MEMBER_PAGE_SIZE.getLimit());
         return memberRepository.findByUsernameContaining(q, pageable)
                 .stream()
                 .map(member -> MemberDto.builder()

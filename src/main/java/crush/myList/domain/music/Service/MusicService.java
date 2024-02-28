@@ -93,8 +93,6 @@ public class MusicService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
         );
 
-        System.out.println("music.getPlaylistId() = " + music.getPlaylistId());
-
         Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
@@ -117,6 +115,9 @@ public class MusicService {
         if (url != null && !url.isBlank()) {
             music.setUrl(url);
         }
+
+        // updateDate를 업데이트하기 위해 save 메소드 사용
+        musicRepository.save(music);
 
         return convertToDto(music);
     }
