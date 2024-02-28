@@ -90,7 +90,13 @@ public class LikeService {
     }
 
     // 내가 좋아요한 playlist 조회
-    public List<PlaylistDto.Response> getLikedPlaylists(String username, Integer page) {
+    public List<PlaylistDto.Response> getLikedPlaylists(SecurityMember securityMember, String username, Integer page) {
+        if (username == null && securityMember == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유저 정보를 찾을 수 없습니다.");
+        }
+
+        username = username == null ? securityMember.getUsername() : username;
+
         Member memberEntity = memberRepository.findByUsername(username).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다.")
         );
