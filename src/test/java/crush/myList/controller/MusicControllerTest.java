@@ -152,6 +152,9 @@ public class MusicControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(patchRequest))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("data.title").value("updatedTitle"))
+                .andExpect(jsonPath("data.artist").value("updatedArtist"))
+                .andExpect(jsonPath("data.url").value("https://youtube.com/watch?v=urx8-yfpY7c"))
                 .andReturn().getResponse().getContentAsString());
     }
 
