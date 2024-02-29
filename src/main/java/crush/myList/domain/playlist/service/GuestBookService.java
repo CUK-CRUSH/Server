@@ -61,7 +61,12 @@ public class GuestBookService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "방명록을 찾을 수 없습니다.")
         );
 
-        if (!guestBook.getMember().getUsername().equals(member.getUsername()) || !guestBook.getPlaylist().getId().equals(playlistId)) {
+        Playlist playlist = guestBook.getPlaylist();
+        Member guestBookMember = guestBook.getMember();
+        Member playlistOwner = playlist.getMember();
+
+        if (!playlist.getId().equals(playlistId) ||  // playlistId가 일치하지 않는 경우
+                (!guestBookMember.getId().equals(member.getId())) && !guestBookMember.getId().equals(playlistOwner.getId()) ) {  // 방명록 작성자가 아니고 플레이리스트 주인이 아닌 경우
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "방명록을 삭제할 수 없습니다.");
         }
 
