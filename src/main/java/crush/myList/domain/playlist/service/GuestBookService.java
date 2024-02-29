@@ -68,7 +68,7 @@ public class GuestBookService {
         // playlistId가 일치하지 않는 경우 또는 방명록 작성자가 아니고 플레이리스트 주인이 아닌 경우
         if (!playlist.getId().equals(playlistId) ||
                 // 방명록 작성자가 아니고 플레이리스트 주인이 아닌 경우
-                (!guestBookMember.getId().equals(member.getId())) && !guestBookMember.getId().equals(playlistOwner.getId()) ) {
+                (!guestBookMember.getId().equals(member.getId())) && !playlistOwner.getId().equals(member.getId()) ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "방명록을 삭제할 수 없습니다.");
         }
 
