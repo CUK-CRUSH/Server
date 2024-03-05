@@ -76,6 +76,8 @@ public class TestUtil {
         Playlist playlist = Playlist.builder()
                 .name("testPlaylistName")
                 .member(member)
+                .likes(new ArrayList<>())
+                .guestBooks(new ArrayList<>())
                 .build();
         playlistRepository.save(playlist);
 
@@ -168,8 +170,8 @@ public class TestUtil {
                 .playlist(playlist)
                 .content("testContent")
                 .build();
-        member.setGuestBooks(List.of(guestBook));
-        playlist.setGuestBooks(List.of(guestBook));
+        member.getGuestBooks().add(guestBook);
+        playlist.getGuestBooks().add(guestBook);
         return guestBookRepository.save(guestBook);
     }
 

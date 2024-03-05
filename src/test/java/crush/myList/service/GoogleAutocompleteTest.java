@@ -28,4 +28,20 @@ public class GoogleAutocompleteTest {
         // then
         list.forEach(System.out::println);
     }
+
+    @Test
+    @DisplayName("이모지 테스트")
+    public void etcTest() {
+        String t = new String(Character.toChars(0x1F60A));
+        String emoji = "😊";
+        System.out.println(t);
+        System.out.println(emoji);
+        System.out.println(t.equals(emoji));
+
+        String t2 = new String(Character.toChars(0x1F415));
+        String emoji2 = "🐕";
+        System.out.println(t2);
+        System.out.println(emoji2);
+        System.out.println(t2.equals(emoji2));
+    }
 }
