@@ -14,6 +14,7 @@ import java.util.Optional;
 @Repository
 public interface PlaylistLikeRepository extends JpaRepository<PlaylistLike, Long> {
     Integer countByPlaylistId(Long playlistId);
+    Integer countByMemberId(Long memberId);
     List<PlaylistLike> findAllByMemberId(Long memberId);
 
     List<PlaylistLike> findAllByMember(Member member, Pageable pageable);

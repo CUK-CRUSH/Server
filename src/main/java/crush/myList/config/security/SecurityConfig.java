@@ -47,6 +47,7 @@ public class SecurityConfig {
         "/api/v1/member/id/{id}",
         "/api/v1/member/nickname/{username}",
         "/api/v1/member/nickname/available/{username}",
+        "/api/v1/member/playlist/like",
         // 자동완성 api
         "/api/v1/autocomplete/**",
 
@@ -57,6 +58,9 @@ public class SecurityConfig {
         "/api/v1/search",
         "/api/v1/search/playlist",
         "/api/v1/search/member",
+
+         // 랭킹 api
+         "api/v1/ranking/**",
     };
 
     private final String[] TEMPORARY_LIST = {

@@ -2,6 +2,7 @@ package crush.myList.domain.playlist.entity;
 
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.member.entity.Member;
+import crush.myList.domain.ranking.entity.PlaylistRanking;
 import crush.myList.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,4 +34,6 @@ public class Playlist extends BaseEntity {
     private List<PlaylistLike> likes = new ArrayList<>();
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GuestBook> guestBooks = new ArrayList<>();
+    @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PlaylistRanking ranking;
 }
