@@ -15,6 +15,8 @@ import crush.myList.domain.playlist.entity.PlaylistLike;
 import crush.myList.domain.playlist.repository.GuestBookRepository;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
+import crush.myList.domain.ranking.repository.MemberRankingRepository;
+import crush.myList.domain.ranking.repository.PlaylistRankingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -41,6 +43,10 @@ public class TestUtil {
     private GuestBookRepository guestBookRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private PlaylistRankingRepository playlistRankingRepository;
+    @Autowired
+    private MemberRankingRepository memberRankingRepository;
 
     /**
      * 테스트용 멤버 생성
@@ -171,5 +177,14 @@ public class TestUtil {
 
     public <T> String toJson(T data) throws JsonProcessingException {
         return objectMapper.writeValueAsString(data);
+    }
+
+    public void clearAll() {
+        playlistLikeRepository.deleteAll();
+        musicRepository.deleteAll();
+        playlistRepository.deleteAll();
+        memberRepository.deleteAll();
+        playlistRankingRepository.deleteAll();
+        memberRankingRepository.deleteAll();
     }
 }

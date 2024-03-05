@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
@@ -16,14 +17,18 @@ import java.util.List;
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, Long>, JpaSpecificationExecutor<Playlist> {
     List<Playlist> findAll(@Nullable Specification<Playlist> spec);
+
     Long countByMember(Member member);
+
     List<Playlist> findAllByMemberOrderByCreatedDateDesc(Member member);
 
-    List<Playlist> findByName(String name);
-
-    ArrayList<Playlist> findAllByMemberIsNotAndNameIsNot(Member member, String name);
-
-    ArrayList<Playlist> findAllByNameIsNot(String name);
-
     Page<Playlist> findByNameContaining(String q, Pageable pageable);
+
+//    @Query("SELECT p FROM Playlist p WHERE p.id IN (" +
+//            "SELECT pl.playlist.id FROM PlaylistLike pl " +
+//            "GROUP BY pl.playlist.id " +
+//            "ORDER BY COUNT(pl) DESC" +
+//            ") ORDER BY SIZE(p.likes) DESC")
+    @Query("SELECT p FROM Playlist p ORDER BY SIZE(p.likes) DESC")
+    Page<Playlist> findTopPlaylists(Pageable pageable);
 }
