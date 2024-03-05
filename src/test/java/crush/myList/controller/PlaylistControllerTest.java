@@ -467,4 +467,21 @@ public class PlaylistControllerTest {
                                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                         .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("플레이리스트 방명록 삭제 - 소유자가 타인의 방명록 삭제")
+    public void deleteOthersGuestBookTest(TestReporter testReporter) throws Exception {
+        // given
+        Member otherUser = testUtil.createTestMember("otherUser");
+        Playlist playlist = testUtil.createTestPlaylist(otherUser);
+        Member member = testUtil.createTestMember("testUser");
+        GuestBook guestBook = testUtil.createTestGuestBook(member, playlist);
+        final String api = "/api/v1/playlist/" + playlist.getId() + "/guestbook/" + guestBook.getId();
+
+        // when
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete(api)
+                                .header("Authorization", "Bearer " + jwtTokenProvider.createToken(otherUser.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
+                        .andExpect(status().isOk());
+    }
 }
