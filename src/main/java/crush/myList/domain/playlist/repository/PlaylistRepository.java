@@ -24,10 +24,11 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long>, JpaSp
 
     Page<Playlist> findByNameContaining(String q, Pageable pageable);
 
-    @Query("SELECT p FROM Playlist p WHERE p.id IN (" +
-            "SELECT pl.playlist.id FROM PlaylistLike pl " +
-            "GROUP BY pl.playlist.id " +
-            "ORDER BY COUNT(pl) DESC" +
-            ") ORDER BY SIZE(p.likes) DESC")
+//    @Query("SELECT p FROM Playlist p WHERE p.id IN (" +
+//            "SELECT pl.playlist.id FROM PlaylistLike pl " +
+//            "GROUP BY pl.playlist.id " +
+//            "ORDER BY COUNT(pl) DESC" +
+//            ") ORDER BY SIZE(p.likes) DESC")
+    @Query("SELECT p FROM Playlist p ORDER BY SIZE(p.likes) DESC")
     Page<Playlist> findTopPlaylists(Pageable pageable);
 }
