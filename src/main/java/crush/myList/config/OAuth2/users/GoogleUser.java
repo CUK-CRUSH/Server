@@ -12,17 +12,13 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoogleUser implements CustomOAuth2User {
-    private String registrationId;
-    private String memberId;
-    private String oauth2Id;
-    private Map<String, Object> attributes;
-    private Collection<? extends GrantedAuthority> authorities;
+    private String registrationId;  // google
+    private String memberId;  // DB에 저장된 id
+    private String oauth2Id;  // googleId
+    private Map<String, Object> attributes;  // google 정보
+    private Collection<? extends GrantedAuthority> authorities;  // 권한
     @Override
     public String getName() {
         return attributes.get("name").toString();
-    }
-    @Override
-    public String getOAuth2Id() {
-        return oauth2Id;
     }
 }

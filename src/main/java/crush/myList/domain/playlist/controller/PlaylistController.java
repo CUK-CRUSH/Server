@@ -223,7 +223,7 @@ public class PlaylistController {
         );
     }
 
-    @Operation(summary = "플레이리스트 방명록 삭제하기", tags = {"방명록"})
+    @Operation(summary = "플레이리스트 방명록 삭제하기", description = "플레이리스트 소유자 또는 방명록 작성자만 삭제 가능", tags = {"방명록"})
     @DeleteMapping("/{playlistId}/guestbook/{guestbookId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 방명록 삭제 성공"),
