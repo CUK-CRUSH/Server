@@ -47,7 +47,7 @@ public class DailyMemberRankingService implements RankingService<MemberDto> {
     @Scheduled(cron = "0 0 0 * * ?")
     public void updateRanking() {
         log.info("일간 유저 랭킹 업데이트");
-        memberRankingRepository.deleteAll();
+        memberRankingRepository.deleteAllInBatch();
         memberRankingRepository.flush();
 
         Pageable pageable = PageRequest.of(0, LimitConstants.MEMBER_RANKING_SIZE.getLimit());

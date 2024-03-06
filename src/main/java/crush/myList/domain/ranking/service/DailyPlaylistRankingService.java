@@ -47,7 +47,7 @@ public class DailyPlaylistRankingService implements RankingService<PlaylistDto.R
     @Scheduled(cron = "0 0 0 * * ?")
     public void updateRanking() {
         log.info("일간 플레이리스트 랭킹 업데이트");
-        playlistRankingRepository.deleteAll();
+        playlistRankingRepository.deleteAllInBatch();
         playlistRankingRepository.flush();
 
         Pageable pageable = PageRequest.of(0, LimitConstants.PLAYLIST_RANKING_SIZE.getLimit());
