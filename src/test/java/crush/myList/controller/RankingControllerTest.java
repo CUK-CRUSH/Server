@@ -34,7 +34,7 @@ public class RankingControllerTest {
     @Autowired
     private DailyMemberRankingService dailyMemberRankingService;
 
-    @DisplayName("랭킹 조회 테스트")
+    @DisplayName("랭킹 조회 테스트 - 업데이트 후 조회")
     @Test
     public void getRankingTest() throws Exception {
         // given
@@ -57,6 +57,11 @@ public class RankingControllerTest {
         final String USER_GET_API = "/api/v1/ranking/daily/users";
 
         // when
+        // 업데이트
+        dailyPlaylistRankingService.updateRanking();
+        dailyMemberRankingService.updateRanking();
+
+        // 조회
         mockMvc.perform(get(PLAYLIST_GET_API)
                         .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member1.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())

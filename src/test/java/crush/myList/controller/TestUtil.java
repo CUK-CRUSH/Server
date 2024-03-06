@@ -184,7 +184,5 @@ public class TestUtil {
         musicRepository.deleteAll();
         playlistRepository.deleteAll();
         memberRepository.deleteAll();
-        playlistRankingRepository.deleteAll();
-        memberRankingRepository.deleteAll();
     }
 }
