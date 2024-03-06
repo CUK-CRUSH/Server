@@ -4,11 +4,6 @@ on:
   push:
     branches: ['develop']
 
-env:
-  GCE_INSTANCE: 'mylist-server'
-  GCE_INSTANCE_ZONE: 'asia-northeast3-a'
-  PROJECT_NAME: 'mylist spring server'
-
 jobs:
   build:
     name: Build and push Docker image
