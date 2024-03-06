@@ -33,7 +33,7 @@ public class GuestBookService {
     private final PlaylistRepository playlistRepository;
 
     public List<GuestBookDto.Response> getGuestBooks(Long playlistId, Integer page) {
-        Pageable pageable = PageRequest.of(page, LimitConstants.GUESTBOOK_PAGE_SIZE.getLimit(), Sort.by("modifiedDate").descending());
+        Pageable pageable = PageRequest.of(page, LimitConstants.GUESTBOOK_PAGE_SIZE.getLimit(), Sort.by("createdDate").descending());
 
         return guestBookRepository.findAllByPlaylistId(playlistId, pageable).stream()
                 .map(guestBook -> convertToResponse(guestBook, false))
