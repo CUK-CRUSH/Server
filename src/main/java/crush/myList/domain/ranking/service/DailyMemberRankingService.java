@@ -41,11 +41,15 @@ public class DailyMemberRankingService implements RankingService<MemberDto> {
         return convertToDtoList(memberRankings);
     }
 
+
+
     @Override
     @Scheduled(cron = "0 0 0 * * ?")
     public void updateRanking() {
         log.info("일간 유저 랭킹 업데이트");
         memberRankingRepository.deleteAll();
+        memberRankingRepository.flush();
+
         Pageable pageable = PageRequest.of(0, LimitConstants.MEMBER_RANKING_SIZE.getLimit());
 
         List<Member> bestMembers = memberRepository.findTopMembers(pageable).getContent();
@@ -74,6 +78,7 @@ public class DailyMemberRankingService implements RankingService<MemberDto> {
         return MemberDto.builder()
                 .id(memberRanking.getMember().getId())
                 .username(memberRanking.getMember().getUsername())
+                .introduction(memberRanking.getMember().getIntroduction())
                 .profileImageUrl(memberRanking.getMember().getProfileImage() == null ? null : memberRanking.getMember().getProfileImage().getUrl())
                 .build();
     }

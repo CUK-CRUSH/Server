@@ -1,5 +1,6 @@
 package crush.myList.domain.ranking.service;
 
+import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
@@ -28,6 +29,7 @@ public class DailyPlaylistRankingService implements RankingService<PlaylistDto.R
     private final PlaylistRankingRepository playlistRankingRepository;
     private final PlaylistRepository playlistRepository;
     private final PlaylistLikeRepository playlistLikeRepository;
+    private final MusicRepository musicRepository;
 
     @Override
     @PostConstruct
@@ -46,6 +48,8 @@ public class DailyPlaylistRankingService implements RankingService<PlaylistDto.R
     public void updateRanking() {
         log.info("일간 플레이리스트 랭킹 업데이트");
         playlistRankingRepository.deleteAll();
+        playlistRankingRepository.flush();
+
         Pageable pageable = PageRequest.of(0, LimitConstants.PLAYLIST_RANKING_SIZE.getLimit());
 
         List<Playlist> bestPlaylists = playlistRepository.findTopPlaylists(pageable).getContent();
@@ -76,6 +80,7 @@ public class DailyPlaylistRankingService implements RankingService<PlaylistDto.R
                 .playlistName(playlistRanking.getPlaylist().getName())
                 .username(playlistRanking.getPlaylist().getMember().getUsername())
                 .thumbnailUrl(playlistRanking.getPlaylist().getImage() == null ? null : playlistRanking.getPlaylist().getImage().getUrl())
+                .numberOfMusics(musicRepository.countByPlaylistId(playlistRanking.getPlaylist().getId()))
                 .likeCount(playlistRanking.getLikeCount())
                 .build();
     }
