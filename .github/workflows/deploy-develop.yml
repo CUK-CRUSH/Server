@@ -4,12 +4,6 @@ on:
   push:
     branches: ['develop']
 
-env:
-  PROJECT_ID: 'eighth-alchemy-408113'
-  GCE_INSTANCE: 'mylist-server'
-  GCE_INSTANCE_ZONE: 'asia-northeast3-a'
-  PROJECT_NAME: 'mylist spring server'
-
 jobs:
   build:
     name: Build and push Docker image
@@ -103,7 +97,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker container prune -f
+            docker system prune -a
             docker pull minskim22/mylist-spring:test
             docker tag minskim22/mylist-spring:test mylist-spring-test
             
