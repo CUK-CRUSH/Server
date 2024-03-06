@@ -2,6 +2,8 @@ package crush.myList.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import crush.myList.domain.festival.mongo.document.Form;
+import crush.myList.domain.festival.mongo.repository.FormRepository;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
@@ -47,6 +49,8 @@ public class TestUtil {
     private PlaylistRankingRepository playlistRankingRepository;
     @Autowired
     private MemberRankingRepository memberRankingRepository;
+    @Autowired
+    private FormRepository formRepository;
 
     /**
      * 테스트용 멤버 생성
@@ -184,5 +188,21 @@ public class TestUtil {
         musicRepository.deleteAll();
         playlistRepository.deleteAll();
         memberRepository.deleteAll();
+    }
+
+    public void clearForm() {
+        formRepository.deleteAll();
+    }
+
+    public String createForm() {
+        Form form = Form.builder()
+                .age("20")
+                .sex("male")
+                .phone("010-1234-5678")
+                .name("testName")
+                .link("https://mylist.im/user/testUser")
+                .genre("rock")
+                .build();
+        return formRepository.save(form).getId();
     }
 }
