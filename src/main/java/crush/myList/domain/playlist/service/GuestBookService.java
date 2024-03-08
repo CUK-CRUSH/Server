@@ -99,9 +99,10 @@ public class GuestBookService {
                                 guestBook.getMember().getProfileImage().getUrl() : null)
                         .build())
                 .content(guestBook.getContent())
+                .createdDate(guestBook.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .modifiedDate(isModified ?
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) :
-                        guestBook.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) :
+                        guestBook.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
     }
 }
