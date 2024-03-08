@@ -27,6 +27,8 @@ public class GuestBookDto {
         @NotBlank
         private String content;
         @NotBlank
+        private String createdDate;
+        @NotBlank
         private String modifiedDate;
 
         @Getter
