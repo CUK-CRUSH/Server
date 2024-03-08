@@ -30,10 +30,10 @@ public class GuestBookDto {
         @Schema(example = "content")
         @NotBlank
         private String content;
-        @Schema(example = "2021-08-01-00:00:00")
+        @Schema(example = "2021-08-01 00:00:00")
         @NotBlank
         private String createdDate;
-        @Schema(example = "2021-08-01-00:00:00")
+        @Schema(example = "2021-08-01 00:00:00")
         @NotBlank
         private String modifiedDate;
 
