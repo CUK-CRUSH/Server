@@ -1,5 +1,6 @@
 package crush.myList.domain.member.dto;
 
+import crush.myList.domain.viewcounting.entity.View;
 import lombok.*;
 
 @Getter
@@ -15,4 +16,5 @@ public class MemberDto {
     private String introduction;
     private String profileImageUrl;
     private String backgroundImageUrl;
+    private View view;
 }

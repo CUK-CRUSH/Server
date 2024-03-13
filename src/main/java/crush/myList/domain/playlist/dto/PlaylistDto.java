@@ -1,7 +1,7 @@
 package crush.myList.domain.playlist.dto;
 
+import crush.myList.domain.viewcounting.dto.ViewDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -68,5 +68,8 @@ public class PlaylistDto {
 
         @Schema(name = "isLike", description = "플레이리스트 좋아요 여부입니다.")
         private Boolean isLike;
+
+        @Schema(name = "view", description = "플레이리스트 조회수입니다.")
+        private ViewDto view;
     }
 }
