@@ -27,8 +27,7 @@ public class ViewService {
 
         // View 엔티티가 없는 경우
         if (view == null) {
-            view = new View();
-            viewEntity.setView(view);
+            viewEntity.setView(new View());
         }
 
         view.setTotalViews(view.getTotalViews() + 1);
