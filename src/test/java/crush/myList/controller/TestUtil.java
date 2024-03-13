@@ -19,6 +19,8 @@ import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.ranking.repository.MemberRankingRepository;
 import crush.myList.domain.ranking.repository.PlaylistRankingRepository;
+import crush.myList.domain.viewcounting.entity.View;
+import crush.myList.domain.viewcounting.service.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,8 @@ public class TestUtil {
     private MemberRankingRepository memberRankingRepository;
     @Autowired
     private FormRepository formRepository;
+    @Autowired
+    private ViewService viewService;
 
     /**
      * 테스트용 멤버 생성
@@ -83,6 +87,9 @@ public class TestUtil {
                 .likes(new ArrayList<>())
                 .guestBooks(new ArrayList<>())
                 .build();
+
+        playlist.setView(new View());
+
         playlistRepository.save(playlist);
 
         List<Playlist> playlists = member.getPlaylists();

@@ -129,34 +129,25 @@ public class PlaylistControllerTest {
         assertThat(response.getContentAsString()).contains("likeCount\":1");
     }
 
-    @DisplayName("플레이리스트 단일 조회 테스트 - 조회수 및 동시성 테스트")
+    @DisplayName("플레이리스트 단일 조회 테스트 - 조회수 기능 테스트")
     @Test
-    public void viewPlaylistConcurrentTest(TestReporter testReporter) throws Exception {
+    public void viewPlaylistViewCountTest(TestReporter testReporter) throws Exception {
         // given
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
-        CountDownLatch countDownLatch = new CountDownLatch(10);
-
         Member member = testUtil.createTestMember("testUser");
         Playlist playlist = testUtil.createTestPlaylist(member);
         Music music = testUtil.createTestMusic(playlist);
+        String accessToken = jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN);
 
         final String api = "/api/v1/playlist/" + playlist.getId();
 
         // when
         for (int i = 0; i < 50; i++) {
-            executorService.execute(() -> {
-                try {
-                    mockMvc.perform(get(api));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    countDownLatch.countDown();
-                }
-            });
+            mockMvc.perform(get(api)
+                    .header("Authorization", "Bearer " + accessToken));
         }
 
-        // then
-        assertThat(playlist.getViewCount()).isEqualTo(100);
+        assertThat(playlist.getView().getTodayViews()).isEqualTo(50);
+        assertThat(playlist.getView().getTotalViews()).isEqualTo(50);
     }
 
     @DisplayName("플레이리스트 단일 조회 테스트 - 실패")
