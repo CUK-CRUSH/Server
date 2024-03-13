@@ -203,7 +203,7 @@ public class TestUtil {
 
     public String createForm() {
         Form form = Form.builder()
-                .age("20")
+                .age(20)
                 .sex("male")
                 .phone("010-1234-5678")
                 .name("testName")
