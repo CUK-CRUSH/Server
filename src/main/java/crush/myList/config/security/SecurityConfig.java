@@ -88,7 +88,10 @@ public class SecurityConfig {
         "/api/v1/festival/match",
 
         // 에러 페이지
-        "/error"
+        "/error",
+
+        // certbot 도메인 인증
+        "/.well-known/acme-challenge/**",
     };
 
     @Bean
