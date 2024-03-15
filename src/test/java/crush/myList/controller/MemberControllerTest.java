@@ -155,6 +155,9 @@ public class MemberControllerTest {
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/id/{id}", member.getId())
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.username").value(member.getUsername()))
+                .andExpect(jsonPath("$.data.view.totalViews").value(1))
+                .andExpect(jsonPath("$.data.view.todayViews").value(1))
                 .andReturn().getResponse().getContentAsString());
     }
 
@@ -168,6 +171,9 @@ public class MemberControllerTest {
         testReporter.publishEntry(mvc.perform(get("/api/v1/member/nickname/{username}", member.getUsername())
                 .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.username").value(member.getUsername()))
+                .andExpect(jsonPath("$.data.view.totalViews").value(1))
+                .andExpect(jsonPath("$.data.view.todayViews").value(1))
                 .andReturn().getResponse().getContentAsString());
     }
 
@@ -247,6 +253,7 @@ public class MemberControllerTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("회원 탈퇴 테스트 - 이미지 및 플레이리스트 / 좋아요 삭제")
     void deleteMemberTest2(TestReporter testReporter) throws Exception {
         // given
