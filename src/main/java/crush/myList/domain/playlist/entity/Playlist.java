@@ -3,6 +3,8 @@ package crush.myList.domain.playlist.entity;
 import crush.myList.domain.image.entity.Image;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.ranking.entity.PlaylistRanking;
+import crush.myList.domain.viewcounting.entity.View;
+import crush.myList.domain.viewcounting.entity.ViewEntity;
 import crush.myList.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +20,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Playlist extends BaseEntity {
+public class Playlist extends BaseEntity implements ViewEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -36,4 +38,7 @@ public class Playlist extends BaseEntity {
     private List<GuestBook> guestBooks = new ArrayList<>();
     @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private PlaylistRanking ranking;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "view_count")
+    private View view = null;
 }
