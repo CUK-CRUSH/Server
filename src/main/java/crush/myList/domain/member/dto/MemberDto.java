@@ -1,5 +1,6 @@
 package crush.myList.domain.member.dto;
 
+import crush.myList.domain.viewcounting.entity.View;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -23,4 +24,5 @@ public class MemberDto {
     private String profileImageUrl;
     @Schema(description = "배경 이미지 url", example = "https://storage.googleapis.com/mylist-image_v2/img/3e3e3e3e-3e3e-3e3e-3e3e-3e3e3e3e3e3e")
     private String backgroundImageUrl;
+    private View view;
 }

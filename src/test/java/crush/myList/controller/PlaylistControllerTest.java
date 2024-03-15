@@ -8,6 +8,7 @@ import crush.myList.domain.playlist.dto.GuestBookDto;
 import crush.myList.domain.playlist.entity.GuestBook;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.entity.PlaylistLike;
+import crush.myList.domain.playlist.service.PlaylistService;
 import crush.myList.global.enums.JwtTokenType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
@@ -20,6 +21,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,6 +43,8 @@ public class PlaylistControllerTest {
     private TestUtil testUtil;
     @Autowired
     private MusicRepository musicRepository;
+    @Autowired
+    private PlaylistService playlistService;
 
     @AfterEach
     void cleanUp() {
@@ -120,6 +127,27 @@ public class PlaylistControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertThat(response.getContentAsString()).contains("likeCount\":1");
+    }
+
+    @DisplayName("플레이리스트 단일 조회 테스트 - 조회수 기능 테스트")
+    @Test
+    public void viewPlaylistViewCountTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
+        String accessToken = jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN);
+
+        final String api = "/api/v1/playlist/" + playlist.getId();
+
+        // when
+        for (int i = 0; i < 50; i++) {
+            mockMvc.perform(get(api)
+                    .header("Authorization", "Bearer " + accessToken));
+        }
+
+        assertThat(playlist.getView().getTodayViews()).isEqualTo(50);
+        assertThat(playlist.getView().getTotalViews()).isEqualTo(50);
     }
 
     @DisplayName("플레이리스트 단일 조회 테스트 - 실패")

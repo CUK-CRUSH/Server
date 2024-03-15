@@ -10,6 +10,8 @@ import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.domain.playlist.entity.Playlist;
 import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
+import crush.myList.domain.viewcounting.dto.ViewDto;
+import crush.myList.domain.viewcounting.service.ViewService;
 import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class PlaylistService {
     private final MusicRepository musicRepository;
 
     private final ImageService imageService;
+    private final ViewService viewService;
 
     public List<PlaylistDto.Response> getPlaylists(String username) {
         Member member = memberRepository.findByUsername(username).orElseThrow(() ->
@@ -69,6 +72,9 @@ public class PlaylistService {
                 .image(image)
                 .build();
         playlistRepository.save(playlist);
+
+        // 조회수 엔티티 생성
+        viewService.increaseViewCount(playlist);
 
         return convertToDto(playlist);
     }
@@ -159,6 +165,10 @@ public class PlaylistService {
                 // counts musics in playlist
                 .numberOfMusics(musicRepository.countByPlaylistId(playlist.getId()))
                 .likeCount(playlistLikeRepository.countByPlaylistId(playlist.getId()))
+                .view(ViewDto.builder()
+                        .todayViews(playlist.getView().getTodayViews())
+                        .totalViews(playlist.getView().getTotalViews())
+                        .build())
                 .build();
     }
 
@@ -167,6 +177,9 @@ public class PlaylistService {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
+
+        // 조회수 증가
+        viewService.increaseViewCount(playlist);
 
         PlaylistDto.Response response = convertToDto(playlist);
         if (securityMember != null) {
