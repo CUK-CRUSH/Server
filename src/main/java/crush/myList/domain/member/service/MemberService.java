@@ -13,6 +13,8 @@ import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.domain.member.repository.RoleRepository;
 import crush.myList.domain.music.mongo.repository.MusicRepository;
 import crush.myList.domain.playlist.entity.Playlist;
+import crush.myList.domain.viewcounting.dto.ViewDto;
+import crush.myList.domain.viewcounting.service.ViewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,7 @@ public class MemberService {
     // service
     private final ImageService imageService;
     private final UsernameService usernameService;
+    private final ViewService viewService;
 
     /** 사용자 닉네임 변경 */
     public void changeUsername(Long id, String username) {
@@ -132,6 +135,11 @@ public class MemberService {
                 .introduction(member.getIntroduction())
                 .profileImageUrl(profileImage == null ? null : profileImage.getUrl())
                 .backgroundImageUrl(backgroundImage == null ? null : backgroundImage.getUrl())
+                .view(ViewDto.builder()
+                        .todayViews(member.getView().getTodayViews())
+                        .totalViews(member.getView().getTotalViews())
+                        .build()
+                )
                 .build();
     }
 
@@ -139,6 +147,7 @@ public class MemberService {
     public MemberDto getMember(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
+        viewService.increaseViewCount(member);
         return convertDto(member);
     }
 
@@ -146,6 +155,7 @@ public class MemberService {
     public MemberDto getMember(String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."));
+        viewService.increaseViewCount(member);
         return convertDto(member);
     }
 
