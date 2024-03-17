@@ -253,7 +253,6 @@ public class MemberControllerTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("회원 탈퇴 테스트 - 이미지 및 플레이리스트 / 좋아요 삭제")
     void deleteMemberTest2(TestReporter testReporter) throws Exception {
         // given
