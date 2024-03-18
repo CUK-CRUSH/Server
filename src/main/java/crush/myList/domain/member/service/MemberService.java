@@ -136,8 +136,8 @@ public class MemberService {
                 .profileImageUrl(profileImage == null ? null : profileImage.getUrl())
                 .backgroundImageUrl(backgroundImage == null ? null : backgroundImage.getUrl())
                 .view(ViewDto.builder()
-                        .todayViews(member.getView().getTodayViews())
-                        .totalViews(member.getView().getTotalViews())
+                        .todayViews(member.getView() != null ? member.getView().getTodayViews() : 0)
+                        .totalViews(member.getView() != null ? member.getView().getTotalViews() : 0)
                         .build()
                 )
                 .build();

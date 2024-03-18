@@ -166,8 +166,8 @@ public class PlaylistService {
                 .numberOfMusics(musicRepository.countByPlaylistId(playlist.getId()))
                 .likeCount(playlistLikeRepository.countByPlaylistId(playlist.getId()))
                 .view(ViewDto.builder()
-                        .todayViews(playlist.getView().getTodayViews())
-                        .totalViews(playlist.getView().getTotalViews())
+                        .todayViews(playlist.getView() != null ? playlist.getView().getTodayViews() : 0)
+                        .totalViews(playlist.getView() != null ? playlist.getView().getTotalViews() : 0)
                         .build())
                 .build();
     }
