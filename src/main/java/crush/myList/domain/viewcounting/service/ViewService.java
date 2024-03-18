@@ -23,12 +23,11 @@ public class ViewService {
      * @param viewEntity 조회수 증가할 플레이리스트
     */
     public void increaseViewCount(ViewEntity viewEntity) {
-        View view = viewEntity.getView();
-
         // View 엔티티가 없는 경우
-        if (view == null) {
+        if (viewEntity.getView() == null) {
             viewEntity.setView(new View());
         }
+        View view = viewEntity.getView();
 
         view.setTotalViews(view.getTotalViews() + 1);
         view.setTodayViews(view.getTodayViews() + 1);
