@@ -71,6 +71,8 @@ public class TestUtil {
                 .playlists(new ArrayList<>())
                 .guestBooks(new ArrayList<>())
                 .build();
+
+        member.setView(new View());
         memberRepository.save(member);
 
         return member;
