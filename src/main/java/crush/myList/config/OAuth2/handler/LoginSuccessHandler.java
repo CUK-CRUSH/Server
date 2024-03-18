@@ -55,20 +55,6 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         String accessToken = jwtTokenProvider.createToken(oAuth2User.getMemberId(), JwtTokenType.ACCESS_TOKEN);
         String refreshToken = jwtTokenProvider.createToken(oAuth2User.getMemberId(), JwtTokenType.REFRESH_TOKEN);
 
-//        Map<String, String> token = new HashMap<>();
-//        token.put("access_token", accessToken);
-//        token.put("refresh_token", refreshToken);
-//
-//        JsonBody<Object> jsonBody = JsonBody.of(HttpStatus.OK.value(), "로그인 성공", token);
-
-        // content-type을 json, 인코딩을 utf-8로 설정
-//        response.setContentType("application/json; charset=utf-8");
-
-        // 객체를 JSON으로 변환
-//        ObjectMapper mapper = new ObjectMapper();
-        // JSON 형태로 변환된 객체를 Response에 담아준다.
-//        mapper.writeValue(response.getWriter(), jsonBody);
-
         String uri = createURI(accessToken, refreshToken);
         response.sendRedirect(uri);
 
