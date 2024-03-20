@@ -56,6 +56,6 @@ public class Member extends BaseEntity implements ViewEntity {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private MemberRanking ranking;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "view_count")
+    @JoinColumn(name = "view_id")
     private View view;
 }

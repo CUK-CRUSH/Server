@@ -17,40 +17,40 @@ import org.springframework.web.server.ResponseStatusException;
 public class FestivalService {
     private final FormRepository formRepository;
 
-    private void checkFormData(FormData formData) {
-        // link가 'https://mylist.im/user/*' 형식의 유효한 URL인지 확인
-        if (!formData.getLink().matches("https://mylist.im/user/.*")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효한 URL이 아닙니다.");
+    private void checkUsername(FormData formData) {
+        // 이미 신청한 사용자인지 확인
+        if (formRepository.existsByUsername(formData.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 신청한 사용자 입니다.");
         }
     }
 
     public String matchPost(FormData formData) {
-        checkFormData(formData);
+        checkUsername(formData);
         return formRepository.save(Form.builder()
-                .age(formData.getAge())
+                .name(formData.getName())
                 .sex(formData.getSex())
                 .phone(formData.getPhone())
-                .name(formData.getName())
-                .link(formData.getLink())
-                .genre(formData.getGenre())
+                .username(formData.getUsername())
                 .build()).getId();
     }
 
-    public FormData matchGet(String id) {
-        Form form = formRepository.findById(id).orElseThrow(()
+    public FormData matchGet(String username) {
+        Form form = formRepository.findByUsername(username).orElseThrow(()
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "신청서를 찾을 수 없습니다."));
         return FormData.builder()
-                .age(form.getAge())
+                .name(form.getName())
                 .sex(form.getSex())
                 .phone(form.getPhone())
-                .name(form.getName())
-                .link(form.getLink())
-                .genre(form.getGenre())
+                .username(form.getUsername())
                 .build();
     }
 
-    public String matchDelete(String id) {
-        formRepository.deleteById(id);
-        return id;
+    public String matchDelete(String username) {
+        try {
+            formRepository.deleteByUsername(username);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "신청서를 찾을 수 없습니다.");
+        }
+        return username;
     }
 }
