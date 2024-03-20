@@ -203,15 +203,13 @@ public class TestUtil {
         formRepository.deleteAll();
     }
 
-    public String createForm() {
+    public Form createForm() {
         Form form = Form.builder()
-                .age(20)
+                .name("testName")
                 .sex("male")
                 .phone("010-1234-5678")
-                .name("testName")
-                .link("https://mylist.im/user/testUser")
-                .genre("rock")
+                .username("testUser")
                 .build();
-        return formRepository.save(form).getId();
+        return formRepository.save(form);
     }
 }

@@ -14,16 +14,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 public class Form extends BaseDocument {
     @NotBlank
-    private Integer age;
+    private String name;
     @NotBlank
     private String sex;
     @NotBlank
-    private String phone;
-    @NotBlank
-    private String name;
-    @NotBlank
     @Indexed(unique = true)
-    private String link;
+    private String username;
     @NotBlank
-    private String genre;
+    private String phone;
 }
