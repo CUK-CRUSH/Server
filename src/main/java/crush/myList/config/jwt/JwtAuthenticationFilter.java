@@ -29,6 +29,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        // request의 URI가 /api/v1/로 시작하지 않는 경우 세션 인증을 거칩니다.
+        if (!request.getRequestURI().startsWith("/api/v1/")) {
+            chain.doFilter(request, response);
+            return;
+        }
         try {
             // 헤더에서 JWT 를 받아옵니다.
             String jwt = jwtTokenProvider.resolveToken(request);

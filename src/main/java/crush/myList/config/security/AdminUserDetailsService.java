@@ -1,27 +1,27 @@
 package crush.myList.config.security;
 
+
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 @RequiredArgsConstructor
-public class SecurityUserDetailsService implements UserDetailsService {
+public class AdminUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
+
     @Override
-    public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
-        Member member = memberRepository.findById(Long.parseLong(memberId))
+    public AdminMember loadUserByUsername(String username) {
+        Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다."));
-        return SecurityMember.builder()
-                .id(member.getId())
-                .oauth2id(member.getOauth2id())
+        return AdminMember.builder()
                 .username(member.getUsername())
-                .name(member.getName())
+                .password(member.getIntroduction())
                 .role(member.getRole().getName())
                 .build();
     }
