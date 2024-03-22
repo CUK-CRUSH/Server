@@ -50,3 +50,7 @@ react:
 
 perspective:
   api-key: ${PERSPECTIVE_API_KEY}
+
+admin:
+  username: ${ADMIN_USERNAME}
+  password: ${ADMIN_PASSWORD}

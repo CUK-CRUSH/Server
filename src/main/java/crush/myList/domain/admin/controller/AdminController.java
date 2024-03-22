@@ -15,7 +15,7 @@ public class AdminController {
     }
 
     @GetMapping("/home")
-    public String main() {
+    public String home() {
         return "home";
     }
 }

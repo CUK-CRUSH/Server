@@ -125,7 +125,7 @@ public class SecurityConfig {
                     .requestMatchers(TEMPORARY_LIST).hasAnyRole(RoleName.TEMPORARY.name(), RoleName.USER.name())  // 임시 유저 이상만 허용
                     .requestMatchers("/api/v1/**").hasAnyRole(RoleName.USER.name())  // 닉네임이 설정된 USER 권한 이상만 허용
                     .requestMatchers("/admin/**").hasRole(RoleName.ADMIN.name()) // ADMIN 권한만 허용
-                    .anyRequest().permitAll());  // 그 외 나머지 경로는 전부 허용
+                    .anyRequest().authenticated());  // 그 외 나머지 경로는 전부 인증 필요
 
         // cors 설정
         http.cors(cors -> cors

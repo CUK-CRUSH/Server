@@ -54,6 +54,9 @@ jobs:
           spring.data.mongodb.uri: ${{ secrets.MONGODB_URI }}
           spring.data.mongodb.database: ${{ secrets.MONGODB_DATABASE }}
 
+          admin.username: ${{ secrets.ADMIN_USERNAME }}
+          admin.password: ${{ secrets.ADMIN_PASSWORD }}
+
       - name: create-json
         id: create-json
         uses: jsdaniell/create-json@v1.2.2
