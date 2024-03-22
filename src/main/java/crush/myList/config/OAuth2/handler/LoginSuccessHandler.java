@@ -57,7 +57,5 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
         String uri = createURI(accessToken, refreshToken);
         response.sendRedirect(uri);
-
-        log.info("로그인 성공");
     }
 }

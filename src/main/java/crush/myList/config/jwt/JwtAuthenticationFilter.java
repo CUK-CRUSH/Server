@@ -53,12 +53,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) { // 유효하지 않은 토큰
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Expired Token");
-            log.error(e.getMessage());
             return;
         } catch (JwtException e) { // 유효하지 않은 토큰
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid Token");
-            log.error(e.getMessage());
             return;
         } catch (Exception e) { // 그 외 에러
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
