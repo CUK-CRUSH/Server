@@ -10,16 +10,20 @@ import crush.myList.domain.member.enums.RoleName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 // spring security 설정 파일 입니다.
 @Configuration
@@ -59,8 +63,8 @@ public class SecurityConfig {
         "/api/v1/search/playlist",
         "/api/v1/search/member",
 
-         // 랭킹 api
-         "api/v1/ranking/**",
+        // 랭킹 api
+        "/api/v1/ranking/**",
     };
 
     private final String[] TEMPORARY_LIST = {
@@ -92,44 +96,62 @@ public class SecurityConfig {
     };
 
     @Bean
-    protected SecurityFilterChain myConfig(HttpSecurity http) throws Exception {
-        /* 허용 페이지 등록 */
-        http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(WHITE_LIST).permitAll()  // 모든 사용자 허용 경로 (모든 메소드)
-                        .requestMatchers(HttpMethod.GET, GET_LIST).permitAll()  // 모든 사용자 허용 경로 (GET 메소드)
-                        .requestMatchers(TEMPORARY_LIST).hasAnyRole(RoleName.TEMPORARY.name(), RoleName.USER.name())  // 임시 유저 이상만 허용
-                        .requestMatchers("/api/v1/**").hasAnyRole(RoleName.USER.name())  // 닉네임이 설정된 USER 권한 이상만 허용
-                        .anyRequest().authenticated())  // 그 외 나머지 경로는 전부 로그인 필요
-//                        .anyRequest().permitAll())  // 그 외 나머지 경로는 전부 허용
-                .cors(cors -> cors
-                        .configurationSource(request -> {
-                            CorsConfiguration corsConfiguration = new CorsConfiguration();
-                            corsConfiguration.addAllowedOriginPattern("*"); // 모든 ip에 응답을 허용합니다.
-                            corsConfiguration.addAllowedMethod("*");
-                            corsConfiguration.addAllowedHeader("*");
-                            corsConfiguration.setAllowCredentials(true);
-                            corsConfiguration.setMaxAge(3600L);
-                            return corsConfiguration;
-                        }))
-                // 예외 처리
-                .exceptionHandling(exception -> exception
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(HttpStatus.FORBIDDEN.value()); // 403
-                        })) // 권한 없음
-                // 로그인
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage(envBean.getReactUri() + "/login") // 로그인 페이지
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(OAuth2Service)) // 유저 정보 가져오기
-                        .successHandler(loginSuccessHandler) // 로그인 성공
-                        .failureHandler(loginFailureHandler) // 로그인 실패
-                        .permitAll()
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 비활성화
+    protected SecurityFilterChain apiConfig(HttpSecurity http) throws Exception {
+        // 로그인 설정
+        http.oauth2Login(oauth2 -> oauth2
+                    .userInfoEndpoint(userInfo -> userInfo
+                            .userService(OAuth2Service)) // 유저 정보 가져오기
+                    .loginPage(envBean.getReactUri() + "/login") // 로그인 페이지
+                    .successHandler(loginSuccessHandler) // 로그인 성공
+                    .failureHandler(loginFailureHandler) // 로그인 실패
+                    .permitAll())
+
+            .formLogin(form -> form
+                    .loginPage("/admin/login") // 로그인 페이지
+                    .loginProcessingUrl("/admin/login") // 로그인 처리 url
+                    .defaultSuccessUrl("/admin/home") // 로그인 성공시 이동할 페이지
+                    .failureUrl("/admin/login?error=true") // 로그인 실패시 이동할 페이지
+                    .permitAll()) // 로그인 페이지는 모든 사용자 허용
+            .logout(logout -> logout
+                    .logoutUrl("/admin/logout") // 로그아웃 url
+                    .deleteCookies("JSESSIONID") // 쿠키 삭제
+                    .logoutSuccessUrl("/admin/login") // 로그아웃 성공시 이동할 페이지
+                    .permitAll()) // 로그아웃 페이지는 모든 사용자 허용
+
+            // 허용 경로 설정
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(WHITE_LIST).permitAll()  // 모든 사용자 허용 경로 (모든 메소드)
+                    .requestMatchers(HttpMethod.GET, GET_LIST).permitAll()  // 모든 사용자 허용 경로 (GET 메소드)
+                    .requestMatchers(TEMPORARY_LIST).hasAnyRole(RoleName.TEMPORARY.name(), RoleName.USER.name())  // 임시 유저 이상만 허용
+                    .requestMatchers("/api/v1/**").hasAnyRole(RoleName.USER.name())  // 닉네임이 설정된 USER 권한 이상만 허용
+                    .requestMatchers("/admin/**").hasRole(RoleName.ADMIN.name()) // ADMIN 권한만 허용
+                    .anyRequest().authenticated());  // 그 외 나머지 경로는 전부 인증 필요
+
+        // cors 설정
+        http.cors(cors -> cors
+                .configurationSource(request -> {
+                    CorsConfiguration corsConfiguration = new CorsConfiguration();
+                    corsConfiguration.addAllowedOriginPattern("*"); // 모든 ip에 응답을 허용합니다.
+                    corsConfiguration.addAllowedMethod("*");
+                    corsConfiguration.addAllowedHeader("*");
+                    corsConfiguration.setAllowCredentials(true);
+                    corsConfiguration.setMaxAge(3600L);
+                    return corsConfiguration;
+                })
+            )
+
+        // 예외 처리
+        .exceptionHandling(exception -> exception
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(HttpStatus.FORBIDDEN.value()); // 403
+                })); // 권한 없음
+
+        // csrf 비활성화 및 jwt 필터 추가
+        http.sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // 세션 생성 정책
                 .csrf(AbstractHttpConfigurer::disable); // csrf 비활성화
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // jwt 필터 추가
 
         return http.build();
     }

@@ -9,13 +9,10 @@ import org.springframework.stereotype.Component;
 public class EnvBean {
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
-
     @Value("${spring.cloud.gcp.storage.bucket-dir}")
     private String bucketDir;
-
     @Value("${spring.cloud.gcp.storage.project-id}")
     private String projectId;
-
     @Value("${spring.cloud.gcp.storage.key-name}")
     private String keyName;
 
@@ -27,7 +24,11 @@ public class EnvBean {
 
     @Value("${spring.data.mongodb.uri}")
     private String mongoUri;
-
     @Value("${spring.data.mongodb.database}")
     private String mongoDatabase;
+
+    @Value("${admin.username}")
+    private String adminUsername;
+    @Value("${admin.password}")
+    private String adminPassword;
 }

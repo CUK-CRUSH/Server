@@ -1,5 +1,8 @@
 package crush.myList.config.setup;
 
+import crush.myList.config.EnvBean;
+import crush.myList.domain.admin.mongo.document.Admin;
+import crush.myList.domain.admin.mongo.repository.AdminRepository;
 import crush.myList.domain.member.entity.Role;
 import crush.myList.domain.member.enums.RoleName;
 import crush.myList.domain.member.repository.RoleRepository;
@@ -17,8 +20,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InitData implements ApplicationListener<ContextRefreshedEvent> {
     private boolean alreadySetup = false;
+
+    private final EnvBean envBean;
     private final RoleRepository roleRepository;
     private final MusicRepository musicRepository;
+    private final AdminRepository adminRepository;
 
     public void createRoleIfNotFound(RoleName roleName) {
         Optional<Role> role = roleRepository.findByName(roleName);
@@ -27,6 +33,16 @@ public class InitData implements ApplicationListener<ContextRefreshedEvent> {
                     .name(roleName)
                     .build();
             roleRepository.save(newRole);
+        }
+    }
+
+    public void createAdminIfNotFound() {
+        if (adminRepository.findByUsername(envBean.getAdminUsername()).isEmpty()) {
+            adminRepository.save(Admin.builder()
+                    .username(envBean.getAdminUsername())
+                    .password(envBean.getAdminPassword())
+                    .role(RoleName.ADMIN)
+                    .build());
         }
     }
 
@@ -42,6 +58,9 @@ public class InitData implements ApplicationListener<ContextRefreshedEvent> {
         for (RoleName roleName : roleNames) {
             createRoleIfNotFound(roleName);
         }
+
+        // 관리자 계정 생성
+        createAdminIfNotFound();
 
         alreadySetup = true;
     }
