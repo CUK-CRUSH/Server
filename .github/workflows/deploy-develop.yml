@@ -46,7 +46,10 @@ jobs:
           spring.cloud.gcp.storage.bucket-dir: ${{ secrets.TEST_GCS_BUCKET_DIR }}
           spring.cloud.gcp.storage.key-name: ${{ secrets.GCS_KEY_NAME }}
 
+          server.ssl.key-store: classpath:keystore.p12
+          server.ssl.key-store-type: PKCS12
           server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
+
           react.uri: ${{ secrets.TEST_REACT_URI }}
           perspective.api-key: ${{ secrets.PERSPECTIVE_API_KEY }}
           spring.jpa.hibernate.ddl-auto: ${{ secrets.TEST_JPA_DDL_AUTO }}
