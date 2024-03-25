@@ -109,7 +109,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                     .loginPage("/admin/login") // 로그인 페이지
                     .loginProcessingUrl("/admin/login") // 로그인 처리 url
-                    .defaultSuccessUrl("/admin/home") // 로그인 성공시 이동할 페이지
+                    .defaultSuccessUrl("/admin/home", true) // 로그인 성공시 이동할 페이지
                     .failureUrl("/admin/login?error=true") // 로그인 실패시 이동할 페이지
                     .permitAll()) // 로그인 페이지는 모든 사용자 허용
             .logout(logout -> logout
