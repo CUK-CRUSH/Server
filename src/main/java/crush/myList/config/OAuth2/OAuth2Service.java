@@ -32,11 +32,6 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-//        oAuth2User.getAttributes().forEach((k, v) -> log.info("key: {}, value: {}", k, v));
-//
-//        log.info("registrationId: {}", registrationId);
-//        log.info("name: {}", oAuth2User.getName());
-
         return saveOrUpdate(oAuth2User, registrationId);
     }
 

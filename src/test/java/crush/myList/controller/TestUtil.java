@@ -19,6 +19,8 @@ import crush.myList.domain.playlist.repository.PlaylistLikeRepository;
 import crush.myList.domain.playlist.repository.PlaylistRepository;
 import crush.myList.domain.ranking.repository.MemberRankingRepository;
 import crush.myList.domain.ranking.repository.PlaylistRankingRepository;
+import crush.myList.domain.viewcounting.entity.View;
+import crush.myList.domain.viewcounting.service.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,8 @@ public class TestUtil {
     private MemberRankingRepository memberRankingRepository;
     @Autowired
     private FormRepository formRepository;
+    @Autowired
+    private ViewService viewService;
 
     /**
      * 테스트용 멤버 생성
@@ -67,6 +71,8 @@ public class TestUtil {
                 .playlists(new ArrayList<>())
                 .guestBooks(new ArrayList<>())
                 .build();
+
+        member.setView(new View());
         memberRepository.save(member);
 
         return member;
@@ -83,6 +89,9 @@ public class TestUtil {
                 .likes(new ArrayList<>())
                 .guestBooks(new ArrayList<>())
                 .build();
+
+        playlist.setView(new View());
+
         playlistRepository.save(playlist);
 
         List<Playlist> playlists = member.getPlaylists();
@@ -194,15 +203,13 @@ public class TestUtil {
         formRepository.deleteAll();
     }
 
-    public String createForm() {
+    public Form createForm() {
         Form form = Form.builder()
-                .age(20)
+                .name("testName")
                 .sex("male")
                 .phone("010-1234-5678")
-                .name("testName")
-                .link("https://mylist.im/user/testUser")
-                .genre("rock")
+                .username("testUser")
                 .build();
-        return formRepository.save(form).getId();
+        return formRepository.save(form);
     }
 }

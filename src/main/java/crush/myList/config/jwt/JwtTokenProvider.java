@@ -1,7 +1,6 @@
 package crush.myList.config.jwt;
 
-import crush.myList.config.security.SecurityMember;
-import crush.myList.config.security.SecurityUserDetailsService;
+import crush.myList.config.security.SecurityMemberService;
 import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.member.repository.MemberRepository;
 import crush.myList.global.enums.JwtTokenType;
@@ -36,7 +35,7 @@ public class JwtTokenProvider {
     private long refreshTokenTime;
 
     private final MemberRepository memberRepository;
-    private final SecurityUserDetailsService securityUserDetailsService;
+    private final SecurityMemberService SecurityMemberService;
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -75,7 +74,7 @@ public class JwtTokenProvider {
         String memberId = claimsJws.getBody().getSubject();
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        UserDetails userDetails = securityUserDetailsService.loadUserByUsername(member.getId().toString());
+        UserDetails userDetails = SecurityMemberService.loadUserByMemberId(member.getId().toString());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

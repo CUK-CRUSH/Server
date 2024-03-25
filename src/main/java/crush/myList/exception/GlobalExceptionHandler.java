@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
+
 @Slf4j(topic = "GlobalExceptionHandler")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,6 +18,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseBody handleNullPointerException(NullPointerException e){
         log.error(e.getMessage());
+        log.error(Arrays.toString(e.getStackTrace()));
         return ErrorResponse.toResponse(ErrorCode.InternalError);
     }
 

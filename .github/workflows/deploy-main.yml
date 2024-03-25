@@ -45,13 +45,18 @@ jobs:
           spring.cloud.gcp.storage.bucket: ${{ secrets.GCS_BUCKET_NAME }}
           spring.cloud.gcp.storage.bucket-dir: ${{ secrets.GCS_BUCKET_DIR }}
           spring.cloud.gcp.storage.key-name: ${{ secrets.GCS_KEY_NAME }}
+
           server.ssl.key-store-password: ${{ secrets.KEYSTORE_PASSWORD }}
+
           react.uri: ${{ secrets.REACT_URI }}
           perspective.api-key: ${{ secrets.PERSPECTIVE_API_KEY }}
           spring.jpa.hibernate.ddl-auto: ${{ secrets.JPA_DDL_AUTO }}
 
           spring.data.mongodb.uri: ${{ secrets.MONGODB_URI }}
           spring.data.mongodb.database: ${{ secrets.MONGODB_DATABASE }}
+
+          admin.username: ${{ secrets.ADMIN_USERNAME }}
+          admin.password: ${{ secrets.ADMIN_PASSWORD }}
 
       - name: create-json
         id: create-json
@@ -99,7 +104,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker container prune -f
+            docker system prune -a
             docker pull minskim22/mylist-spring:latest
             docker tag minskim22/mylist-spring:latest mylist-spring
             

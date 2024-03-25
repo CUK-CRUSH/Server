@@ -38,20 +38,23 @@ jwt:
 server:
   port: ${SERVER_PORT}
 
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-type: PKCS12
-    key-store-password: ${KEYSTORE_PASSWORD}
-
   error:
     include-exception: false      # Response 에 Exception 을 표시할지
     include-message: always       # Response 에 Exception Message 를 표시할지 (never | always | on_param)
     include-stacktrace: never     # Response 에 Stack Trace 를 표시할지 (never | always | on_param)
     whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
 
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ${KEYSTORE_PASSWORD}
 
 react:
   uri: ${REACT_URI}
 
 perspective:
   api-key: ${PERSPECTIVE_API_KEY}
+
+admin:
+  username: ${ADMIN_USERNAME}
+  password: ${ADMIN_PASSWORD}
