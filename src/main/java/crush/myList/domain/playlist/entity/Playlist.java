@@ -39,6 +39,6 @@ public class Playlist extends BaseEntity implements ViewEntity {
     @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private PlaylistRanking ranking;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "view_count")
-    private View view = null;
+    @JoinColumn(name = "view_id")
+    private View view;
 }
