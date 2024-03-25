@@ -18,6 +18,10 @@ public class FestivalService {
     private final FormRepository formRepository;
 
     private void checkUsername(FormData formData) {
+        // 사용자 이름이 설정되어 있는지 확인
+        if (formData.getUsername() == null || formData.getUsername().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자 이름이 설정되지 않았습니다.");
+        }
         // 이미 신청한 사용자인지 확인
         if (formRepository.existsByUsername(formData.getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 신청한 사용자 입니다.");
