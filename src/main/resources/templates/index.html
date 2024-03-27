@@ -121,14 +121,16 @@
                                         <tr>
                                             <th>이름</th>
                                             <th>유저명</th>
-                                            <th>가입일</th>
+                                            <th>프로필</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr th:each="member : ${memberList}">
                                             <td th:text="${member.name}">name</td>
                                             <td th:text="${member.username}">username</td>
-                                            <td th:src="${member.profileImageUrl}">profileImageUrl</td>
+                                            <td>
+                                                <img th:src="${member.profileImageUrl}" alt="profileImage">profileImageUrl
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -161,7 +163,9 @@
                                         <tr th:each="playlist : ${allPlayList}">
                                             <td th:text="${playlist.playlistName}">name</td>
                                             <td th:text="${playlist.username}">member</td>
-                                            <td th:src="${playlist.thumbnailUrl}">thumbnail</td>
+                                            <td>
+                                                <img th:src="${playlist.thumbnailUrl}" alt="thumbnail">thumbnail
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
