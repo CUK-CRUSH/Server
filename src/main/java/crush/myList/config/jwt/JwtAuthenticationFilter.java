@@ -31,7 +31,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         // request의 URI가 /api/v1/로 시작하지 않는 경우 세션 인증을 거칩니다.
         if (!request.getRequestURI().startsWith("/api/v1/")) {
-            chain.doFilter(request, response);
+            try {
+                chain.doFilter(request, response);
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Session Filter Error");
+                log.error(e.getMessage());
+            }
             return;
         }
         try {

@@ -1,8 +1,11 @@
 package crush.myList.domain.member.dto;
 
+import crush.myList.domain.member.entity.Member;
 import crush.myList.domain.viewcounting.dto.ViewDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +29,18 @@ public class MemberDto {
     private String backgroundImageUrl;
     @Schema(name = "view", description = "유저 조회수입니다.")
     private ViewDto view;
+
+    // 기본 정보만 가져오는 메서드
+    public static MemberDto of(Member member) {
+        return MemberDto.builder()
+                .id(member.getId())
+                .name(member.getName())
+                .username(member.getUsername())
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getUrl() : null)
+                .build();
+    }
+
+    public static List<MemberDto> of(List<Member> member) {
+        return member.stream().map(MemberDto::of).toList();
+    }
 }

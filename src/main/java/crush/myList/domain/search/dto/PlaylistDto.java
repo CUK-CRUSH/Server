@@ -1,10 +1,13 @@
 package crush.myList.domain.search.dto;
 
+import crush.myList.domain.playlist.entity.Playlist;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,4 +33,18 @@ public class PlaylistDto {
 
     @Schema(name = "numberOfMusics", description = "플레이리스트에 포함된 음악 수입니다.")
     private Integer numberOfMusics;
+
+    // playlist 기본 정보 가져오는 메서드
+    public static PlaylistDto of(Playlist playlist) {
+        return PlaylistDto.builder()
+                .id(playlist.getId())
+                .username(playlist.getMember().getUsername())
+                .playlistName(playlist.getName())
+                .thumbnailUrl(playlist.getImage() != null ? playlist.getImage().getUrl() : null)
+                .build();
+    }
+    // playlist 리스트 기본 정보 가져오는 메서드
+    public static List<PlaylistDto> of(List<Playlist> playlists) {
+        return playlists.stream().map(PlaylistDto::of).toList();
+    }
 }

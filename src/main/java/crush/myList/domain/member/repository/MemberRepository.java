@@ -24,4 +24,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m " +
             "ORDER BY (SELECT COUNT(pl) FROM Playlist p JOIN p.likes pl WHERE p.member.id = m.id) DESC")
     Page<Member> findTopMembers(Pageable pageable);
+
+    List<Member> findAllByOrderByCreatedDateDesc();
 }

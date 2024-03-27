@@ -31,4 +31,6 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long>, JpaSp
 //            ") ORDER BY SIZE(p.likes) DESC")
     @Query("SELECT p FROM Playlist p ORDER BY SIZE(p.likes) DESC")
     Page<Playlist> findTopPlaylists(Pageable pageable);
+
+    List<Playlist> findAllByOrderByCreatedDateDesc();
 }
