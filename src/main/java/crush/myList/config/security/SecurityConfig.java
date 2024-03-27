@@ -10,20 +10,16 @@ import crush.myList.domain.member.enums.RoleName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 // spring security 설정 파일 입니다.
 @Configuration
@@ -109,7 +105,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                     .loginPage("/admin/login") // 로그인 페이지
                     .loginProcessingUrl("/admin/login") // 로그인 처리 url
-                    .defaultSuccessUrl("/admin/home", true) // 로그인 성공시 이동할 페이지
+                    .defaultSuccessUrl("/admin/index", true) // 로그인 성공시 이동할 페이지
                     .failureUrl("/admin/login?error=true") // 로그인 실패시 이동할 페이지
                     .permitAll()) // 로그인 페이지는 모든 사용자 허용
             .logout(logout -> logout
