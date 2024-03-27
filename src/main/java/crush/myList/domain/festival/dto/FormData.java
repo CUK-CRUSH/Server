@@ -1,9 +1,12 @@
 package crush.myList.domain.festival.dto;
 
+import crush.myList.domain.festival.mongo.document.Form;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,4 +26,17 @@ public class FormData {
     @NotBlank
     @Schema(description = "사용자명", example = "username")
     private String username;
+
+    public static FormData of(Form form) {
+        return FormData.builder()
+                .name(form.getName())
+                .sex(form.getSex())
+                .phone(form.getPhone())
+                .username(form.getUsername())
+                .build();
+    }
+
+    public static List<FormData> of(List<Form> list) {
+        return list.stream().map(FormData::of).toList();
+    }
 }
