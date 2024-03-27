@@ -121,16 +121,12 @@
                                         <tr>
                                             <th>이름</th>
                                             <th>유저명</th>
-                                            <th>프로필</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr th:each="member : ${memberList}">
                                             <td th:text="${member.name}">name</td>
                                             <td th:text="${member.username}">username</td>
-                                            <td>
-                                                <img th:src="${member.profileImageUrl}" alt="profileImage" width="100" height="100">
-                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
