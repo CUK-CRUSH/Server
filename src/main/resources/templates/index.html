@@ -122,12 +122,14 @@
                                         <tr>
                                             <th>이름</th>
                                             <th>유저명</th>
+                                            <th>링크</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr th:each="member : ${memberList}">
                                             <td th:text="${member.name}">name</td>
                                             <td th:text="${member.username}">username</td>
+                                            <a th:href="'https://mylist.im/user/' + ${member.username}">link</a>
                                         </tr>
                                         </tbody>
                                     </table>
