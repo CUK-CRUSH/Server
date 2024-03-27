@@ -14,8 +14,8 @@ public class AdminController {
         return "login";
     }
 
-    @GetMapping("/home")
+    @GetMapping("/index")
     public String home() {
-        return "home";
+        return "index";
     }
 }
