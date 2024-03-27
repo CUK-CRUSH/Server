@@ -142,39 +142,6 @@
 
                 <!-- Content Row -->
                 <div class="row">
-                    <!-- playlist 정보를 나타내는 테이블 -->
-                    <!-- allPlayList를 받아서 반복문으로 나타냄 -->
-                    <div class="col-xl-12 col-lg-7">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">플레이리스트</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="playlistTable" width="100%" cellspacing="0">
-                                        <thead>
-                                        <tr>
-                                            <th>플리이리스트 id</th>
-                                            <th>플레이리스트 이름</th>
-                                            <th>유저명</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="playlist : ${allPlayList}">
-                                            <td th:text="${playlist.id}">id</td>
-                                            <td th:text="${playlist.playlistName}">name</td>
-                                            <td th:text="${playlist.username}">member</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content Row -->
-                <div class="row">
                     <!-- form 정보를 나타내는 테이블 -->
                     <!-- formList 받아서 반복문으로 나타냄 -->
                     <div class="col-xl-12 col-lg-7">

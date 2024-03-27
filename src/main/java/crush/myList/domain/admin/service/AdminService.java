@@ -22,15 +22,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminService {
     private final MemberRepository memberRepository;
-    private final PlaylistRepository playlistRepository;
     private final FormRepository formRepository;
 
     public List<MemberDto> getAllMembersOrderByCreatedDateDesc() {
         return MemberDto.of(memberRepository.findAllByOrderByCreatedDateDesc());
-    }
-
-    public List<PlaylistDto> getAllPlaylistsOrderByCreatedDateDesc() {
-        return PlaylistDto.of(playlistRepository.findAllByOrderByCreatedDateDesc());
     }
 
     public List<FormData> getAllFormsOrderByCreatedDateDesc() {
