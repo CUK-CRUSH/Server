@@ -116,6 +116,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
+                                    <div th:text="'총 사용자 수: ' + ${memberList.size()} + '명'"></div>
                                     <table class="table table-bordered" id="memberTable" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
@@ -147,6 +148,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
+                                    <div th:text="'총 신청자 수: ' + ${formList.size()} + '명'"></div>
                                     <table class="table table-bordered" id="formTable" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
