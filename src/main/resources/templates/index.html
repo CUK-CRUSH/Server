@@ -121,47 +121,16 @@
                                         <tr>
                                             <th>이름</th>
                                             <th>유저명</th>
-                                            <th>가입일</th>
+                                            <th>프로필</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr th:each="member : ${memberList}">
                                             <td th:text="${member.name}">name</td>
                                             <td th:text="${member.username}">username</td>
-                                            <td th:src="${member.profileImageUrl}">profileImageUrl</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content Row -->
-                <div class="row">
-                    <!-- playlist 정보를 나타내는 테이블 -->
-                    <!-- allPlayList를 받아서 반복문으로 나타냄 -->
-                    <div class="col-xl-12 col-lg-7">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">플레이리스트</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="playlistTable" width="100%" cellspacing="0">
-                                        <thead>
-                                        <tr>
-                                            <th>플레이리스트 이름</th>
-                                            <th>유저명</th>
-                                            <th>썸네일</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="playlist : ${allPlayList}">
-                                            <td th:text="${playlist.playlistName}">name</td>
-                                            <td th:text="${playlist.username}">member</td>
-                                            <td th:src="${playlist.thumbnailUrl}">thumbnail</td>
+                                            <td>
+                                                <img th:src="${member.profileImageUrl}" alt="profileImage" width="100" height="100">
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>

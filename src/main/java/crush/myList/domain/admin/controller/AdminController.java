@@ -20,7 +20,6 @@ public class AdminController {
     @GetMapping("/index")
     public String home(Model model) {
         model.addAttribute("memberList", adminService.getAllMembersOrderByCreatedDateDesc());
-        model.addAttribute("allPlayList", adminService.getAllPlaylistsOrderByCreatedDateDesc());
         model.addAttribute("formList", adminService.getAllFormsOrderByCreatedDateDesc());
 
         return "index";
