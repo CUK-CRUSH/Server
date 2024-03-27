@@ -129,7 +129,7 @@
                                         <tr th:each="member : ${memberList}">
                                             <td th:text="${member.name}">name</td>
                                             <td th:text="${member.username}">username</td>
-                                            <a th:href="'https://mylist.im/user/' + ${member.username}">link</a>
+                                            <td><a th:href="'https://mylist.im/user/' + ${member.username}">link</a></td>
                                         </tr>
                                         </tbody>
                                     </table>
