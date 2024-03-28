@@ -158,6 +158,7 @@
                                             <th>성별</th>
                                             <th>유저명</th>
                                             <th>번호</th>
+                                            <th>링크</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -166,6 +167,7 @@
                                             <td th:text="${form.sex}">sex</td>
                                             <td th:text="${form.username}">username</td>
                                             <td th:text="${form.phone}">phoneNumber</td>
+                                            <td><a th:href="'https://mylist.im/user/' + ${form.username}">link</a></td>
                                         </tr>
                                         </tbody>
                                     </table>
