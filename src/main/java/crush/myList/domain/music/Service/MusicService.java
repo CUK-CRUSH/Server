@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -122,6 +123,50 @@ public class MusicService {
         return convertToDto(music);
     }
 
+    // 음악 여려개 한번에 수정하기
+    public List<MusicDto.Result> updateMultipleMusics(SecurityMember member, Long playlistId, List<MusicDto.PatchRequestV1> patchRequests) {
+        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+        );
+
+        if (!Objects.equals(playlist.getMember().getUsername(), member.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
+        }
+
+        List<Music> musics = new ArrayList<>();
+
+        for (MusicDto.PatchRequestV1 patchRequest : patchRequests) {
+            Music music = musicRepository.findById(patchRequest.getMusicId()).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
+            );
+            musics.add(music);
+
+            if (!Objects.equals(music.getPlaylistId(), playlist.getId())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "플레이리스트에 속한 음악이 아닙니다.");
+            }
+
+            if (patchRequest.getMusicOrder() != null) {
+                music.setOrder(patchRequest.getMusicOrder());
+            }
+
+            if (patchRequest.getTitle() != null && !patchRequest.getTitle().isBlank()) {
+                music.setTitle(patchRequest.getTitle());
+            }
+
+            if (patchRequest.getArtist() != null && !patchRequest.getArtist().isBlank()) {
+                music.setArtist(patchRequest.getArtist());
+            }
+
+            if (patchRequest.getUrl() != null && !patchRequest.getUrl().isBlank()) {
+                music.setUrl(musicUrlFilter(patchRequest.getUrl()));
+            }
+        }
+
+        musicRepository.saveAll(musics);
+
+        return convertToDtoList(musics);
+    }
+
     public void deleteMusic(SecurityMember memberDetails, String musicId) {
         Music music = musicRepository.findById(musicId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
@@ -147,6 +192,7 @@ public class MusicService {
         // youtube url 형식인지 정규 표현식으로 확인
         String url = musicUrlFilter(postRequest.getUrl());
         return Music.builder()
+                .order(postRequest.getOrder())
                 .title(postRequest.getTitle())
                 .artist(postRequest.getArtist())
                 .url(url)
@@ -169,6 +215,7 @@ public class MusicService {
     private MusicDto.Result convertToDto(Music music) {
         return MusicDto.Result.builder()
                 .id(music.getId())
+                .order(music.getOrder())
                 .title(music.getTitle())
                 .artist(music.getArtist())
                 .url(music.getUrl())

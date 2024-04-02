@@ -32,13 +32,15 @@ public class Playlist extends BaseEntity implements ViewEntity {
     @JoinColumn(name = "title_image")
     private Image image;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "view_id")
+    private View view;
+
+
+    @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PlaylistRanking ranking;
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaylistLike> likes = new ArrayList<>();
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GuestBook> guestBooks = new ArrayList<>();
-    @OneToOne(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private PlaylistRanking ranking;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "view_id")
-    private View view;
 }

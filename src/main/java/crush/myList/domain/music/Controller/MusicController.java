@@ -3,6 +3,7 @@ package crush.myList.domain.music.controller;
 import crush.myList.config.security.SecurityMember;
 import crush.myList.domain.music.dto.MusicDto;
 import crush.myList.domain.music.service.MusicService;
+import crush.myList.domain.playlist.dto.PlaylistDto;
 import crush.myList.global.dto.JsonBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,6 +87,23 @@ public class MusicController {
                 musicService.updateMusic(member, musicId, patchRequest)
         );
     }
+
+
+    @Operation(summary = "여러개의 음악 한번에 수정하기")
+    @PatchMapping("/{playlistId}/multiple")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "음악 수정 성공"),
+            @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "음악 수정 실패", content = @Content(schema = @Schema(hidden = true)))
+    })
+    public JsonBody<List<MusicDto.Result>> updateMultipleMusic(@AuthenticationPrincipal SecurityMember member, @PathVariable Long playlistId, @RequestBody List<MusicDto.PatchRequestV1> patchRequests) {
+        return JsonBody.of(
+                HttpStatus.OK.value(),
+                "음악 수정 성공",
+                musicService.updateMultipleMusics(member, playlistId, patchRequests)
+        );
+    }
+
 
     @Operation(summary = "유저의 플레이리스트 삭제하기")
     @DeleteMapping("")

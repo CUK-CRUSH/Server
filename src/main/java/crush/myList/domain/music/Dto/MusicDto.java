@@ -13,6 +13,9 @@ public class MusicDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostRequest {
+        @Schema(name = "order", description = "음악 순서입니다.")
+        private Integer order;
+
         @Schema(name = "title", description = "음악 제목입니다.")
         @NotEmpty
         private String title;
@@ -44,6 +47,26 @@ public class MusicDto {
 
     @Getter
     @Setter
+    public static class PatchRequestV1 {
+        @NotNull
+        @Schema(name = "musicId", description = "음악 ID입니다.")
+        private String musicId;
+
+        @Schema(name = "musicOrder", description = "음악 순서입니다.")
+        private Integer musicOrder;
+
+        @Schema(name = "title", description = "음악 제목입니다.")
+        private String title;
+
+        @Schema(name = "artist", description = "아티스트 이름입니다.")
+        private String artist;
+
+        @Schema(name = "url", description = "음악 링크 이름입니다.")
+        private String url;
+    }
+
+    @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -51,6 +74,9 @@ public class MusicDto {
         @Schema(name = "id", description = "음악 ID입니다.")
         @NotNull
         private String id;
+
+        @Schema(name = "order", description = "음악 순서입니다.")
+        private Integer order;
 
         @Schema(name = "title", description = "음악 제목입니다.")
         @NotEmpty
