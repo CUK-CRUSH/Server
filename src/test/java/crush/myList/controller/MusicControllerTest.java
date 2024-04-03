@@ -63,36 +63,36 @@ public class MusicControllerTest {
                 .getResponse().getContentAsString());
     }
 
+//    @Test
+//    @DisplayName("음악 추가 테스트")
+//    @Disabled
+//    public void postMusicTest(TestReporter testReporter) throws Exception {
+//        // given
+//        Member member = testUtil.createTestMember("testUser");
+//        Playlist playlist = testUtil.createTestPlaylist(member);
+//
+//        MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
+//                .title("TestMusic")
+//                .artist("TestArtist")
+//                .url("https://youtube.com/watch?v=urx8-yfpY7c")
+//                .build();
+//
+//        String request = objectMapper.writeValueAsString(postRequestDto);
+//
+//        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
+//
+//        // when
+//        MockHttpServletResponse res = mockMvc.perform(
+//                MockMvcRequestBuilders.post(POST_API)
+//                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(request))
+//                .andExpect(status().isOk())
+//                .andReturn().getResponse();
+//    }
+
     @Test
     @DisplayName("음악 추가 테스트")
-    @Disabled
-    public void postMusicTest(TestReporter testReporter) throws Exception {
-        // given
-        Member member = testUtil.createTestMember("testUser");
-        Playlist playlist = testUtil.createTestPlaylist(member);
-
-        MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
-                .title("TestMusic")
-                .artist("TestArtist")
-                .url("https://youtube.com/watch?v=urx8-yfpY7c")
-                .build();
-
-        String request = objectMapper.writeValueAsString(postRequestDto);
-
-        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
-
-        // when
-        MockHttpServletResponse res = mockMvc.perform(
-                MockMvcRequestBuilders.post(POST_API)
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isOk())
-                .andReturn().getResponse();
-    }
-
-    @Test
-    @DisplayName("음악 여러곡 추가 테스트")
     public void postMultipleMusicTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
@@ -114,7 +114,7 @@ public class MusicControllerTest {
         requestMusics.add(postRequestDto2);
         String request = objectMapper.writeValueAsString(requestMusics);
 
-        final String POST_API = "/api/v1/music/" + playlist.getId().toString() + "/multiple";
+        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
 
         // when
         MockHttpServletResponse res = mockMvc.perform(
@@ -126,40 +126,40 @@ public class MusicControllerTest {
                 .andReturn().getResponse();
     }
 
+//    @Test
+//    @DisplayName("음악 수정 테스트")
+////    @Disabled
+//    public void patchMusicTest(TestReporter testReporter) throws Exception {
+//        // given
+//        Member member = testUtil.createTestMember("testUser");
+//        Playlist playlist = testUtil.createTestPlaylist(member);
+//        Music music = testUtil.createTestMusic(playlist);
+//
+//        // when
+//        MusicDto.PatchRequest patchRequestDto = MusicDto.PatchRequest.builder()
+//                .title("updatedTitle")
+//                .artist("updatedArtist")
+//                .url("https://youtube.com/watch?v=urx8-yfpY7c")
+//                .build();
+//
+//        String patchRequest = objectMapper.writeValueAsString(patchRequestDto);
+//
+//        final String PATCH_API = "/api/v1/music?musicId=" + music.getId();
+//
+//        testReporter.publishEntry(mockMvc.perform(
+//                MockMvcRequestBuilders.patch(PATCH_API)
+//                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(patchRequest))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("data.title").value("updatedTitle"))
+//                .andExpect(jsonPath("data.artist").value("updatedArtist"))
+//                .andExpect(jsonPath("data.url").value("https://youtube.com/watch?v=urx8-yfpY7c"))
+//                .andReturn().getResponse().getContentAsString());
+//    }
+
     @Test
     @DisplayName("음악 수정 테스트")
-//    @Disabled
-    public void patchMusicTest(TestReporter testReporter) throws Exception {
-        // given
-        Member member = testUtil.createTestMember("testUser");
-        Playlist playlist = testUtil.createTestPlaylist(member);
-        Music music = testUtil.createTestMusic(playlist);
-
-        // when
-        MusicDto.PatchRequest patchRequestDto = MusicDto.PatchRequest.builder()
-                .title("updatedTitle")
-                .artist("updatedArtist")
-                .url("https://youtube.com/watch?v=urx8-yfpY7c")
-                .build();
-
-        String patchRequest = objectMapper.writeValueAsString(patchRequestDto);
-
-        final String PATCH_API = "/api/v1/music?musicId=" + music.getId();
-
-        testReporter.publishEntry(mockMvc.perform(
-                MockMvcRequestBuilders.patch(PATCH_API)
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(patchRequest))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("data.title").value("updatedTitle"))
-                .andExpect(jsonPath("data.artist").value("updatedArtist"))
-                .andExpect(jsonPath("data.url").value("https://youtube.com/watch?v=urx8-yfpY7c"))
-                .andReturn().getResponse().getContentAsString());
-    }
-
-    @Test
-    @DisplayName("음악 여러 곡 수정 테스트")
     public void patchMultipleMusicTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
@@ -191,7 +191,7 @@ public class MusicControllerTest {
 
         System.out.println(patchRequest);
 
-        final String PATCH_API = "/api/v1/music/" + playlist.getId() + "/multiple";
+        final String PATCH_API = "/api/v1/music/" + playlist.getId();
 
         testReporter.publishEntry(mockMvc.perform(
                 MockMvcRequestBuilders.patch(PATCH_API)
@@ -216,15 +216,20 @@ public class MusicControllerTest {
         Playlist playlist = testUtil.createTestPlaylist(member);
         Music music = testUtil.createTestMusic(playlist);
 
-        MusicDto.PatchRequest patchRequestDto = MusicDto.PatchRequest.builder()
-                .title("TestMusic2")
-                .artist("TestArtist2")
-                .url("https://youtube.com/watch?v=urx8-yfpY72c")  // 잘못된 URL
-                .build();
+        List<MusicDto.PatchRequestV1> patchRequests = new ArrayList<>();
 
-        String patchRequest = objectMapper.writeValueAsString(patchRequestDto);
+        MusicDto.PatchRequestV1 patchRequestDto1 = new MusicDto.PatchRequestV1();
+        patchRequestDto1.setMusicId(music.getId());
+        patchRequestDto1.setMusicOrder(1);
+        patchRequestDto1.setTitle("updatedTitle");
+        patchRequestDto1.setArtist("updatedArtist");
+        patchRequestDto1.setUrl("https://youtube.com/watch?v=urx8-yfpY72c");
 
-        final String PATCH_API = "/api/v1/music?musicId=" + music.getId();
+        patchRequests.add(patchRequestDto1);
+
+        String patchRequest = objectMapper.writeValueAsString(patchRequests);
+
+        final String PATCH_API = "/api/v1/music/" + playlist.getId();
 
         testReporter.publishEntry(mockMvc.perform(
                 MockMvcRequestBuilders.patch(PATCH_API)
@@ -233,5 +238,32 @@ public class MusicControllerTest {
                         .content(patchRequest))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().toString());
+    }
+
+    @Test
+    @DisplayName("음악 삭제 테스트")
+    public void deleteMusicTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music = testUtil.createTestMusic(playlist);
+
+        final String DELETE_API = "/api/v1/music/" + playlist.getId();
+
+        List<MusicDto.DeleteRequest> deleteRequests = new ArrayList<>();
+        MusicDto.DeleteRequest deleteRequest = new MusicDto.DeleteRequest();
+        deleteRequest.setMusicId(music.getId());
+        deleteRequests.add(deleteRequest);
+
+        String request = objectMapper.writeValueAsString(deleteRequests);
+
+        // when
+        testReporter.publishEntry(mockMvc.perform(
+                MockMvcRequestBuilders.delete(DELETE_API)
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
     }
 }

@@ -51,26 +51,26 @@ public class MusicService {
         return convertToDtoList(musics);
     }
 
-    public MusicDto.Result addMusic(SecurityMember memberDetails, Long playlistId, MusicDto.PostRequest postRequest) {
-        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
-        );
+//    public MusicDto.Result addMusic(SecurityMember memberDetails, Long playlistId, MusicDto.PostRequest postRequest) {
+//        Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
+//                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+//        );
+//
+//        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
+//        }
+//
+//        if (musicRepository.countByPlaylistId(playlist.getId()) >= LimitConstants.MUSIC_LIMIT.getLimit()) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("플레이리스트에는 %d개의 음악만 추가할 수 있습니다.", LimitConstants.MUSIC_LIMIT.getLimit()));
+//        }
+//
+//        Music music = convertToEntity(postRequest, playlist);
+//        musicRepository.save(music);
+//
+//        return convertToDto(music);
+//    }
 
-        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
-        }
-
-        if (musicRepository.countByPlaylistId(playlist.getId()) >= LimitConstants.MUSIC_LIMIT.getLimit()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("플레이리스트에는 %d개의 음악만 추가할 수 있습니다.", LimitConstants.MUSIC_LIMIT.getLimit()));
-        }
-
-        Music music = convertToEntity(postRequest, playlist);
-        musicRepository.save(music);
-
-        return convertToDto(music);
-    }
-
-    public List<MusicDto.Result> addMultipleMusic(SecurityMember memberDetails, Long playlistId, List<MusicDto.PostRequest> postRequests) {
+    public List<MusicDto.Result> addMusic(SecurityMember memberDetails, Long playlistId, List<MusicDto.PostRequest> postRequests) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
@@ -89,42 +89,42 @@ public class MusicService {
         return convertToDtoList(musics);
     }
 
-    public MusicDto.Result updateMusic(SecurityMember memberDetails, String musicId, MusicDto.PatchRequest patchRequest) {
-        Music music = musicRepository.findById(musicId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
-        );
-
-        Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
-        );
-
-        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
-        }
-
-        String title = patchRequest.getTitle();
-        if (title != null && !title.isBlank()) {
-            music.setTitle(title);
-        }
-
-        String artist = patchRequest.getArtist();
-        if (artist != null && !artist.isBlank()) {
-            music.setArtist(artist);
-        }
-
-        String url = musicUrlFilter(patchRequest.getUrl());
-        if (url != null && !url.isBlank()) {
-            music.setUrl(url);
-        }
-
-        // updateDate를 업데이트하기 위해 save 메소드 사용
-        musicRepository.save(music);
-
-        return convertToDto(music);
-    }
+//    public MusicDto.Result updateMusic(SecurityMember memberDetails, String musicId, MusicDto.PatchRequest patchRequest) {
+//        Music music = musicRepository.findById(musicId).orElseThrow(() ->
+//                new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
+//        );
+//
+//        Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
+//                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+//        );
+//
+//        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
+//        }
+//
+//        String title = patchRequest.getTitle();
+//        if (title != null && !title.isBlank()) {
+//            music.setTitle(title);
+//        }
+//
+//        String artist = patchRequest.getArtist();
+//        if (artist != null && !artist.isBlank()) {
+//            music.setArtist(artist);
+//        }
+//
+//        String url = musicUrlFilter(patchRequest.getUrl());
+//        if (url != null && !url.isBlank()) {
+//            music.setUrl(url);
+//        }
+//
+//        // updateDate를 업데이트하기 위해 save 메소드 사용
+//        musicRepository.save(music);
+//
+//        return convertToDto(music);
+//    }
 
     // 음악 여려개 한번에 수정하기
-    public List<MusicDto.Result> updateMultipleMusics(SecurityMember member, Long playlistId, List<MusicDto.PatchRequestV1> patchRequests) {
+    public List<MusicDto.Result> updateMusics(SecurityMember member, Long playlistId, List<MusicDto.PatchRequestV1> patchRequests) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
@@ -167,19 +167,26 @@ public class MusicService {
         return convertToDtoList(musics);
     }
 
-    public void deleteMusic(SecurityMember memberDetails, String musicId) {
-        Music music = musicRepository.findById(musicId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
-        );
-        Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
-        );
-
-        if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
+    public String deleteMusic(SecurityMember memberDetails, Long playlistId, List<MusicDto.DeleteRequest> deleteRequest) {
+        List<Music> musics = new ArrayList<>();
+        for (MusicDto.DeleteRequest request : deleteRequest) {
+            Music music = musicRepository.findById(request.getMusicId()).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, "음악을 찾을 수 없습니다.")
+            );
+            if (!music.getPlaylistId().equals(playlistId)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "플레이리스트에 속한 음악이 아닙니다.");
+            }
+            Playlist playlist = playlistRepository.findById(music.getPlaylistId()).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
+            );
+            if (!Objects.equals(playlist.getMember().getUsername(), memberDetails.getUsername())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "플레이리스트에 접근할 수 없습니다.");
+            }
+            musics.add(music);
         }
+        musicRepository.deleteAll(musics);
 
-        musicRepository.delete(music);
+        return "음악 삭제 성공";
     }
 
     private List<Music> convertToEntityList(List<MusicDto.PostRequest> postRequests, Playlist playlist) {
