@@ -10,6 +10,7 @@ import crush.myList.global.enums.LimitConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.SortDirection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,11 +42,12 @@ public class MusicService {
         return url;
     }
 
+    // order로 정렬하여 페이징 처리하여 음악 조회
     public List<MusicDto.Result> getMusics(Long playlistId, int page) {
         Playlist playlist = playlistRepository.findById(playlistId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "플레이리스트를 찾을 수 없습니다.")
         );
-        Pageable pageable = PageRequest.of(page, LimitConstants.PLAYLIST_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.ASC, "createdDate"));
+        Pageable pageable = PageRequest.of(page, LimitConstants.PLAYLIST_PAGE_SIZE.getLimit(), Sort.by(Sort.Direction.ASC, "order"));
 
         Page<Music> musics = musicRepository.findAllByPlaylistId(playlist.getId(), pageable);
         return convertToDtoList(musics);

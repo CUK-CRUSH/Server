@@ -26,7 +26,7 @@ import java.util.List;
 public class MusicController {
     private final MusicService musicService;
 
-    @Operation(summary = "플레이리스트의 음악 조회하기")
+    @Operation(summary = "플레이리스트의 음악 조회하기", description = "플레이리스트 음악을 order 순서대로 조회합니다.")
     @GetMapping("/{playlistId}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "음악 조회 성공"),

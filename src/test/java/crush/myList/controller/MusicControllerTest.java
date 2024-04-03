@@ -51,14 +51,23 @@ public class MusicControllerTest {
         // given
         Member member = testUtil.createTestMember("testUser");
         Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music1 = testUtil.createTestMusic(playlist);
+        Music music2 = testUtil.createTestMusic(playlist);
 
-        final String GET_API = "/api/v1/music/" + playlist.getId().toString() + "?page=0";
+        music1.setOrder(2);
+        music1.setTitle("TestMusic2");
+        musicRepository.save(music1);
+
+        final String GET_API = "/api/v1/music/" + playlist.getId() + "?page=0";
 
         // when
         testReporter.publishEntry(mockMvc.perform(
                 MockMvcRequestBuilders.get(GET_API)
         )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("data[0].order").value(1))
+                .andExpect(jsonPath("data[1].title").value("TestMusic2"))
+                .andExpect(jsonPath("data[1].order").value(2))
                 .andReturn()
                 .getResponse().getContentAsString());
     }
@@ -99,12 +108,14 @@ public class MusicControllerTest {
         Playlist playlist = testUtil.createTestPlaylist(member);
 
         MusicDto.PostRequest postRequestDto1 = MusicDto.PostRequest.builder()
+                .order(2)
                 .title("TestMusic")
                 .artist("TestArtist")
                 .url("https://youtube.com/watch?v=urx8-yfpY7c")
                 .build();
 
         MusicDto.PostRequest postRequestDto2 = MusicDto.PostRequest.builder()
+                .order(1)
                 .title("TestMusic2")
                 .artist("TestArtist2")
                 .url("https://youtube.com/watch?v=urx8-yfpY7c")
