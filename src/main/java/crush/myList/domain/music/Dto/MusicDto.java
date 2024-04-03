@@ -48,7 +48,7 @@ public class MusicDto {
     @Getter
     @Setter
     public static class PatchRequestV1 {
-        @NotNull
+        @NotBlank
         @Schema(name = "musicId", description = "음악 ID입니다.")
         private String musicId;
 

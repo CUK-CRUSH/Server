@@ -159,31 +159,62 @@ public class MusicControllerTest {
     }
 
     @Test
+    @DisplayName("음악 여러 곡 수정 테스트")
+    public void patchMultipleMusicTest(TestReporter testReporter) throws Exception {
+        // given
+        Member member = testUtil.createTestMember("testUser");
+        Playlist playlist = testUtil.createTestPlaylist(member);
+        Music music1 = testUtil.createTestMusic(playlist);
+        Music music2 = testUtil.createTestMusic(playlist);
+
+        // when
+        MusicDto.PatchRequestV1 patchRequestDto1 = new MusicDto.PatchRequestV1();
+
+        patchRequestDto1.setMusicId(music1.getId());
+        patchRequestDto1.setMusicOrder(1);
+        patchRequestDto1.setTitle("updatedTitle");
+        patchRequestDto1.setArtist("updatedArtist");
+        patchRequestDto1.setUrl("https://youtube.com/watch?v=urx8-yfpY7c");
+
+        MusicDto.PatchRequestV1 patchRequestDto2 = new MusicDto.PatchRequestV1();
+
+        patchRequestDto2.setMusicId(music2.getId());
+        patchRequestDto2.setMusicOrder(2);
+        patchRequestDto2.setTitle("updatedTitle2");
+        patchRequestDto2.setArtist("updatedArtist2");
+        patchRequestDto2.setUrl("https://youtube.com/watch?v=urx8-yfpY7c");
+
+        List<MusicDto.PatchRequestV1> patchRequests = new ArrayList<>();
+        patchRequests.add(patchRequestDto1);
+        patchRequests.add(patchRequestDto2);
+        String patchRequest = objectMapper.writeValueAsString(patchRequests);
+
+        System.out.println(patchRequest);
+
+        final String PATCH_API = "/api/v1/music/" + playlist.getId() + "/multiple";
+
+        testReporter.publishEntry(mockMvc.perform(
+                MockMvcRequestBuilders.patch(PATCH_API)
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patchRequest))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data[0].title").value("updatedTitle"))
+                .andExpect(jsonPath("data[0].artist").value("updatedArtist"))
+                .andExpect(jsonPath("data[0].url").value("https://youtube.com/watch?v=urx8-yfpY7c"))
+                .andExpect(jsonPath("data[1].title").value("updatedTitle2"))
+                .andExpect(jsonPath("data[1].artist").value("updatedArtist2"))
+                .andExpect(jsonPath("data[1].url").value("https://youtube.com/watch?v=urx8-yfpY7c"))
+                .andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
     @DisplayName("음악 수정 실패 테스트 - 잘못된 URL")
-    @Disabled
     public void patchMusicFailTest(TestReporter testReporter) throws Exception {
         // given
         Member member = testUtil.createTestMember("testUser");
         Playlist playlist = testUtil.createTestPlaylist(member);
-
-        MusicDto.PostRequest postRequestDto = MusicDto.PostRequest.builder()
-                .title("TestMusic")
-                .artist("TestArtist")
-                .url("https://youtu.be/pWRcCeKdd6Y?si=tBID5-iK-qAEhHEJ")
-                .build();
-
-        String request = objectMapper.writeValueAsString(postRequestDto);
-
-        final String POST_API = "/api/v1/music/" + playlist.getId().toString();
-
-        // when
-        testReporter.publishEntry(mockMvc.perform(
-                MockMvcRequestBuilders.post(POST_API)
-                        .header("Authorization", "Bearer " + jwtTokenProvider.createToken(member.getId().toString(), JwtTokenType.ACCESS_TOKEN))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString());
+        Music music = testUtil.createTestMusic(playlist);
 
         MusicDto.PatchRequest patchRequestDto = MusicDto.PatchRequest.builder()
                 .title("TestMusic2")
@@ -193,7 +224,7 @@ public class MusicControllerTest {
 
         String patchRequest = objectMapper.writeValueAsString(patchRequestDto);
 
-        final String PATCH_API = "/api/v1/music?musicId=" + musicRepository.findAll().get(0).getId().toString();
+        final String PATCH_API = "/api/v1/music?musicId=" + music.getId();
 
         testReporter.publishEntry(mockMvc.perform(
                 MockMvcRequestBuilders.patch(PATCH_API)
