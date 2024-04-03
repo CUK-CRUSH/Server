@@ -112,6 +112,7 @@ public class TestUtil {
      */
     public Music createTestMusic(Playlist playlist) {
         Music music = Music.builder()
+                .order(1)
                 .title("굿굿")
                 .artist("후후")
                 .url("https://youtube.com/watch?v=test")
