@@ -27,7 +27,7 @@ import java.util.Map;
 public class LoginController {
     private final LoginService loginService;
 
-    @Operation(summary = "kakao login token 발급 경로", description = "로그인 성공시 URI를 통해 토큰을 발급 받는다.")
+    @Operation(summary = "kakao login token 발급 경로", description = "/oauth2/authorization/kakao 로그인 성공시 URI를 통해 토큰을 발급 받는다.")
     @GetMapping(value = "/oauth2/code/kakao", produces = "application/json; charset=utf-8")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
@@ -39,7 +39,7 @@ public class LoginController {
         return null;
     }
 
-    @Operation(summary = "google login token 발급 경로", description = "로그인 성공시 URI를 통해 토큰을 발급 받는다.")
+    @Operation(summary = "google login token 발급 경로", description = "/oauth2/authorization/google 로그인 성공시 URI를 통해 토큰을 발급 받는다.")
     @GetMapping(value = "/oauth2/code/google", produces = "application/json; charset=utf-8")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
@@ -51,7 +51,7 @@ public class LoginController {
         return null;
     }
 
-    @Operation(summary = "facebook login token 발급 경로", description = "로그인 성공시 URI를 통해 토큰을 발급 받는다.")
+    @Operation(summary = "facebook login token 발급 경로", description = "/oauth2/authorization/facebook 로그인 성공시 URI를 통해 토큰을 발급 받는다.")
     @GetMapping(value = "/oauth2/code/facebook", produces = "application/json; charset=utf-8")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
