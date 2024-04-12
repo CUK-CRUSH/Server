@@ -184,6 +184,8 @@ public class SearchService {
                         .map(VideoDto::of)
                         .collect(Collectors.toList());
             }
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             log.error("유튜브 API 요청 중 오류가 발생했습니다.: " + e.getMessage());
         }
