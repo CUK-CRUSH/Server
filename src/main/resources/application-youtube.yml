@@ -1,0 +1,15 @@
+youtube:
+  api-key1: ${YOUTUBE_API_KEY_1}
+  api-key2: ${YOUTUBE_API_KEY_2}
+  api-key3: ${YOUTUBE_API_KEY_3}
+  api-key4: ${YOUTUBE_API_KEY_4}
+  api-key5: ${YOUTUBE_API_KEY_5}
+  api-key6: ${YOUTUBE_API_KEY_6}
+  api-key7: ${YOUTUBE_API_KEY_7}
+  api-key8: ${YOUTUBE_API_KEY_8}
+  api-key9: ${YOUTUBE_API_KEY_9}
+  api-key10: ${YOUTUBE_API_KEY_10}
+  api-key11: ${YOUTUBE_API_KEY_11}
+  api-key12: ${YOUTUBE_API_KEY_12}
+  api-key13: ${YOUTUBE_API_KEY_13}
+  api-key14: ${YOUTUBE_API_KEY_14}
