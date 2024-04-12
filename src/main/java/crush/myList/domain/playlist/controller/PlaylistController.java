@@ -83,7 +83,7 @@ public class PlaylistController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "플레이리스트 정보 수정 성공"),
             @ApiResponse(responseCode = "403", description = "비허가된 유저의 접근", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "404", description = "플레이리스트 변경 실패", content = @Content(schema = @Schema(hidden = true)))
+            @ApiResponse(responseCode = "404", description = "플레이리스트 찾을 수 없음", content = @Content(schema = @Schema(hidden = true)))
     })
     public JsonBody<PlaylistDto.Response> updatePlaylist(
             @AuthenticationPrincipal SecurityMember member,
