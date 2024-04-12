@@ -21,7 +21,9 @@ public enum LimitConstants {
     PLAYLIST_RECOMMENDATION_SIZE(7),
 
     PLAYLIST_RANKING_SIZE(10),
-    MEMBER_RANKING_SIZE(10);
+    MEMBER_RANKING_SIZE(10),
+
+    YOUTUBE_SEARCH_LIMIT(10);
 
     private final int limit;
 }

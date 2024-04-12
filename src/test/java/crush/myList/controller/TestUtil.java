@@ -2,6 +2,7 @@ package crush.myList.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import crush.myList.config.jwt.JwtTokenProvider;
 import crush.myList.domain.festival.mongo.document.Form;
 import crush.myList.domain.festival.mongo.repository.FormRepository;
 import crush.myList.domain.member.entity.Member;
@@ -21,6 +22,7 @@ import crush.myList.domain.ranking.repository.MemberRankingRepository;
 import crush.myList.domain.ranking.repository.PlaylistRankingRepository;
 import crush.myList.domain.viewcounting.entity.View;
 import crush.myList.domain.viewcounting.service.ViewService;
+import crush.myList.global.enums.JwtTokenType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -55,6 +57,8 @@ public class TestUtil {
     private FormRepository formRepository;
     @Autowired
     private ViewService viewService;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     /**
      * 테스트용 멤버 생성
@@ -212,5 +216,9 @@ public class TestUtil {
                 .username("testUser")
                 .build();
         return formRepository.save(form);
+    }
+
+    public String createAccessToken(String memberId) {
+        return jwtTokenProvider.createToken(memberId, JwtTokenType.ACCESS_TOKEN);
     }
 }
