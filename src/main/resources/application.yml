@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: oauth2, gcs
+    include: oauth2, gcs, youtube
 
   # override datasource during deployment
   datasource:

@@ -22,7 +22,7 @@ jobs:
     - name: Set yml file
       uses: microsoft/variable-substitution@v1
       with:
-        files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml, ./src/main/resources/application-gcs.yml
+        files: ./src/main/resources/application.yml, ./src/main/resources/application-oauth2.yml, ./src/main/resources/application-gcs.yml, ./src/main/resources/application-youtube.yml
       env:
         server.port: ${{ secrets.SERVER_PORT }}
         spring.datasource.driver-class-name: ${{ secrets.BUILD_DATASOURCE_DRIVER_CLASS_NAME }}
@@ -61,6 +61,21 @@ jobs:
 
         admin.username: ${{ secrets.ADMIN_USERNAME }}
         admin.password: ${{ secrets.ADMIN_PASSWORD }}
+
+        youtube.api-key1: ${{ secrets.YOUTUBE_API_KEY_1 }}
+        youtube.api-key2: ${{ secrets.YOUTUBE_API_KEY_2 }}
+        youtube.api-key3: ${{ secrets.YOUTUBE_API_KEY_3 }}
+        youtube.api-key4: ${{ secrets.YOUTUBE_API_KEY_4 }}
+        youtube.api-key5: ${{ secrets.YOUTUBE_API_KEY_5 }}
+        youtube.api-key6: ${{ secrets.YOUTUBE_API_KEY_6 }}
+        youtube.api-key7: ${{ secrets.YOUTUBE_API_KEY_7 }}
+        youtube.api-key8: ${{ secrets.YOUTUBE_API_KEY_8 }}
+        youtube.api-key9: ${{ secrets.YOUTUBE_API_KEY_9 }}
+        youtube.api-key10: ${{ secrets.YOUTUBE_API_KEY_10 }}
+        youtube.api-key11: ${{ secrets.YOUTUBE_API_KEY_11 }}
+        youtube.api-key12: ${{ secrets.YOUTUBE_API_KEY_12 }}
+        youtube.api-key13: ${{ secrets.YOUTUBE_API_KEY_13 }}
+        youtube.api-key14: ${{ secrets.YOUTUBE_API_KEY_14 }}
 
     - name: create-json
       id: create-json
