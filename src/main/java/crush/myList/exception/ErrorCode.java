@@ -14,7 +14,8 @@ public enum ErrorCode {
     NotFound(HttpStatus.NOT_FOUND, "해당 리소스를 찾을 수 없습니다."),
 
     NullPointer(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러입니다 - NullPointerException"),
-    DataIntegrityViolation(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러입니다 - DataIntegrityViolationException");
+    DataIntegrityViolation(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러입니다 - DataIntegrityViolationException"),
+    IOAccess(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러입니다 - IOException");
 
     private final HttpStatus status;
     private final String message;
