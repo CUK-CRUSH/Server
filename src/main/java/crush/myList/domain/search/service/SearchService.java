@@ -3,9 +3,7 @@ package crush.myList.domain.search.service;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.SearchResultSnippet;
 import crush.myList.config.EnvBean;
@@ -119,13 +117,15 @@ public class SearchService {
     }
 
     /** @param search 유튜브 검색 요청 객체
-     * @return 유튜브 검색 결과
+     * @return 유튜브 동영상 검색 결과 목록
      */
-    private SearchListResponse requestYoutubeSearching(final YouTube.Search.List search) {
+    private List<SearchResultSnippet> requestYoutubeSearching(final YouTube.Search.List search) throws IOException {
         for (int i = 0; i < envBean.getYoutubeKeyMaxSize(); i++) {
             try {
                 search.setKey(getYoutubeApiKey(youtubeKeyCurrentIndex));
-                return search.execute();
+                return search.execute().getItems().stream()
+                        .map(SearchResult::getSnippet)
+                        .toList();
             } catch (GoogleJsonResponseException e) {
                 if (e.getStatusCode() == 403) {
                     log.error( "[GoogleJsonResponseException] " + (youtubeKeyCurrentIndex+1)+ "번째 YouTube API Key가 만료되었습니다.");
@@ -135,60 +135,35 @@ public class SearchService {
                 }
             } catch (IllegalArgumentException e) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "[IllegalArgumentException] " + e.getMessage());
-            } catch (IOException e) {
-                log.error("유튜브 API 요청 중 오류가 발생했습니다.: " + e.getMessage());
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "[IOException] Youtube API 요청 중 오류가 발생했습니다.");
             }
         }
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Youtube API 할당량 초과로 인한 검색 실패입니다. 잠시 후 다시 시도해주세요.");
     }
 
-
     /** @param q 검색어
      * @param maxResults 최대 검색 결과 개수
      * @return 검색 결과
      */
-    public List<VideoDto> searchVideos(final String q, Long maxResults) {
-        try {
-            // YouTube Data API에 접근할 수 있는 YouTube 클라이언트 생성
-            YouTube youtube = new YouTube.Builder(
-                    new NetHttpTransport(),
-                    GsonFactory.getDefaultInstance(),
-                    request -> {
-                    })
-                    .build();
+    public List<VideoDto> searchVideos(final String q, Long maxResults) throws IOException {
+        // YouTube Data API에 접근할 수 있는 YouTube 클라이언트 생성
+        YouTube youtube = new YouTube.Builder(
+                new NetHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                request -> {
+                })
+                .build();
 
-            // YouTube Data API를 사용해 동영상 검색을 위한 요청 객체 생성
-            YouTube.Search.List search = youtube.search().list(Collections.singletonList("id,snippet"));
-            search.setQ(q);
-            search.setType(Collections.singletonList("video"));
+        // YouTube Data API를 사용해 동영상 검색을 위한 요청 객체 생성. 최대 사이즈 10으로 제한
+        YouTube.Search.List search = youtube.search().list(Collections.singletonList("id,snippet"))
+                .setQ(q)
+                .setType(Collections.singletonList("video"))
+                .setMaxResults(Math.min(maxResults, YOUTUBE_SEARCH_LIMIT.getLimit()));
 
-            // 검색 결과 최대 개수 설정
-            if (maxResults > YOUTUBE_SEARCH_LIMIT.getLimit()) {
-                maxResults = (long) YOUTUBE_SEARCH_LIMIT.getLimit();
-            }
-            search.setMaxResults(maxResults);
+        // 검색 요청 실행 후 검색 결과에서 동영상 목록 가져오기
+        List<SearchResultSnippet> searchResultSnippets = requestYoutubeSearching(search);
 
-            // 검색 요청 실행 및 응답 받아오기
-            SearchListResponse searchResponse = requestYoutubeSearching(search);
-
-            // 검색 결과에서 동영상 목록 가져오기
-            List<SearchResultSnippet> searchResultSnippets = searchResponse.getItems().stream()
-                    .map(SearchResult::getSnippet)
-                    .toList();
-
-            log.info("searchResultSnippets: " + searchResultSnippets.size());
-
-            if (!searchResultSnippets.isEmpty()) {
-                return searchResultSnippets.stream()
-                        .map(VideoDto::of)
-                        .collect(Collectors.toList());
-            }
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("유튜브 API 요청 중 오류가 발생했습니다.: " + e.getMessage());
-        }
-        return null;
+        return searchResultSnippets.stream()
+                .map(VideoDto::of)
+                .collect(Collectors.toList());
     }
 }

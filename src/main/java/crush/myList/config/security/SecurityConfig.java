@@ -138,9 +138,9 @@ public class SecurityConfig {
 
         // 예외 처리
         .exceptionHandling(exception -> exception
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setStatus(HttpStatus.FORBIDDEN.value()); // 403
-                })); // 권한 없음
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value()); // 401
+                })); // 인증 실패
 
         // csrf 비활성화 및 jwt 필터 추가
         http.sessionManagement(session -> session
