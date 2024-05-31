@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,7 +69,7 @@ public class SearchController {
             @ApiResponse(responseCode = "500", description = "유튜브 API 할당량 모두 채움")
     })
     public JsonBody<List<VideoDto>> searchVideo(@RequestParam(name = "q") String q,
-                                                @RequestParam(name = "maxResults", defaultValue = "5", required = false) Long maxResults) {
+                                                @RequestParam(name = "maxResults", defaultValue = "5", required = false) Long maxResults) throws IOException{
         List<VideoDto> searchRes = searchService.searchVideos(q, maxResults);
         return JsonBody.of(HttpStatus.OK.value(),"검색 성공", searchRes);
     }

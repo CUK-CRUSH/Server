@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 @Slf4j(topic = "GlobalExceptionHandler")
@@ -27,5 +28,12 @@ public class GlobalExceptionHandler {
         // 데이터 무결성 위반 예외 처리
         log.error(e.getMessage());
         return ErrorResponse.toResponse(ErrorCode.DataIntegrityViolation);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseBody handleIOException(IOException e) {
+        // 스트림 및 파일 입출력 엑세스 오류 예외 처리
+        log.error(e.getMessage());
+        return ErrorResponse.toResponse(ErrorCode.IOAccess);
     }
 }
